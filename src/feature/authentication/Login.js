@@ -3,6 +3,8 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, SafeAreaView, Text, View, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
+import { COLORS } from '../../constant/colors';
+
 import ButtonCustom    from '../../components/ButtonCustom';
 import TextInputCustom from '../../components/TextInputCustom'
 
@@ -17,6 +19,10 @@ const Login = () => {
 
   const openForgotPassword = () => {
     navigate.navigate('ForgotPasswordScreen');
+  }
+
+  const openRegister = () => {
+    navigate.navigate('RegisterScreen');
   }
     
   return (
@@ -34,7 +40,7 @@ const Login = () => {
             <TextInputCustom 
                 icon='user-alt'
                 placeholderText='Nhập tài khoản'
-                textColor='#929292'
+                textColor={ COLORS.DEFAULT_TEXT } 
             />
             </View>
             
@@ -42,14 +48,14 @@ const Login = () => {
             <TextInputCustom 
                 icon='lock'
                 placeholderText='Nhập mật khẩu'
-                textColor='#929292'
+                textColor={ COLORS.DEFAULT_TEXT }
                 secureTextEntry={true}
             />
             </View>
             
             <View style={{ marginTop: 15 }}>
             <ButtonCustom 
-                title='Đăng nhập'
+                title='Đăng Nhập'
                 color='#2F4F4F'
                 btnAction={() => console.log('Login click...')}
             />
@@ -61,7 +67,7 @@ const Login = () => {
               <Text style={ styles.buttonActionText }>Quên mật khẩu</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={ styles.buttonAction }>
+            <TouchableOpacity style={ styles.buttonAction } onPress={openRegister}>
               <Text style={ styles.buttonActionText }>Đăng ký</Text>
             </TouchableOpacity>
         </View>
@@ -71,7 +77,7 @@ const Login = () => {
 };
 
 const DEFAULT_TEXT = {
-  color: '#fff',
+  color: COLORS.WHITE,
   textAlign: 'center'
 }
 
@@ -80,7 +86,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#198c51',
+    backgroundColor: COLORS.DEFAULT_BACKGROUND,
   },
 
   hiText: {

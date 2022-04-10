@@ -2,6 +2,8 @@ import React, { useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, SafeAreaView, Text, View, TouchableOpacity } from 'react-native';
 
+import { COLORS } from '../../constant/colors';
+
 import ButtonCustom    from '../../components/ButtonCustom';
 import TextInputCustom from '../../components/TextInputCustom'
 
@@ -27,7 +29,7 @@ const ForgotPassword = () => {
                 <TextInputCustom 
                     icon='pen'
                     placeholderText='Nhập mã tạo lại mật khẩu'
-                    textColor='#929292'
+                    textColor={ COLORS.DEFAULT_TEXT }
                 />
             </View>
 
@@ -35,7 +37,7 @@ const ForgotPassword = () => {
                 <TextInputCustom 
                     icon='unlock'
                     placeholderText='Nhập mật khẩu mới'
-                    textColor='#929292'
+                    textColor={ COLORS.DEFAULT_TEXT }
                     secureTextEntry={true}
                 />
             </View>
@@ -44,15 +46,15 @@ const ForgotPassword = () => {
                 <TextInputCustom 
                     icon='unlock'
                     placeholderText='Nhập mật khẩu xác nhận'
-                    textColor='#929292'
+                    textColor={ COLORS.DEFAULT_TEXT }
                     secureTextEntry={true}
                 />
             </View>
             
             <View style={{ marginTop: 15, }}>
             <ButtonCustom 
-                title='Tạo lại mật khẩu'
-                color='#2F4F4F'
+                title='Tạo Lại Mật Khẩu'
+                color={ COLORS.BUTTON_AUTH_COLOR }
                 btnAction={() => console.log('ForgotPassword click...')}
             />
             </View>
@@ -63,7 +65,7 @@ const ForgotPassword = () => {
 };
 
 const DEFAULT_TEXT = {
-  color: '#fff',
+  color: COLORS.WHITE,
   textAlign: 'center'
 }
 
@@ -72,7 +74,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#198c51',
+    backgroundColor: COLORS.DEFAULT_BACKGROUND,
   },
 
   hiText: {

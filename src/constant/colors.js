@@ -1,0 +1,8 @@
+const COLORS = {
+    DEFAULT_BACKGROUND: '#198c51',
+    DEFAULT_TEXT: '#929292',
+    WHITE: '#fff',
+    BUTTON_AUTH_COLOR: '#2F4F4F'
+}
+
+exports.COLORS = COLORS;
