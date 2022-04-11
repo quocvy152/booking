@@ -1,0 +1,68 @@
+const CARS = [
+    {
+        id: '1',
+        name: 'Mazda 6 2020',
+        categoryID: '1',
+        image: require('../resources/images/mazda-6-2020-26469.png'),
+        priceBorrow: 500000,
+        seat: '4 chỗ',
+    },
+    {
+        id: '5',
+        name: 'Toyota Vios G',
+        categoryID: '1',
+        image: require('../resources/images/download.jpg'),
+        priceBorrow: 300000,
+        seat: '4 chỗ',
+    },
+    {
+        id: '2',
+        name: 'Lexus RX350L',
+        categoryID: '2',
+        image: require('../resources/images/xe-lexus-7-cho-3.jpg'),
+        priceBorrow: 1000000,
+        seat: '7 chỗ',
+    },
+    {
+        id: '6',
+        name: 'Toyota Innova 2018',
+        categoryID: '2',
+        image: require('../resources/images/ba0e57dd-20190731_034037.jpg'),
+        priceBorrow: 650000,
+        seat: '7 chỗ',
+    },
+    {
+        id: '3',
+        name: 'Huyndai Starex AT',
+        categoryID: '3',
+        image: require('../resources/images/9_cho.png'),
+        priceBorrow: 1100000,
+        seat: '9 chỗ',
+    },
+    {
+        id: '7',
+        name: 'Toyota Granvia PV',
+        categoryID: '3',
+        image: require('../resources/images/toyota-granvia-vne-1591589032-9750-1591589975.jpg'),
+        priceBorrow: 1050000,
+        seat: '9 chỗ',
+    },
+    {
+        id: '4',
+        name: 'Ford Transit 16',
+        categoryID: '4',
+        image: require('../resources/images/16_cho.jpg'),
+        priceBorrow: 1000000,
+        seat: '16 chỗ',
+    },
+    {
+        id: '8',
+        name: 'Huyndai Solati 16',
+        categoryID: '4',
+        image: require('../resources/images/Hyundai_Solati_16_chY.jpg'),
+        priceBorrow: 700000,
+        seat: '16 chỗ',
+    },
+];
+
+export default CARS;

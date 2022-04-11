@@ -6,6 +6,7 @@ import Login from './src/feature/authentication/Login';
 import ForgotPassword from './src/feature/authentication/ForgotPassword';
 import Register from './src/feature/authentication/Register';
 import Home from './src/feature/home/Home';
+import BottomNavigator from './src/components/BottomNavigator';
 
 const Stack = createStackNavigator(); 
 
@@ -18,6 +19,7 @@ export default function App() {
         <Stack.Screen name='ForgotPasswordScreen' component={ForgotPassword} />
         <Stack.Screen name='RegisterScreen' component={Register} />
         <Stack.Screen name='HomeScreen' component={Home} />
+        <Stack.Screen name='BottomNavigator' component={BottomNavigator} />
       </Stack.Navigator>
     </NavigationContainer>
   );
