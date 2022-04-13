@@ -1,25 +1,59 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, SafeAreaView, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, SafeAreaView, Text, View, TouchableOpacity, Keyboard } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 import { COLORS } from '../../constant/colors';
+import {
+  checkEmail
+} from '../../utils/utils';
 
 import ButtonCustom    from '../../components/ButtonCustom';
-import TextInputCustom from '../../components/TextInputCustom'
+import TextInputCustom from '../../components/TextInputCustom';
+import ToastCustom     from '../../components/ToastCustom';
 
 const Register = () => {
-  const navigate = useNavigation();
+  const [userName, setUserName] = useState();
+  const [email, setEmail] = useState();
+  const [password, setPassword] = useState();
+  const [confirmPassword, setConfirmPassword] = useState();
+  const [phone, setPhone] = useState();
+  const [name, setName] = useState();
 
-  useEffect(() => {
-    return () => {
-    
+  // === START TOAST MESSAGE === //
+  const [isShowToast, setIsShowToast]    = useState(false);
+  const [typeToast, setTypeToast]        = useState();
+  const [contentToast, setContentToast]  = useState();
+
+  const showToast = ({ type, content }) => {
+    setIsShowToast(true);
+    setTypeToast(type);
+    setContentToast(content);
+    setTimeout(() => {
+      setIsShowToast(false)
+    }, 1500);
+}
+// === END TOAST MESSAGE === //
+
+  const handleSubmitRegister = () => {
+    Keyboard.dismiss();
+
+    if(!userName || !email || !password || !confirmPassword || !phone || !name) {
+      showToast({ content: 'Chưa điền đủ thông tin' });
+      return;
     }
-  }, [])
+
+    if(!checkEmail(email)) {
+      showToast({ content: 'Email chưa đúng định dạng' });
+      return;
+    }
+    
+  }
     
   return (
     <>
       <SafeAreaView style={ styles.container }>
+        <ToastCustom typeToast={typeToast} contentToast={contentToast} isShowToast={isShowToast} />
         <StatusBar style='light' />
         <View style={ styles.content }>
             <Text style={ styles.hiText }>
@@ -33,6 +67,9 @@ const Register = () => {
                   icon='mail-bulk'
                   placeholderText='Nhập Email'
                   textColor={ COLORS.DEFAULT_TEXT }
+                  textInputAction={val => {
+                    setEmail(val)
+                  }}
               />
             </View>
 
@@ -41,6 +78,9 @@ const Register = () => {
                   icon='user-alt'
                   placeholderText='Nhập tài khoản'
                   textColor={ COLORS.DEFAULT_TEXT }
+                  textInputAction={val => {
+                    setUserName(val)
+                  }}
               />
             </View>
             
@@ -50,6 +90,9 @@ const Register = () => {
                   placeholderText='Nhập mật khẩu'
                   textColor={ COLORS.DEFAULT_TEXT }
                   secureTextEntry={true}
+                  textInputAction={val => {
+                    setPassword(val)
+                  }}
               />
             </View>
 
@@ -59,6 +102,9 @@ const Register = () => {
                   placeholderText='Nhập mật khẩu xác nhận'
                   textColor={ COLORS.DEFAULT_TEXT }
                   secureTextEntry={true}
+                  textInputAction={val => {
+                    setConfirmPassword(val)
+                  }}
               />
             </View>
 
@@ -68,6 +114,9 @@ const Register = () => {
                   placeholderText='Nhập số điện thoại'
                   textColor={ COLORS.DEFAULT_TEXT }
                   isInputNumber={true}
+                  textInputAction={val => {
+                    setPhone(val)
+                  }}
               />
             </View>
 
@@ -76,6 +125,9 @@ const Register = () => {
                   icon='info'
                   placeholderText='Nhập tên'
                   textColor={ COLORS.DEFAULT_TEXT }
+                  textInputAction={val => {
+                    setName(val)
+                  }}
               />
             </View>
             
@@ -83,7 +135,7 @@ const Register = () => {
               <ButtonCustom 
                   title='Đăng Ký'
                   color={ COLORS.BUTTON_AUTH_COLOR }
-                  btnAction={() => console.log('Register click...')}
+                  btnAction={handleSubmitRegister}
               />
             </View>
         </View>

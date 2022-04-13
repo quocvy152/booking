@@ -20,7 +20,7 @@ const BottomNavigator = () => {
             borderTopWidth: 0,
             elevation: 0,
           },
-          showLabel: false,
+          // showLabel: false,
           activeTintColor: COLORS.CHOOSED_COLOR
         }}
         screenOptions={{
@@ -28,7 +28,7 @@ const BottomNavigator = () => {
         }}
       >
         <Tab.Screen 
-          name='HomeScreen'
+          name='Trang chủ'
           component={Home}
           options={{
             tabBarIcon: ({ color }) => (
@@ -37,7 +37,7 @@ const BottomNavigator = () => {
           }}
         />
         <Tab.Screen 
-          name='FavouriteCarScreen'
+          name='Yêu thích'
           component={Home}
           options={{
             tabBarIcon: ({ color }) => (
@@ -46,20 +46,20 @@ const BottomNavigator = () => {
           }}
         />
         <Tab.Screen 
-          name='AccountScreen'
-          component={Home}
-          options={{
-            tabBarIcon: ({ color }) => (
-              <FontAwesome5 name='user-circle' color={color} size={25} />
-            )
-          }}
-        />
-        <Tab.Screen 
-          name='SupportScreen'
+          name='Hỗ trợ'
           component={Home}
           options={{
             tabBarIcon: ({ color }) => (
               <FontAwesome5 name='question-circle' color={color} size={25} />
+            )
+          }}
+        />
+        <Tab.Screen 
+          name='Tài khoản'
+          component={Home}
+          options={{
+            tabBarIcon: ({ color }) => (
+              <FontAwesome5 name='user-circle' color={color} size={25} />
             )
           }}
         />

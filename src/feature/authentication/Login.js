@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, SafeAreaView, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, SafeAreaView, Text, View, TouchableOpacity, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 import { COLORS } from '../../constant/colors';
+import images from '../../resources/images';
 
 import ButtonCustom    from '../../components/ButtonCustom';
 import TextInputCustom from '../../components/TextInputCustom'
@@ -33,6 +34,18 @@ const Login = () => {
             <Text style={ styles.hiText }>
             Đăng Nhập Booking
             </Text>
+        </View>
+
+        <View>
+          <Image 
+            style={{ 
+              width: 350, 
+              height: 150,
+              marginBottom: 25, 
+              borderRadius: 10,
+            }} 
+            source={ images.bg_login } 
+          />
         </View>
 
         <View style={ styles.form }>

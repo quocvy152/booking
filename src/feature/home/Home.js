@@ -95,7 +95,7 @@ const Home = () => {
               Bạn muốn thuê xe gì ?
             </Text>
           </View>
-          <Image source={require('../../resources/images/man-300x300.png')} style={{ height: 50, width: 50, borderRadius: 25 }} />
+          <Image source={require('../../resources/images/user-300x300.png')} style={{ height: 50, width: 50, borderRadius: 25 }} />
         </View>
         <View 
           style={{ 
