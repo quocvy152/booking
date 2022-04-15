@@ -7,8 +7,8 @@ const method = {
     GET: 'GET',
 };
 
-export async function getListBrand(querys) {
+// export async function getListBrand(querys) {
  
-    let query = queryString.stringify(querys, {sort: false});
-    return await requestAPI(`${ENDPOINT.LIST_BRAND}?${query}`, method.GET);
-}
+//     let query = queryString.stringify(querys, {sort: false});
+//     return await requestAPI(`${ENDPOINT.LOGIN}?${query}`, method.GET);
+// }

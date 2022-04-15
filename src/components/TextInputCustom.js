@@ -16,7 +16,7 @@ const TextInputCustom = ({ icon, placeholderText, textColor, secureTextEntry, is
             placeholder={placeholderText}
             secureTextEntry={secureTextEntry ? secureTextEntry : false}
             placeholderTextColor={textColor}
-            keyboardType={ isInputNumber ? 'numeric' : '' }
+            keyboardType={isInputNumber}
             onChangeText={textInputAction}
           >
           </TextInput>

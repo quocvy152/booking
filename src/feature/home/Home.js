@@ -10,11 +10,12 @@ import CATEGORIES_CAR from '../../constant/categories';
 import CARS from '../../constant/cars';
 
 import TextInputCustom from '../../components/TextInputCustom';
+import { TouchableHighlight } from 'react-native-gesture-handler';
 
 const { width } = Dimensions.get('screen');
 const cardWidth = width / 2 - 20;
 
-const Home = () => {
+const Home = ({ navigation }) => {
   const [selectedCategorIndex, setSelectedCategorIndex] = useState(0);
 
   const ListCategories = () => {
@@ -44,40 +45,44 @@ const Home = () => {
       </ScrollView>
     );
   }
-
   const Card = ({ car }) => {
     return (
       <>
-        <View style={ styles.card }>
-          <View style={{ alignItems: 'center', top: -20 }}>
-            <Image source={ car.image } style={{ height: 120, width: 120, borderRadius: 60, resizeMode: 'contain' }} />
-          </View>
-          <View style={{ marginHorizontal: 20, top: -30 }}>
-            <Text style={{ fontSize: 15, fontWeight: 'bold' }}>{ car.name }</Text>
-            <Text style={{ fontSize: 15, color: COLORS.DEFAULT_TEXT }}>
-              Loại: 
-              <Text style={{ fontWeight: 'bold', color: 'black' }}>
-                { '  ' + car.seat }
-              </Text> 
-            </Text>
-          </View>
-          <View
-            style={{
-              marginTop: 10,
-              marginHorizontal: 20,
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-            }}
-          >
-            <NumberFormat
-              value={ car.priceBorrow }
-              displayType="text"
-              thousandSeparator
-              prefix="đ"
-              renderText={(value) => <Text style={{ fontWeight: 'bold' }}>{value}</Text>}
-            />
-          </View>
-        </View> 
+        <TouchableOpacity 
+          activeOpacity={0.9}
+          onPress={() => navigation.navigate('CarDetailScreen', car)}
+        >
+          <View style={ styles.card }>
+            <View style={{ alignItems: 'center', top: -20 }}>
+              <Image source={ car.image } style={{ height: 120, width: 120, borderRadius: 60, resizeMode: 'contain' }} />
+            </View>
+            <View style={{ marginHorizontal: 20, top: -30 }}>
+              <Text style={{ fontSize: 15, fontWeight: 'bold' }}>{ car.name && car.name.length > 16 ? car.name.slice(0, 16) + '...' : car.name }</Text>
+              <Text style={{ fontSize: 15, color: COLORS.DEFAULT_TEXT }}>
+                Loại: 
+                <Text style={{ fontWeight: 'bold', color: 'black' }}>
+                  { '  ' + car.seat }
+                </Text> 
+              </Text>
+            </View>
+            <View
+              style={{
+                marginTop: 10,
+                marginHorizontal: 20,
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+              }}
+            >
+              <NumberFormat
+                value={ car.priceBorrow }
+                displayType="text"
+                thousandSeparator
+                prefix="đ"
+                renderText={(value) => <Text style={{ fontWeight: 'bold' }}>{value}</Text>}
+              />
+            </View>
+          </View> 
+        </TouchableOpacity>
       </>
     );
   }

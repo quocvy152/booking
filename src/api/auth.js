@@ -13,7 +13,7 @@ export async function loginAPI(body) {
     return await requestAPI(`${ENDPOINT.LOGIN}`, method.POST, body);
 };
 
-export async function registerAPI(body) {
+export async function registerUser(body) {
  
     return await requestAPI(`${ENDPOINT.REGISTER}`, method.POST, body);
 };

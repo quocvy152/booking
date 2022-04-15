@@ -23,14 +23,12 @@ export async function requestAPI(path, method, body, injectHeader) {
     if(body) 
       objMeta.data = body
 
-    console.log({objMeta});
-
+    console.log({ objMeta });
     return await axios(objMeta);
 }
 
 export async function requestFileAPI(path, method, body, type, injectHeader) {
   let token           = await getTokenUser();
- 
   const headers = {
     'Content-Type': type,
     ...injectHeader,

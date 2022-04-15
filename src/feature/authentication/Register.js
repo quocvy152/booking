@@ -2,23 +2,25 @@ import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, SafeAreaView, Text, View, TouchableOpacity, Keyboard } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { FontAwesome5 } from '@expo/vector-icons';
 
 import { COLORS } from '../../constant/colors';
 import {
   checkEmail
 } from '../../utils/utils';
+import { registerUser } from '../../api/auth';
 
 import ButtonCustom    from '../../components/ButtonCustom';
 import TextInputCustom from '../../components/TextInputCustom';
 import ToastCustom     from '../../components/ToastCustom';
 
-const Register = () => {
-  const [userName, setUserName] = useState();
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
-  const [confirmPassword, setConfirmPassword] = useState();
-  const [phone, setPhone] = useState();
-  const [name, setName] = useState();
+const Register = ({ navigation }) => {
+  const [Username, setUsername] = useState();
+  const [Email, setEmail] = useState();
+  const [Password, setPassword] = useState();
+  const [ConfirmPassword, setConfirmPassword] = useState();
+  const [PhoneNumber, setPhoneNumber] = useState();
+  const [Name, setName] = useState();
 
   // === START TOAST MESSAGE === //
   const [isShowToast, setIsShowToast]    = useState(false);
@@ -38,22 +40,50 @@ const Register = () => {
   const handleSubmitRegister = () => {
     Keyboard.dismiss();
 
-    if(!userName || !email || !password || !confirmPassword || !phone || !name) {
-      showToast({ content: 'Chưa điền đủ thông tin' });
+    if(!Username || !Email || !Password || !ConfirmPassword || !PhoneNumber || !Name) {
+      showToast({ content: 'Vui lòng điền thông tin đầy đủ' });
       return;
     }
 
-    if(!checkEmail(email)) {
+    if(!checkEmail(Email)) {
       showToast({ content: 'Email chưa đúng định dạng' });
       return;
     }
+
+    if(Password !== ConfirmPassword) {
+      showToast({ content: 'Mật khẩu xác nhận không khớp' });
+      return;
+    }
+
+    const body = {
+      Username,
+      Email,
+      Password,
+      PhoneNumber,
+      Name
+    };
+
+    registerUser(body)
+      .then(res => {
+        console.log({
+          res
+        })
+      })
+      .catch(err => {
+        console.log({ err });
+        return;
+      })
     
   }
     
   return (
     <>
+      <ToastCustom typeToast={typeToast} contentToast={contentToast} isShowToast={isShowToast} />
+      <View style={ styles.header }>
+        <FontAwesome5 name="chevron-left" size={28} color="black" onPress={ navigation.goBack } />
+        <Text style={{ fontSize: 20, fontWeight: 'bold', marginLeft: 10, }}>Đăng nhập</Text>
+      </View>
       <SafeAreaView style={ styles.container }>
-        <ToastCustom typeToast={typeToast} contentToast={contentToast} isShowToast={isShowToast} />
         <StatusBar style='light' />
         <View style={ styles.content }>
             <Text style={ styles.hiText }>
@@ -79,7 +109,7 @@ const Register = () => {
                   placeholderText='Nhập tài khoản'
                   textColor={ COLORS.DEFAULT_TEXT }
                   textInputAction={val => {
-                    setUserName(val)
+                    setUsername(val)
                   }}
               />
             </View>
@@ -113,9 +143,9 @@ const Register = () => {
                   icon='phone-alt'
                   placeholderText='Nhập số điện thoại'
                   textColor={ COLORS.DEFAULT_TEXT }
-                  isInputNumber={true}
+                  isInputNumber='numeric'
                   textInputAction={val => {
-                    setPhone(val)
+                    setPhoneNumber(val)
                   }}
               />
             </View>
@@ -187,6 +217,13 @@ const styles = StyleSheet.create({
   action: {
     flexDirection: 'row',
     justifyContent: 'space-between'
+  },
+
+  header: {
+    flexDirection: 'row',
+    backgroundColor: COLORS.DEFAULT_BACKGROUND,
+    paddingHorizontal: 15,
+    paddingVertical: 30
   },
 });
 

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, SafeAreaView, Text, View, TouchableOpacity, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -6,17 +6,27 @@ import { useNavigation } from '@react-navigation/native';
 import { COLORS } from '../../constant/colors';
 import images from '../../resources/images';
 
-import ButtonCustom    from '../../components/ButtonCustom';
-import TextInputCustom from '../../components/TextInputCustom'
+import ButtonCustom from '../../components/ButtonCustom';
+import TextInputCustom from '../../components/TextInputCustom';
+import ToastCustom from '../../components/ToastCustom';
 
 const Login = () => {
   const navigate = useNavigation();
+
+  const [userName, setUserName] = useState();
+  const [password, setPassword] = useState();
+
+  // START TOASTCUSTOM MESSAGE
+  const [isShowToast, setIsShowToast] = useState(false);
+  const [content, setContent] = useState();
+  const [type, setType] = useState();
+  // END TOASTCUSTOM MESSAGE
 
   useEffect(() => {
     return () => {
     
     }
-  }, [])
+  }, []);
 
   const openForgotPassword = () => {
     navigate.navigate('ForgotPasswordScreen');
@@ -25,11 +35,32 @@ const Login = () => {
   const openRegister = () => {
     navigate.navigate('RegisterScreen');
   }
+
+  const showToast = ({ content, type }) => {
+    setIsShowToast(true);
+    setContent(content);
+    setType(type);
+    setTimeout(() => {
+      setIsShowToast(false);
+    }, 1500)
+  }
+
+  const handleLoginSubmit = () => {
+    if(!userName || !password) {
+      showToast({ content: 'Vui lòng điền thông tin đầy đủ' })
+      return;
+    }
+  }
     
   return (
     <>
       <SafeAreaView style={ styles.container }>
         <StatusBar style='light' />
+        <ToastCustom 
+          isShowToast={isShowToast}
+          contentToast={content}
+          typeToast={type}
+        />
         <View style={ styles.content }>
             <Text style={ styles.hiText }>
             Đăng Nhập Booking
@@ -54,6 +85,9 @@ const Login = () => {
                 icon='user-alt'
                 placeholderText='Nhập tài khoản'
                 textColor={ COLORS.DEFAULT_TEXT } 
+                textInputAction={(val) => {
+                  setUserName(val)
+                }}
             />
             </View>
             
@@ -63,6 +97,9 @@ const Login = () => {
                 placeholderText='Nhập mật khẩu'
                 textColor={ COLORS.DEFAULT_TEXT }
                 secureTextEntry={true}
+                textInputAction={(val) => {
+                  setPassword(val);
+                }}
             />
             </View>
             
@@ -70,7 +107,7 @@ const Login = () => {
             <ButtonCustom 
                 title='Đăng Nhập'
                 color='#2F4F4F'
-                btnAction={() => console.log('Login click...')}
+                btnAction={handleLoginSubmit}
             />
             </View>
         </View>

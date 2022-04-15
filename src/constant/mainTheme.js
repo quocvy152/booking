@@ -33,13 +33,6 @@ export const SLIVER_COLOR = 'BEC5CA'
 export const GOLD_COLOR = 'F7D765'
 export const DIAMOND_COLOR = '9FDCFA'
 
-// CONFIG FONTFAMILY
-
-export const FONT_BOLD = 'Roboto-Bold'
-export const FONT_TEST = 'MonteCarlo-Regular'
-export const FONT_LIGHT = 'Roboto-Light'
-export const FONT_MEDIUM = 'Roboto-Medium'
-
 //AUTH SCREEN
 export const FORM_AUTH_SCREEN_HEIGHT = 400
 
