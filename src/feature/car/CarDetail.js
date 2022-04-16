@@ -14,16 +14,16 @@ const CarDetail = ({ navigation, route }) => {
   const car = route.params;
 
   return (
-    <ScrollView>
-      <SafeAreaView style={{ backgroundColor: COLORS.WHITE, flex: 1, flexDirection: 'column', }}>
-        <View style={ styles.header }>
-          <FontAwesome5 name="chevron-left" size={28} color="black" onPress={navigation.goBack} />
-          <Text style={{ fontSize: 20, fontWeight: 'bold', marginLeft: 10 }}>Trang chủ</Text>
-        </View>
+    <SafeAreaView style={{ backgroundColor: COLORS.WHITE, flex: 1, flexDirection: 'column', }}>
+      <View style={ styles.header }>
+        <FontAwesome5 name="chevron-left" size={28} color="black" onPress={navigation.goBack} />
+        <Text style={{ fontSize: 20, fontWeight: 'bold', marginLeft: 10 }}>Trang chủ</Text>
+      </View>
 
-        <View style={ styles.body }>
-          <View>
-            <Image style={{ width: 300, height: 300, resizeMode: 'contain' }} source={ car.image } />
+      <View style={ styles.body }>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <View style={{ height: 280, justifyContent: 'center', alignItems: 'center' }} >
+            <Image style={{ width: 220, height: 220, resizeMode: 'contain' }} source={ car.image } />
           </View>
           <View style={ styles.styleParagraph }>
             <View style={ styles.headerParagraph }>
@@ -37,7 +37,7 @@ const CarDetail = ({ navigation, route }) => {
               </View>
             </View>
             <View style={ styles.contentParagraph }>
-              <Text style={{ color: COLORS.WHITE, textAlign: 'justify', marginHorizontal: 20, marginTop: 20 }}>{ car.description }</Text>
+              <Text style={{ color: COLORS.WHITE, textAlign: 'justify', marginHorizontal: 20, marginTop: 20, lineHeight: 22, fontSize: 16, }}>{ car.description }</Text>
             </View>
             <View style={ styles.btnParagraph }>
               <ButtonCustom 
@@ -49,9 +49,9 @@ const CarDetail = ({ navigation, route }) => {
               />
             </View>
           </View>
-        </View>
-      </SafeAreaView>
-    </ScrollView>
+        </ScrollView>
+      </View>
+    </SafeAreaView>
   );
 };
 
@@ -72,8 +72,6 @@ const styles = StyleSheet.create({
 
   body: {
     flex: 1,
-    flexDirection: 'column',
-    alignItems: 'center'
   },
 
   headerParagraph: {
@@ -89,16 +87,15 @@ const styles = StyleSheet.create({
   styleParagraph: {
     flexDirection: 'column', 
     backgroundColor: COLORS.DEFAULT_BACKGROUND, 
-    width: '100%', 
     borderTopLeftRadius: 40, 
     borderTopRightRadius: 40
   },  
 
   btnParagraph: {
-    marginTop: 50,
+    marginTop: 40,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 50,
+    marginBottom: 40,
   },  
 });
 

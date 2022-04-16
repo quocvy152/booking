@@ -1,6 +1,6 @@
 
 import { ENDPOINT } from './utils/uri';
-import { requestAPI } from './index';
+import { requestAPI, requestFileAPI } from './index';
 
 const method = {
     POST: 'POST',
@@ -15,5 +15,5 @@ export async function loginAPI(body) {
 
 export async function registerUser(body) {
  
-    return await requestAPI(`${ENDPOINT.REGISTER}`, method.POST, body);
+    return await requestFileAPI(`${ENDPOINT.REGISTER}`, method.POST, body, 'multipart/form-data');
 };

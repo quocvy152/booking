@@ -70,7 +70,6 @@ const Register = ({ navigation }) => {
         })
       })
       .catch(err => {
-        console.log({ err });
         return;
       })
     
