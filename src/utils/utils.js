@@ -34,7 +34,8 @@ export {
   dayDateDiff,
   hoursDateDiff,
   getDateTime,
-  callNumber
+  callNumber,
+  convertObjectToFormData
 }
 
 function callNumber(phone) {
@@ -387,4 +388,14 @@ function parseServerTimeFromUnix(serverTime, format = 'YYYY-MM-DD HH:mm:ss') {
   } else {
     return moment.unix(serverTime).format(format)
   }
+}
+
+function convertObjectToFormData(object) {
+  var formData = new FormData();
+
+  for (var key in object) {
+    formData.append(key, object[key]);
+  }
+
+  return formData;
 }

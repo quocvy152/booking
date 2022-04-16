@@ -16,11 +16,11 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerTitle: '', headerTransparent: true, headerShown: false }}>
-        {/* <Stack.Screen name='LoginScreen' component={Login} />
+        <Stack.Screen name='LoginScreen' component={Login} />
         <Stack.Screen name='ForgotPasswordScreen' component={ForgotPassword} />
-        <Stack.Screen name='RegisterScreen' component={Register} /> */}
-        <Stack.Screen name='HomeScreen' component={BottomNavigator} />
-        <Stack.Screen name='CarDetailScreen' component={CarDetail} /> 
+        <Stack.Screen name='RegisterScreen' component={Register} />
+        {/* <Stack.Screen name='HomeScreen' component={BottomNavigator} />
+        <Stack.Screen name='CarDetailScreen' component={CarDetail} />  */}
       </Stack.Navigator>
     </NavigationContainer>
   );

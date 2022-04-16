@@ -1,6 +1,8 @@
 
 import { ENDPOINT } from './utils/uri';
 import { requestAPI, requestFileAPI } from './index';
+import objectToFormData from "object-to-formdata";
+import { convertObjectToFormData } from '../utils/utils';
 
 const method = {
     POST: 'POST',
@@ -14,6 +16,7 @@ export async function loginAPI(body) {
 };
 
 export async function registerUser(body) {
- 
-    return await requestFileAPI(`${ENDPOINT.REGISTER}`, method.POST, body, 'multipart/form-data');
+    const parseBody = convertObjectToFormData(body);
+
+    return await requestFileAPI(`${ENDPOINT.REGISTER}`, method.POST, parseBody, 'application/json;');
 };

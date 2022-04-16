@@ -65,11 +65,20 @@ const Register = ({ navigation }) => {
 
     registerUser(body)
       .then(res => {
-        console.log({
-          res
-        })
+        const { message, success, data } = res.data;
+
+        if(!success) {
+          showToast({ content: message });
+          return;
+        }
+
+        showToast({ type: 'success', content: 'Đăng ký tài khoản thành công' });
+        setTimeout(() => {
+          navigation.goBack();
+        }, 3000);
       })
       .catch(err => {
+        console.log({ err });
         return;
       })
     
@@ -93,22 +102,22 @@ const Register = ({ navigation }) => {
         <View style={ styles.form }>
             <View style={{ marginBottom: 10, }}> 
               <TextInputCustom 
-                  icon='mail-bulk'
-                  placeholderText='Nhập Email'
+                  icon='user-alt'
+                  placeholderText='Nhập tài khoản'
                   textColor={ COLORS.DEFAULT_TEXT }
                   textInputAction={val => {
-                    setEmail(val)
+                    setUsername(val)
                   }}
               />
             </View>
 
             <View style={{ marginBottom: 10, }}> 
               <TextInputCustom 
-                  icon='user-alt'
-                  placeholderText='Nhập tài khoản'
+                  icon='mail-bulk'
+                  placeholderText='Nhập Email'
                   textColor={ COLORS.DEFAULT_TEXT }
                   textInputAction={val => {
-                    setUsername(val)
+                    setEmail(val)
                   }}
               />
             </View>

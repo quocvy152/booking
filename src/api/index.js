@@ -24,6 +24,7 @@ export async function requestAPI(path, method, body, injectHeader) {
       objMeta.data = body
 
     console.log({ objMeta });
+
     return await axios(objMeta);
 }
 
