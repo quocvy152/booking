@@ -7,7 +7,6 @@ const BASE_TOKEN     = '/Token';
 export const ENDPOINT = {
   
   // AppUsers
-  LOGIN: `${BASE_APP_USERS}/Login`,
   REGISTER: `${BASE_APP_USERS}/Registration`,
   RESET_PASSWORD: `${BASE_APP_USERS}/ResetPassword`,
   INFO_USER: `${BASE_APP_USERS}/Info`,

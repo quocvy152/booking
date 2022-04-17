@@ -9,14 +9,18 @@ const method = {
     GET: 'GET',
 };
 
-
 export async function loginAPI(body) {
  
-    return await requestAPI(`${ENDPOINT.LOGIN}`, method.POST, body);
+    return await requestAPI(`${ENDPOINT.CREATE_TOKEN}`, method.POST, body);
 };
 
 export async function registerUser(body) {
     const parseBody = convertObjectToFormData(body);
 
-    return await requestFileAPI(`${ENDPOINT.REGISTER}`, method.POST, parseBody, 'application/json;');
+    return await requestFileAPI(`${ENDPOINT.REGISTER}`, method.POST, parseBody, 'application/json');
+};
+
+export async function getInfoUser() {
+ 
+    return await requestAPI(`${ENDPOINT.INFO_USER}`, method.GET);
 };

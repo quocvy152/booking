@@ -1,20 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, SafeAreaView, Text, View, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, SafeAreaView, Text, View, TouchableOpacity, Image, Keyboard } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useDispatch } from 'react-redux';
 
 import { COLORS } from '../../constant/colors';
 import images from '../../resources/images';
-
 import ButtonCustom from '../../components/ButtonCustom';
 import TextInputCustom from '../../components/TextInputCustom';
 import ToastCustom from '../../components/ToastCustom';
+import { loginAPI, getInfoUser } from '../../api/auth';
+import { signIn } from '../../store/auth';
+import { AsyncStorageContstants } from "../../constant/AsyncStorageContstants";
+import { parseJWT } from '../../utils/utils';
 
 const Login = () => {
   const navigate = useNavigation();
+  const dispatch = useDispatch();
 
-  const [userName, setUserName] = useState();
-  const [password, setPassword] = useState();
+  const [Username, setUsername] = useState();
+  const [Password, setPassword] = useState();
 
   // START TOASTCUSTOM MESSAGE
   const [isShowToast, setIsShowToast] = useState(false);
@@ -45,11 +51,71 @@ const Login = () => {
     }, 1500)
   }
 
-  const handleLoginSubmit = () => {
-    if(!userName || !password) {
-      showToast({ content: 'Vui lòng điền thông tin đầy đủ' })
+  const fetchInfoUser = async () => {
+    try {
+      let infoUserAPI = await getInfoUser();
+      const { success, data: infoUser } = infoUserAPI.data;
+
+      if(success) {
+        AsyncStorage.setItem(
+          AsyncStorageContstants.AUTH_USER_INFO,
+          JSON.stringify(infoUser),
+        );
+      }
+
+      dispatch(signIn({ infoUser }));
+    } catch (error) {
+      console.log({ error })
+    }
+  }
+
+  const handleLoginSubmit = async () => {
+    Keyboard.dismiss()
+    if(!Username || !Password) {
+      showToast({ content: 'Vui lòng điền đủ thông tin' })
       return;
     }
+
+    let body = {
+      Username,
+      Password,
+    }
+
+    loginAPI(body)
+    .then(res => {
+      let { token, success, message } = res.data;
+
+      if(!success) {
+        if(message == 'username or email in correct') {
+          showToast({ type: 'error', content: 'Tài khoản hoặc Email không tồn tại' })
+          return;
+        } 
+
+        if(message == 'password in correct') {
+          showToast({ type: 'error', content: 'Mật khẩu không chính xác' })
+          return;
+        }
+      } else {
+        AsyncStorage.setItem(
+          AsyncStorageContstants.AUTH_USER_TOKEN,
+          token,
+        );
+
+        // save in store Redux
+        dispatch(signIn({ token }));
+        fetchInfoUser();
+
+        showToast({ type: 'success', content: 'Đăng nhập thành công' });
+        setTimeout(() => {
+          navigate.navigate('HomeScreen');
+        }, 3000);
+      }
+    })
+    .catch( err => {
+      console.log({ err });
+      return;
+    })
+    console.log('login');
   }
     
   return (
@@ -86,7 +152,7 @@ const Login = () => {
                 placeholderText='Nhập tài khoản'
                 textColor={ COLORS.DEFAULT_TEXT } 
                 textInputAction={(val) => {
-                  setUserName(val)
+                  setUsername(val)
                 }}
             />
             </View>

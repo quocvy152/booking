@@ -9,8 +9,10 @@ export async function requestAPI(path, method, body, injectHeader) {
       'Content-Type': 'application/json',
       ...injectHeader,
     };
-    if(token)
+    if(token) {
+      headers.Authorization = `Bearer ${token}`,
       headers.token = token
+    }
 
     const url = `${DEV_ENVI.BASE_URL}${path}`;
 
@@ -34,8 +36,10 @@ export async function requestFileAPI(path, method, body, type, injectHeader) {
     'Content-Type': type,
     ...injectHeader,
   };
-  if(token)
+  if(token) {
+    headers.Authorization = `Bearer ${token}`,
     headers.token = token
+  }
 
   const url = `${DEV_ENVI.BASE_URL}${path}`;
 
@@ -48,7 +52,7 @@ export async function requestFileAPI(path, method, body, type, injectHeader) {
   if(body) 
     objMeta.data = body
 
-  console.log({objMeta});
+  // console.log({objMeta});
 
   return await axios(objMeta);
 }

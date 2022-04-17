@@ -1,18 +1,17 @@
+// import external
 import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, SafeAreaView, Text, View, TouchableOpacity, Keyboard } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesome5 } from '@expo/vector-icons';
 
+// import internal
 import { COLORS } from '../../constant/colors';
-import {
-  checkEmail
-} from '../../utils/utils';
+import { checkEmail, checkPhone } from '../../utils/utils';
 import { registerUser } from '../../api/auth';
-
-import ButtonCustom    from '../../components/ButtonCustom';
+import ButtonCustom from '../../components/ButtonCustom';
 import TextInputCustom from '../../components/TextInputCustom';
-import ToastCustom     from '../../components/ToastCustom';
+import ToastCustom from '../../components/ToastCustom';
 
 const Register = ({ navigation }) => {
   const [Username, setUsername] = useState();
@@ -47,6 +46,11 @@ const Register = ({ navigation }) => {
 
     if(!checkEmail(Email)) {
       showToast({ content: 'Email chưa đúng định dạng' });
+      return;
+    }
+
+    if(!checkPhone(Phone)) {
+      showToast({ content: 'Số điện thoại không hợp lệ' });
       return;
     }
 

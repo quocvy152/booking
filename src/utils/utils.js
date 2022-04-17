@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { Alert, ToastAndroid, Platform, Linking } from 'react-native';
-
+// import atob from 'atob';
 import moment from 'moment';
 
 export {
@@ -35,7 +35,8 @@ export {
   hoursDateDiff,
   getDateTime,
   callNumber,
-  convertObjectToFormData
+  convertObjectToFormData,
+  // parseJWT
 }
 
 function callNumber(phone) {
@@ -292,20 +293,6 @@ function currencyFormat(value, fixedNumber = 0, currency = '₫') {
   return ''
 }
 
-// function mapImageSize(images, size = 150, sizeY = 150) {
-//   sizeY = sizeY !== 100 ? sizeY : size
-
-//   let imgURL = (images || '').split('|').find(_, idx => idx == 0)
-//   let indexOfDot = imgURL.lastIndexOf('.')
-//   let resizeImgURL = ""
-//   if (indexOfDot >= 0) {
-//     let imgName = imgURL.substr(0, indexOfDot)
-//     let imgExtension = imgURL.substr(indexOfDot + 1)
-//     resizeImgURL = `${imgName}_${size}x${sizeY}.${imgExtension}`
-//   }
-//   return resizeImgURL;
-// }
-
 function mapImageSize(images, width = 150) {
   let imgURL = (images || '').split('|').find(_, idx => idx == 0);
   let indexOfDot = imgURL.lastIndexOf('.');
@@ -317,7 +304,6 @@ function mapImageSize(images, width = 150) {
   }
   return resizeImgURL;
 }
-
 
 function getNumberString(string) {
   let number = string.match(/\d+/g)
@@ -365,7 +351,6 @@ const numberFormat = (value, fixedNumber = 0, init = ',') => {
   return ''
 }
 
-
 function getNavigationRouteName(navProps) {
   const routeName = navProps.state ? navProps.state.routes[navProps.state.index].routeName : 'Unknown'
   return routeName
@@ -399,3 +384,13 @@ function convertObjectToFormData(object) {
 
   return formData;
 }
+
+// function parseJWT(token) {
+//   var base64Url = token.split('.')[1];
+//   var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+//   var jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+//       return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+//   }).join(''));
+
+//   return JSON.parse(jsonPayload);
+// };
