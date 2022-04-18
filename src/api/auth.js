@@ -7,10 +7,12 @@ import { convertObjectToFormData } from '../utils/utils';
 const method = {
     POST: 'POST',
     GET: 'GET',
+    PUT: 'PUT',
+    DELETE: 'DELETE',
 };
 
 export async function loginAPI(body) {
- 
+    
     return await requestAPI(`${ENDPOINT.CREATE_TOKEN}`, method.POST, body);
 };
 
@@ -23,4 +25,9 @@ export async function registerUser(body) {
 export async function getInfoUser() {
  
     return await requestAPI(`${ENDPOINT.INFO_USER}`, method.GET);
+};
+
+export async function resetPassword(Username) {
+ 
+    return await requestAPI(`${ENDPOINT.RESET_PASSWORD}?username=${Username}`, method.PUT);
 };

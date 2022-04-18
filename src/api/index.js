@@ -5,6 +5,9 @@ import { DEV_ENVI } from './utils/constants'
 // -----------CORE------------
 export async function requestAPI(path, method, body, injectHeader) {
     let token           = await getTokenUser();
+    console.log({
+      ___token: token
+    })
     const headers = {
       'Content-Type': 'application/json',
       ...injectHeader,

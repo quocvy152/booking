@@ -4,18 +4,23 @@ import { StyleSheet, SafeAreaView, Text, View, TouchableOpacity, Image, ScrollVi
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesome5 } from '@expo/vector-icons';
 import NumberFormat from 'react-number-format';
+import { useSelector } from 'react-redux';
+import FastImage from 'react-native-fast-image';
 
 import { COLORS } from '../../constant/colors';
 import CATEGORIES_CAR from '../../constant/categories';
 import CARS from '../../constant/cars';
-
 import TextInputCustom from '../../components/TextInputCustom';
 import { TouchableHighlight } from 'react-native-gesture-handler';
+import images from '../../resources/images/index';
 
 const { width } = Dimensions.get('screen');
 const cardWidth = width / 2 - 20;
 
 const Home = ({ navigation }) => {
+  const infoUser = useSelector(state => state.auth.infoUser);
+  const name = infoUser?.name;
+  const avatar = infoUser ? infoUser.avatar : '';
   const [selectedCategorIndex, setSelectedCategorIndex] = useState(0);
 
   const ListCategories = () => {
@@ -91,16 +96,20 @@ const Home = ({ navigation }) => {
     <>
       <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.DEFAULT_BACKGROUND }}>
         <View style={ styles.header }>
-          <View>
+          <View style={{ width: '80%' }}>
             <View style={{ flexDirection: 'row' }}>
-              <Text style={{ fontSize: 25, color: COLORS.WHITE }}>Xin chào,</Text>
-              <Text style={{ fontSize: 25, fontWeight: 'bold', marginLeft: 15, color: COLORS.WHITE }}>Quốc Vỹ</Text>
+              <Text style={{ fontSize: 18, color: COLORS.WHITE }}>Xin chào,</Text>
+              <Text style={{ fontSize: 18, fontWeight: 'bold', marginLeft: 15, color: COLORS.WHITE }}>{ name }</Text>
             </View>
-            <Text style={{ marginTop: 5, fontSize: 20, color: COLORS.WHITE }}>
+            <Text style={{ marginTop: 5, fontSize: 18, color: COLORS.WHITE }}>
               Bạn muốn thuê xe gì ?
             </Text>
           </View>
-          <Image source={require('../../resources/images/user-300x300.png')} style={{ height: 50, width: 50, borderRadius: 25 }} />
+          {
+            avatar ? 
+            (<Image source={{ uri: avatar }} style={ styles.iconUser }/>) : 
+            (<Image source={require('../../resources/images/user-300x300.png')} style={ styles.iconUser } />)
+          }
         </View>
         <View 
           style={{ 
@@ -197,6 +206,12 @@ const styles = StyleSheet.create({
     borderRadius: 15, 
     elevation: 13,
     backgroundColor: COLORS.WHITE
+  },
+
+  iconUser: {
+    height: 50, 
+    width: 50, 
+    borderRadius: 25,
   },
 });
 

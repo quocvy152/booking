@@ -13,7 +13,6 @@ import ToastCustom from '../../components/ToastCustom';
 import { loginAPI, getInfoUser } from '../../api/auth';
 import { signIn } from '../../store/auth';
 import { AsyncStorageContstants } from "../../constant/AsyncStorageContstants";
-import { parseJWT } from '../../utils/utils';
 
 const Login = () => {
   const navigate = useNavigation();
@@ -70,7 +69,8 @@ const Login = () => {
   }
 
   const handleLoginSubmit = async () => {
-    Keyboard.dismiss()
+    Keyboard.dismiss();
+
     if(!Username || !Password) {
       showToast({ content: 'Vui lòng điền đủ thông tin' })
       return;
@@ -82,39 +82,39 @@ const Login = () => {
     }
 
     loginAPI(body)
-    .then(res => {
-      let { token, success, message } = res.data;
+      .then(res => {
+        let { data: token, success, message } = res.data;
 
-      if(!success) {
-        if(message == 'username or email in correct') {
-          showToast({ type: 'error', content: 'Tài khoản hoặc Email không tồn tại' })
-          return;
-        } 
+        if(!success) {
+          if(message == 'username or email in correct') {
+            showToast({ type: 'error', content: 'Tài khoản hoặc Email không tồn tại' })
+            return;
+          } 
 
-        if(message == 'password in correct') {
-          showToast({ type: 'error', content: 'Mật khẩu không chính xác' })
-          return;
+          if(message == 'password in correct') {
+            showToast({ type: 'error', content: 'Mật khẩu không chính xác' })
+            return;
+          }
+        } else {
+          AsyncStorage.setItem(
+            AsyncStorageContstants.AUTH_USER_TOKEN,
+            token,
+          );
+
+          // save in store Redux
+          dispatch(signIn({ token }));
+          fetchInfoUser();
+
+          showToast({ type: 'success', content: 'Đăng nhập thành công' });
+          setTimeout(() => {
+            navigate.navigate('HomeScreen');
+          }, 1500);
         }
-      } else {
-        AsyncStorage.setItem(
-          AsyncStorageContstants.AUTH_USER_TOKEN,
-          token,
-        );
-
-        // save in store Redux
-        dispatch(signIn({ token }));
-        fetchInfoUser();
-
-        showToast({ type: 'success', content: 'Đăng nhập thành công' });
-        setTimeout(() => {
-          navigate.navigate('HomeScreen');
-        }, 3000);
-      }
-    })
-    .catch( err => {
-      console.log({ err });
-      return;
-    })
+      })
+      .catch( err => {
+        console.log({ err });
+        return;
+      })
     console.log('login');
   }
     

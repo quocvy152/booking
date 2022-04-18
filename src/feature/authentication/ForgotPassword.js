@@ -1,19 +1,54 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, SafeAreaView, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, SafeAreaView, Text, View, TouchableOpacity, Keyboard } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
 
-import { COLORS } from '../../constant/colors';
 
+import { COLORS } from '../../constant/colors';
 import ButtonCustom    from '../../components/ButtonCustom';
-import TextInputCustom from '../../components/TextInputCustom'
+import TextInputCustom from '../../components/TextInputCustom';
+import ToastCustom from '../../components/ToastCustom';
+import { resetPassword } from '../../api/auth';
 
 const ForgotPassword = ({ navigation }) => {
-  useEffect(() => {
-    return () => {
-    
+  const [Username, setUsername] = useState();
+
+  // START TOASTCUSTOM MESSAGE
+  const [isShowToast, setIsShowToast] = useState(false);
+  const [content, setContent] = useState();
+  const [type, setType] = useState();
+  // END TOASTCUSTOM MESSAGE
+
+  const showToast = ({ type, content }) => {
+    setIsShowToast(true);
+    setContent(content);
+    setType(type);
+    setTimeout(() => {
+      setIsShowToast(false);
+    }, 1500);
+  }
+
+  const handleForgotPassSubmit = async () => {
+    Keyboard.dismiss();
+
+    if(!Username) {
+      showToast({ content: 'Vui lòng nhập đầy đủ thông tin' });
+      return;
     }
-  }, [])
+
+    let result = await resetPassword(Username);
+    const { success, message, data } = result.data;
+
+    if(!success) {
+      showToast({ content: message });
+      return;
+    } else {
+      showToast({ type: 'success', content: data });
+      setTimeout(() => {
+        navigation.goBack();
+      }, 3000)
+    }
+  }
     
   return (
     <>
@@ -21,6 +56,11 @@ const ForgotPassword = ({ navigation }) => {
         <FontAwesome5 name="chevron-left" size={28} color="black" onPress={ navigation.goBack } />
         <Text style={{ fontSize: 20, fontWeight: 'bold', marginLeft: 10, }}>Đăng nhập</Text>
       </View>
+      <ToastCustom 
+        isShowToast={isShowToast}
+        contentToast={content}
+        typeToast={type}
+      />
       <SafeAreaView style={ styles.container }>
         <StatusBar style='light' />
         <View style={ styles.content }>
@@ -32,13 +72,27 @@ const ForgotPassword = ({ navigation }) => {
         <View style={ styles.form }>
             <View style={{ marginBottom: 10, }}> 
                 <TextInputCustom 
-                    icon='pen'
-                    placeholderText='Nhập mã tạo lại mật khẩu'
-                    textColor={ COLORS.DEFAULT_TEXT }
+                  icon='user-alt'
+                  placeholderText='Nhập tài khoản hoặc email'
+                  textColor={ COLORS.DEFAULT_TEXT }
+                  textInputAction={(val) => setUsername(val)}
                 />
             </View>
 
-            <View style={{ marginBottom: 10, }}> 
+            <Text 
+              style={{ 
+                fontWeight: 'bold', 
+                color: COLORS.WHITE, 
+                marginTop: 30, 
+                borderWidth: 1,
+                borderColor: "thistle",
+                borderRadius: 10, 
+                padding: 10,
+              }}>
+              Lưu ý: Hệ thống sẽ tự động cập nhật mật khẩu và gửi đến Email bạn đã đăng ký
+            </Text>
+
+            {/* <View style={{ marginBottom: 10, }}> 
                 <TextInputCustom 
                     icon='unlock'
                     placeholderText='Nhập mật khẩu mới'
@@ -54,14 +108,14 @@ const ForgotPassword = ({ navigation }) => {
                     textColor={ COLORS.DEFAULT_TEXT }
                     secureTextEntry={true}
                 />
-            </View>
+            </View> */}
             
             <View style={{ marginTop: 30, }}>
-            <ButtonCustom 
-                title='Tạo Lại Mật Khẩu'
-                color={ COLORS.BUTTON_AUTH_COLOR }
-                btnAction={() => console.log('ForgotPassword click...')}
-            />
+              <ButtonCustom 
+                  title='Tạo Lại Mật Khẩu'
+                  color={ COLORS.BUTTON_AUTH_COLOR }
+                  btnAction={ handleForgotPassSubmit }
+              />
             </View>
         </View>
       </SafeAreaView>
