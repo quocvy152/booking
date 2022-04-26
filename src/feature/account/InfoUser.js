@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, Image, Dimensions, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Image, Dimensions, ScrollView, TouchableOpacity } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
@@ -32,35 +32,45 @@ const InfoCustomer = ({ navigation, route }) => {
       <View style={ styles.accountStyle }>
         <Text style={{ fontWeight: 'bold', fontSize: 20 }}>Tài khoản</Text>
         <View style={{ flexDirection: 'row', }}>
-          <View style={ styles.tabStyle }>
-            <FontAwesome5 name="user-alt" size={24} color="#77CBEB" />
-            <Text style={{ marginTop: 16, fontSize: 15 }}>Thông tin cá nhân</Text>
-          </View>
-          <View style={ styles.tabStyle }>
-          <FontAwesome5 name="place-of-worship" size={24} color="#EB466E" />
-            <Text style={{ marginTop: 16, fontSize: 15 }}>Địa chỉ đã lưu</Text>
-          </View>
+          <TouchableOpacity activeOpacity={0.6} >
+            <View style={ styles.tabStyle }>
+              <FontAwesome5 name="user-alt" size={24} color="#77CBEB" />
+              <Text style={{ marginTop: 16, fontSize: 15 }}>Thông tin cá nhân</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity activeOpacity={0.6} >
+            <View style={ styles.tabStyle }>
+            <FontAwesome5 name="place-of-worship" size={24} color="#EB466E" />
+              <Text style={{ marginTop: 16, fontSize: 15 }}>Địa chỉ đã lưu</Text>
+            </View>
+          </TouchableOpacity>
         </View>
         <View style={{ flexDirection: 'row', }}>
-          <View style={ styles.tabStyle }>
-            <FontAwesome5 name="car" size={24} color="#37A604" />
-            <Text style={{ marginTop: 16, fontSize: 15 }}>Xe của tôi</Text>
-          </View>
-          <View style={ styles.tabStyle }>
-            <FontAwesome5 name="hands-helping" size={24} color="#3E89A8" />
-            <Text style={{ marginTop: 16, fontSize: 15 }}>Liên hệ và góp ý</Text>
-          </View>
+          <TouchableOpacity activeOpacity={0.6} >
+            <View style={ styles.tabStyle }>
+              <FontAwesome5 name="car" size={24} color="#37A604" />
+              <Text style={{ marginTop: 16, fontSize: 15 }}>Xe của tôi</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity activeOpacity={0.6}>
+            <View style={ styles.tabStyle }>
+              <FontAwesome5 name="hands-helping" size={24} color="#3E89A8" />
+              <Text style={{ marginTop: 16, fontSize: 15 }}>Liên hệ và góp ý</Text>
+            </View>
+          </TouchableOpacity>
         </View>
       </View>
       <View style={ styles.accountStyle }>
         <Text style={{ fontWeight: 'bold', fontSize: 20 }}>Khác</Text>
-        <View style={ styles.btnAnotherStyle }>
-          <View style={{ flexDirection: 'row' }}>
-            <FontAwesome5 name="sign-out-alt" size={24} color="black" />
-            <Text style={{ fontSize: 16, marginLeft: 15, }}>Đăng xuất</Text>
+        <TouchableOpacity activeOpacity={0.6}>
+          <View style={ styles.btnAnotherStyle }>
+              <View style={{ flexDirection: 'row' }}>
+                <FontAwesome5 name="sign-out-alt" size={24} color="black" />
+                <Text style={{ fontSize: 16, marginLeft: 15, }}>Đăng xuất</Text>
+              </View>
+            <FontAwesome5 name="angle-right" size={24} color="black" style={{ marginLeft : 220 }} />
           </View>
-          <FontAwesome5 name="angle-right" size={24} color="black" style={{ marginLeft : 220 }} />
-        </View>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
