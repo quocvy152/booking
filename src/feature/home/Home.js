@@ -13,6 +13,7 @@ import CARS from '../../constant/cars';
 import TextInputCustom from '../../components/TextInputCustom';
 import { TouchableHighlight } from 'react-native-gesture-handler';
 import images from '../../resources/images/index';
+import { getListBrand } from '../../api/general';
 
 const { width } = Dimensions.get('screen');
 const cardWidth = width / 2 - 20;
@@ -21,7 +22,18 @@ const Home = ({ navigation }) => {
   const infoUser = useSelector(state => state.auth.infoUser);
   const name = infoUser?.name;
   const avatar = infoUser ? infoUser.avatar : '';
-  const [selectedCategorIndex, setSelectedCategorIndex] = useState(0);
+  const [listBrand, setListBrand] = useState([]);
+  const [selectedCategorIndex, setSelectedCategorIndex] = useState();
+
+  useEffect(() => { 
+    fetchListBrand();
+  }, [])
+
+  const fetchListBrand = async () => {
+    let listBrandAPI = await getListBrand();
+    let { success, data: listBrand } = listBrandAPI.data;
+    setListBrand(listBrand);
+  }
 
   const ListCategories = () => {
     return (
@@ -30,9 +42,9 @@ const Home = ({ navigation }) => {
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.categoriesListContainer}
       >
-        {CATEGORIES_CAR.map((categoryCar, index) => (
+        {listBrand.map((categoryCar, index) => (
           <TouchableOpacity 
-            key={index} 
+   as           key={index} 
             activeOpacity={0.8} 
             onPress={() => setSelectedCategorIndex(index)}
           >
@@ -41,15 +53,23 @@ const Home = ({ navigation }) => {
               backgroundColor: index == selectedCategorIndex ? '#FF7700' : '#ffc899'
             }}>
               <View style={ styles.styleCategoryCarChild }>
-                <Image source={categoryCar.image} style={{ height: 35, width: 35, borderRadius: 30, resizeMode: 'contain' }} />
+                {
+                  categoryCar.image ?
+                  (
+                    <Image source={{ uri: categoryCar.image }} style={{ height: 35, width: 35, borderRadius: 30, resizeMode: 'contain' }} />
+                  ) : (
+                    <Image source={images.ic_default_logo_car} style={{ height: 35, width: 35, borderRadius: 30, resizeMode: 'contain' }} />
+                  )  
+                }
               </View>
-              <Text style={{ fontSize: 15, fontWeight: 'bold', marginLeft: 20 }}>{ categoryCar.name }</Text>
+              <Text style={{ fontSize: 12, fontWeight: 'bold', marginLeft: 20, width: '60%' }}>{ categoryCar.name.length > 10 ? categoryCar.name.slice(0, 10).concat('...') : categoryCar.name }</Text>
             </View>
           </TouchableOpacity>
         ))}
       </ScrollView>
     );
   }
+
   const Card = ({ car }) => {
     return (
       <>

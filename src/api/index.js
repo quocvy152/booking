@@ -5,9 +5,6 @@ import { DEV_ENVI } from './utils/constants'
 // -----------CORE------------
 export async function requestAPI(path, method, body, injectHeader) {
     let token           = await getTokenUser();
-    console.log({
-      ___token: token
-    })
     const headers = {
       'Content-Type': 'application/json',
       ...injectHeader,
@@ -55,7 +52,7 @@ export async function requestFileAPI(path, method, body, type, injectHeader) {
   if(body) 
     objMeta.data = body
 
-  // console.log({objMeta});
+  console.log({objMeta});
 
   return await axios(objMeta);
 }

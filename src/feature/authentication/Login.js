@@ -3,7 +3,7 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, SafeAreaView, Text, View, TouchableOpacity, Image, Keyboard } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { COLORS } from '../../constant/colors';
 import images from '../../resources/images';
@@ -17,7 +17,6 @@ import { AsyncStorageContstants } from "../../constant/AsyncStorageContstants";
 const Login = () => {
   const navigate = useNavigation();
   const dispatch = useDispatch();
-
   const [Username, setUsername] = useState();
   const [Password, setPassword] = useState();
 
@@ -27,11 +26,13 @@ const Login = () => {
   const [type, setType] = useState();
   // END TOASTCUSTOM MESSAGE
 
-  useEffect(() => {
-    return () => {
-    
+  useEffect(async () => {
+    const token = await AsyncStorage.getItem(AsyncStorageContstants.AUTH_USER_TOKEN);
+    if(token) {
+      fetchInfoUser();
+      navigate.navigate('HomeScreen');
     }
-  }, []);
+  }, );
 
   const openForgotPassword = () => {
     navigate.navigate('ForgotPasswordScreen');

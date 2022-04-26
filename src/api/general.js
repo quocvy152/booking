@@ -2,13 +2,15 @@
 import { ENDPOINT } from './utils/uri'
 import { requestAPI } from './index'
 import queryString from 'query-string'
+
 const method = {
     POST: 'POST',
     GET: 'GET',
+    PUT: 'PUT',
+    DELETE: 'DELETE',
 };
 
-// export async function getListBrand(querys) {
+export async function getListBrand() {
  
-//     let query = queryString.stringify(querys, {sort: false});
-//     return await requestAPI(`${ENDPOINT.LOGIN}?${query}`, method.GET);
-// }
+    return await requestAPI(`${ENDPOINT.LIST_BRAND}`, method.GET);
+}

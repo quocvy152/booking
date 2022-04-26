@@ -9,12 +9,14 @@ const contentWidth = width - 20;
 
 import { COLORS } from '../../constant/colors';
 import ButtonCustom from '../../components/ButtonCustom';
+import { StatusBar } from 'expo-status-bar';
 
 const CarDetail = ({ navigation, route }) => {
   const car = route.params;
 
   return (
     <SafeAreaView style={{ backgroundColor: COLORS.WHITE, flex: 1, flexDirection: 'column', }}>
+      <StatusBar style='dark' />
       <View style={ styles.header }>
         <FontAwesome5 name="chevron-left" size={28} color="black" onPress={navigation.goBack} />
         <Text style={{ fontSize: 20, fontWeight: 'bold', marginLeft: 10 }}>Trang chủ</Text>

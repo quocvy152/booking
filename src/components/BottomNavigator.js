@@ -1,16 +1,19 @@
 import React, { useEffect } from 'react';
-import { StyleSheet, Icon } from 'react-native';
+import { StyleSheet, Image } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { FontAwesome5 } from '@expo/vector-icons';
+import { useSelector } from 'react-redux';
 
 import { COLORS } from '../constant/colors';
-
 import Home from '../feature/home/Home';
+import InfoCustomer from '../feature/account/InfoUser';
 
 const Tab = createBottomTabNavigator();
 
 const BottomNavigator = () => {
-    
+  const infoUser = useSelector(state => state.auth.infoUser);
+  const avatar = infoUser ? infoUser.avatar : '';
+
   return (
     <>
       <Tab.Navigator
@@ -55,12 +58,24 @@ const BottomNavigator = () => {
           }}
         />
         <Tab.Screen 
-          name='Tài khoản'
-          component={Home}
+          name={infoUser ? infoUser.name : 'Tài khoản'}
+          component={infoUser ? InfoCustomer : Home}
           options={{
-            tabBarIcon: ({ color }) => (
-              <FontAwesome5 name='user-circle' color={color} size={25} />
-            )
+            tabBarIcon: props => {
+              return (
+                <>
+                  {
+                    infoUser ? (
+                      avatar ? 
+                      (<Image source={{ uri: avatar }} style={ styles.iconUser }/>) : 
+                      (<Image source={require('../resources/images/user-300x300.png')} style={ styles.iconUser } />)
+                    ) : (
+                      <FontAwesome5 name='user-circle' color={props.color} size={25} />
+                    )
+                  }
+                </>
+              )
+            }
           }}
         />
       </Tab.Navigator>
@@ -74,6 +89,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: COLORS.DEFAULT_BACKGROUND,
+  },
+
+  iconUser: {
+    height: 25, 
+    width: 25, 
+    borderRadius: 25,
   },
 });
 

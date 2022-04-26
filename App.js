@@ -9,12 +9,11 @@ import Home from './src/feature/home/Home';
 import BottomNavigator from './src/components/BottomNavigator';
 import CarDetail from './src/feature/car/CarDetail';
 import { Provider } from 'react-redux';
-import store from './src/store/index'
+import store from './src/store/index';
 
 const Stack = createStackNavigator(); 
 
 export default function App() {
-
   return (
     <Provider store={store}>
       <NavigationContainer>

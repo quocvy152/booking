@@ -1,7 +1,6 @@
 
 import { ENDPOINT } from './utils/uri';
 import { requestAPI, requestFileAPI } from './index';
-import objectToFormData from "object-to-formdata";
 import { convertObjectToFormData } from '../utils/utils';
 
 const method = {

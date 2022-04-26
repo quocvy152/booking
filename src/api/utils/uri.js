@@ -1,6 +1,7 @@
 const BASE_APP_USERS = '/AppUsers';
 const BASE_CARS      = '/Cars';
 const BASE_LOCATION  = '/Location';
+const BASE_BRANDS     = '/Brands';
 const BASE_TOKEN     = '/Token';
 
 /* eslint-disable */
@@ -13,6 +14,9 @@ export const ENDPOINT = {
 
   // Cars
   CREATE_CAR: `${BASE_CARS}`,
+
+  // Brands
+  LIST_BRAND: `${BASE_BRANDS}`,
 
   // Location
   LIST_PROVINCE: `${BASE_LOCATION}/provinces`,
