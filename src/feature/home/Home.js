@@ -25,15 +25,15 @@ const Home = ({ navigation }) => {
   const [listBrand, setListBrand] = useState([]);
   const [selectedCategorIndex, setSelectedCategorIndex] = useState();
 
-  useEffect(() => { 
-    fetchListBrand();
-  }, [])
-
   const fetchListBrand = async () => {
     let listBrandAPI = await getListBrand();
     let { success, data: listBrand } = listBrandAPI.data;
     setListBrand(listBrand);
   }
+
+  useEffect(() => { 
+    fetchListBrand();
+  }, [])
 
   const ListCategories = () => {
     return (
@@ -44,7 +44,7 @@ const Home = ({ navigation }) => {
       >
         {listBrand.map((categoryCar, index) => (
           <TouchableOpacity 
-   as           key={index} 
+            key={index} 
             activeOpacity={0.8} 
             onPress={() => setSelectedCategorIndex(index)}
           >

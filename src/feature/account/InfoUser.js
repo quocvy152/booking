@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, Image, Dimensions, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, Dimensions, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 const { width } = Dimensions.get('screen');
 const contentWidth = width - 30;
 
@@ -14,6 +15,25 @@ import images from '../../resources/images';
 const InfoCustomer = ({ navigation, route }) => {
   const infoUser = useSelector(state => state.auth.infoUser);
   const avatar = infoUser ? infoUser.avatar : '';
+
+  const handleLogoutBtn = async () => {
+    await AsyncStorage.clear();
+    navigation.navigate('LoginScreen');
+  }
+
+  const alert = () =>
+    Alert.alert(
+      "Thông Báo",
+      "Bạn có chắc chắn muốn đăng xuất khỏi ứng dụng không ?",
+      [
+        {
+          text: "Hủy",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel"
+        },
+        { text: "Có", onPress: handleLogoutBtn }
+      ]
+    );
 
   return (
     <SafeAreaView>
@@ -62,7 +82,7 @@ const InfoCustomer = ({ navigation, route }) => {
       </View>
       <View style={ styles.accountStyle }>
         <Text style={{ fontWeight: 'bold', fontSize: 20 }}>Khác</Text>
-        <TouchableOpacity activeOpacity={0.6}>
+        <TouchableOpacity activeOpacity={0.6} onPress={alert}>
           <View style={ styles.btnAnotherStyle }>
               <View style={{ flexDirection: 'row' }}>
                 <FontAwesome5 name="sign-out-alt" size={24} color="black" />

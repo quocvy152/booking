@@ -85,7 +85,6 @@ const Login = () => {
     loginAPI(body)
       .then(res => {
         let { data: token, success, message } = res.data;
-
         if(!success) {
           if(message == 'username or email in correct') {
             showToast({ type: 'error', content: 'Tài khoản hoặc Email không tồn tại' })
