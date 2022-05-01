@@ -52,7 +52,7 @@ const InfoCustomer = ({ navigation, route }) => {
       <View style={ styles.accountStyle }>
         <Text style={{ fontWeight: 'bold', fontSize: 20 }}>Tài khoản</Text>
         <View style={{ flexDirection: 'row', }}>
-          <TouchableOpacity activeOpacity={0.6} >
+          <TouchableOpacity activeOpacity={0.6} onPress={() => { navigation.navigate('DetaulInfoCustomerScreen') }}>
             <View style={ styles.tabStyle }>
               <FontAwesome5 name="user-alt" size={24} color="#77CBEB" />
               <Text style={{ marginTop: 16, fontSize: 15 }}>Thông tin cá nhân</Text>
