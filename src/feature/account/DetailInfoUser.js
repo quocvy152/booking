@@ -4,7 +4,7 @@ import Icon from '@expo/vector-icons/FontAwesome5';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import ImagePicker from 'react-native-image-crop-picker';
+//import ImagePicker from 'react-native-image-crop-picker';
 const { width } = Dimensions.get('screen');
 const contentWidth = width - 42;
 
@@ -14,7 +14,7 @@ import { StatusBar } from 'expo-status-bar';
 import images from '../../resources/images';
 import { TextInput } from 'react-native-gesture-handler';
 
-const DetailInfoCustomer = ({ navigation, route }) => {
+const DetailInfoUser = ({ navigation, route }) => {
   const infoUser = useSelector(state => state.auth.infoUser);
   const avatar = infoUser ? infoUser.avatar : '';
   const [name, setName] = useState(infoUser ? infoUser.name : '');
@@ -23,16 +23,16 @@ const DetailInfoCustomer = ({ navigation, route }) => {
   const [Username, setUsername] = useState(infoUser ? infoUser.username : '');
   const [resourcePath, setResourcePath] = useState();
 
-  const pickPicture = () => {
-    ImagePicker.openPicker({
-      width: 300,
-      height: 400,
-      cropping: true,
-    }).then(image => {
-      setUri(image.path);
-      props.onChange?.(image);
-    });
-  };
+  // const pickPicture = () => {
+  //   ImagePicker.openPicker({
+  //     width: 300,
+  //     height: 400,
+  //     cropping: true,
+  //   }).then(image => {
+  //     setUri(image.path);
+  //     props.onChange?.(image);
+  //   });
+  // };
 
   return (
     <SafeAreaView>
@@ -122,11 +122,11 @@ const styles = StyleSheet.create({
   btnStyle: {
     height: 48,
     width: '100%',
-    backgroundColor: '#E0021C',
+    backgroundColor: COLORS.DEFAULT_BACKGROUND,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 6,
   },
 });
 
-export default DetailInfoCustomer;
+export default DetailInfoUser;

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, Image, Dimensions, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -12,7 +13,7 @@ import ButtonCustom from '../../components/ButtonCustom';
 import { StatusBar } from 'expo-status-bar';
 import images from '../../resources/images';
 
-const InfoCustomer = ({ navigation, route }) => {
+const InfoUser = ({ navigation, route }) => {
   const infoUser = useSelector(state => state.auth.infoUser);
   const avatar = infoUser ? infoUser.avatar : '';
 
@@ -52,7 +53,7 @@ const InfoCustomer = ({ navigation, route }) => {
       <View style={ styles.accountStyle }>
         <Text style={{ fontWeight: 'bold', fontSize: 20 }}>Tài khoản</Text>
         <View style={{ flexDirection: 'row', }}>
-          <TouchableOpacity activeOpacity={0.6} onPress={() => { navigation.navigate('DetaulInfoCustomerScreen') }}>
+          <TouchableOpacity activeOpacity={0.6} onPress={() => { navigation.navigate('DetaulInfoUserScreen') }}>
             <View style={ styles.tabStyle }>
               <FontAwesome5 name="user-alt" size={24} color="#77CBEB" />
               <Text style={{ marginTop: 16, fontSize: 15 }}>Thông tin cá nhân</Text>
@@ -62,16 +63,24 @@ const InfoCustomer = ({ navigation, route }) => {
             <View style={ styles.tabStyle }>
             <FontAwesome5 name="place-of-worship" size={24} color="#EB466E" />
               <Text style={{ marginTop: 16, fontSize: 15 }}>Địa chỉ đã lưu</Text>
-            </View>
+            </View> 
           </TouchableOpacity>
         </View>
         <View style={{ flexDirection: 'row', }}>
-          <TouchableOpacity activeOpacity={0.6} >
+          <TouchableOpacity activeOpacity={0.6} onPress={() => { navigation.navigate('ListCarUserScreen') }}>
             <View style={ styles.tabStyle }>
               <FontAwesome5 name="car" size={24} color="#37A604" />
               <Text style={{ marginTop: 16, fontSize: 15 }}>Xe của tôi</Text>
             </View>
           </TouchableOpacity>
+          <TouchableOpacity activeOpacity={0.6} onPress={() => navigation.navigate('ListTripUserScreen')}>
+            <View style={ styles.tabStyle }>
+              <FontAwesome name="tripadvisor" size={24} color="#8B4513" />
+              <Text style={{ marginTop: 16, fontSize: 15 }}>Chuyến của tôi</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+        <View style={{ flexDirection: 'row', }}>
           <TouchableOpacity activeOpacity={0.6}>
             <View style={ styles.tabStyle }>
               <FontAwesome5 name="hands-helping" size={24} color="#3E89A8" />
@@ -150,4 +159,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default InfoCustomer;
+export default InfoUser;

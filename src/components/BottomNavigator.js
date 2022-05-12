@@ -3,6 +3,7 @@ import { StyleSheet, Image } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { useSelector } from 'react-redux';
+import { useNavigation } from '@react-navigation/native';
 
 import { COLORS } from '../constant/colors';
 import Home from '../feature/home/Home';
@@ -10,7 +11,7 @@ import InfoCustomer from '../feature/account/InfoUser';
 
 const Tab = createBottomTabNavigator();
 
-const BottomNavigator = () => {
+const BottomNavigator = ({ route }) => {
   const infoUser = useSelector(state => state.auth.infoUser);
   const avatar = infoUser ? infoUser.avatar : '';
 
@@ -36,7 +37,7 @@ const BottomNavigator = () => {
           options={{
             tabBarIcon: ({ color }) => (
               <FontAwesome5 name='home' color={color} size={25} />
-            )
+            ),
           }}
         />
         <Tab.Screen 

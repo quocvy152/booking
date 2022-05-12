@@ -14,61 +14,16 @@ import TextInputCustom from '../../components/TextInputCustom';
 import { TouchableHighlight } from 'react-native-gesture-handler';
 import images from '../../resources/images/index';
 import { getListBrand } from '../../api/general';
-
+import ButtonCustom from '../../components/ButtonCustom';
+import { backgroundColor } from 'react-native/Libraries/Components/View/ReactNativeStyleAttributes';
 const { width } = Dimensions.get('screen');
 const cardWidth = width / 2 - 20;
+const contentWidth = width - 20;
 
-const Home = ({ navigation }) => {
+const ListTripUser = ({ navigation, route }) => {
   const infoUser = useSelector(state => state.auth.infoUser);
   const name = infoUser?.name;
   const avatar = infoUser ? infoUser.avatar : '';
-  const [listBrand, setListBrand] = useState([]);
-  const [selectedCategorIndex, setSelectedCategorIndex] = useState();
-
-  const fetchListBrand = async () => {
-    let listBrandAPI = await getListBrand();
-    let { success, data: listBrand } = listBrandAPI.data;
-    setListBrand(listBrand);
-  }
-
-  useEffect(() => { 
-    fetchListBrand();
-  }, [])
-
-  const ListCategories = () => {
-    return (
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.categoriesListContainer}
-      >
-        {listBrand.map((categoryCar, index) => (
-          <TouchableOpacity 
-            key={index} 
-            activeOpacity={0.8} 
-            onPress={() => setSelectedCategorIndex(index)}
-          >
-            <View style={{ 
-              ...styles.styleCategoryCar, 
-              backgroundColor: index == selectedCategorIndex ? '#FF7700' : '#ffc899'
-            }}>
-              <View style={ styles.styleCategoryCarChild }>
-                {
-                  categoryCar.image ?
-                  (
-                    <Image source={{ uri: categoryCar.image }} style={{ height: 35, width: 35, borderRadius: 30, resizeMode: 'contain' }} />
-                  ) : (
-                    <Image source={images.ic_default_logo_car} style={{ height: 35, width: 35, borderRadius: 30, resizeMode: 'contain' }} />
-                  )  
-                }
-              </View>
-              <Text style={{ fontSize: 12, fontWeight: 'bold', marginLeft: 20, width: '60%' }}>{ categoryCar.name.length > 10 ? categoryCar.name.slice(0, 10).concat('...') : categoryCar.name }</Text>
-            </View>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
-    );
-  }
 
   const Card = ({ car }) => {
     return (
@@ -116,47 +71,63 @@ const Home = ({ navigation }) => {
     <>
       <SafeAreaView style={{ flex: 1, }}>
         <View style={ styles.header }>
-          <View style={{ width: '80%' }}>
-            <View style={{ flexDirection: 'row' }}>
-              <Text style={{ fontSize: 18, color: COLORS.WHITE }}>Xin chào,</Text>
-              <Text style={{ fontSize: 18, fontWeight: 'bold', marginLeft: 15, color: COLORS.WHITE }}>{ name }</Text>
-            </View>
-            <Text style={{ marginTop: 5, fontSize: 18, color: COLORS.WHITE }}>
-              Bạn muốn thuê xe gì ?
-            </Text>
-          </View>
-          {
-            avatar ? 
-            (<Image source={{ uri: avatar }} style={ styles.iconUser }/>) : 
-            (<Image source={require('../../resources/images/user-300x300.png')} style={ styles.iconUser } />)
-          }
+          <FontAwesome5 name="chevron-left" size={28} color="black" onPress={() => navigation.goBack()} />
+          <Text style={{ fontSize: 20, fontWeight: 'bold', marginLeft: 10 }}>Thông Tin Của Bạn</Text>
         </View>
         <View 
           style={{ 
-            marginTop: 20,
             flexDirection: 'row'
           }}>
             <View style={ styles.inputContainer }>
               <TextInputCustom
                 icon='search'
                 textColor={ COLORS.DEFAULT_TEXT }
-                placeholderText='Tìm kiếm xe'
+                placeholderText='Tìm kiếm chuyến đi'
                 style={{ marginLeft: 10, borderRadius: 10, width: '95%' }}
               />
             </View>
-            <View style={ styles.sortBtn }>
-              <FontAwesome5 name='align-left' size={24} color={ COLORS.WHITE } />
+        </View>
+        <View style={{ width: contentWidth, flexDirection: 'row', marginLeft: 10, }}>
+          <TouchableOpacity activeOpacity={0.8} style={ styles.btnStyle } onPress={() => navigation.navigate('HomeScreen')}>
+            <View>
+              <Text style={{ color: 'white', fontSize: 15, fontWeight: 'bold', }}>Tìm xe ngay</Text>
             </View>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            activeOpacity={0.8} 
+            style={[ 
+              styles.btnStyle, 
+              { backgroundColor: COLORS.WHITE, marginLeft: '2%', borderWidth: 1, borderColor: COLORS.DEFAULT_BACKGROUND }
+            ]}
+            onPress={() => navigation.navigate('ListCarUserScreen')}>
+            <View>
+              <Text style={{ color: COLORS.DEFAULT_BACKGROUND, fontSize: 15, fontWeight: 'bold', }}>Xe của tôi</Text>
+            </View>
+          </TouchableOpacity>
         </View>
-        <View>
-          <ListCategories />
-        </View>
-        <FlatList 
-          showsVerticalScrollIndicator={false}
-          numColumns={2}
-          data={CARS}
-          renderItem={({ item }) => <Card car={item} />}
-        />
+        {
+          infoUser && infoUser.cars && infoUser.cars.length ?
+          (
+            <FlatList 
+              showsVerticalScrollIndicator={false}
+              numColumns={2}
+              data={CARS}
+              renderItem={({ item }) => <Card car={item} />}
+            />
+          ) : 
+          (
+            <>
+            <View style={{ alignItems: 'center', justifyContent: 'center', marginTop: 30, }}>
+              <Image 
+                  source={require('../../resources/images/trip.png')}
+                  style={{ width: 300, height: 200, resizeMode: 'contain' }}
+              />
+              <Text style={{ textAlign: 'center', fontSize: 17, fontStyle: 'italic', width: contentWidth, marginTop: 30 }}>Bạn chưa có chuyến nào, hãy thuê ngay một chiếc xe để trải nghiệm dịch vụ</Text>
+            </View>
+            </>
+          )
+        }
+        
       </SafeAreaView>
     </>
   );
@@ -167,16 +138,16 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: COLORS.DEFAULT_BACKGROUND,
   },
 
   header: {
-    marginTop: 30,
+    paddingVertical: 20,
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 18,
-    backgroundColor: COLORS.DEFAULT_BACKGROUND,
-    paddingVertical: 15,
-  },  
+    marginLeft: 20, 
+    alignItems: 'center',
+    marginTop: 15,
+  }, 
 
   inputContainer: {
     flex: 1,
@@ -194,7 +165,7 @@ const styles = StyleSheet.create({
   },
 
   categoriesListContainer: {
-    paddingVertical: 15,
+    paddingVertical: 30,
     alignItems: 'center',
     paddingHorizontal: 20
   },
@@ -234,6 +205,16 @@ const styles = StyleSheet.create({
     width: 50, 
     borderRadius: 25,
   },
+  
+  btnStyle: {
+    height: 48,
+    width: '49%',
+    backgroundColor: COLORS.DEFAULT_BACKGROUND,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 6,
+    marginTop: 20,
+  },
 });
 
-export default Home;
+export default ListTripUser;

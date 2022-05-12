@@ -14,6 +14,7 @@ export const ENDPOINT = {
 
   // Cars
   CREATE_CAR: `${BASE_CARS}`,
+  DETAIL_INFO: '/Detail',
 
   // Brands
   LIST_BRAND: `${BASE_BRANDS}`,
@@ -22,7 +23,7 @@ export const ENDPOINT = {
   LIST_PROVINCE: `${BASE_LOCATION}/provinces`,
   LIST_DISTRICT: `${BASE_LOCATION}/districts`,
   LIST_DISTRICT_OF_PROVINCE: `${BASE_LOCATION}/district-by-province`,
-  LIST_WARD_OF_DISTRICT: `${BASE_LOCATION}/ward-by-district`,
+  LIST_WARD_OF_DISTRICT: `${BASE_LOCATION}/ward-by-distric`,
   LIST_WARD_OF_PROVINCE: `${BASE_LOCATION}/ward-by-province`,
 
   // Token
