@@ -1,34 +1,39 @@
 import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, SafeAreaView, Text, View, TouchableOpacity, Image, ScrollView, FlatList, Dimensions, TextInput } from 'react-native';
+import { StyleSheet, SafeAreaView, Text, View, TouchableOpacity, Image, ScrollView, FlatList, Dimensions, TextInput, Keyboard } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesome5 } from '@expo/vector-icons';
 import NumberFormat from 'react-number-format';
 import MultiSelect from 'react-native-multiple-select';
 import { useSelector } from 'react-redux';
+//nestedScrollEnabled
 import SelectBox from 'react-native-multi-selectbox';
 import { xorBy } from 'lodash';
 const { width } = Dimensions.get('screen');
 const contentWidth = width - 42;
+import axios from 'axios';
 
+import ToastCustom from '../../components/ToastCustom';
 import { COLORS } from '../../constant/colors';
 import { PARAMS_CONSTANT } from '../../../src/constant/param';
-import { getInfoAboutCar, getListBrand, getListProvince, getListDistrict, getListWard } from '../../api/general';
+import { getInfoAboutCar, getListBrand, getListProvince, getListDistrict, getListWard, createCar } from '../../api/general';
+import { checkValidDataCar, returnDetailIDS, convertObjectToFormData } from '../../utils/utils';
 
 const AddCar = ({ navigation }) => {
+  const [Name, setName] = useState();
   const [brand, setBrand] = useState({});
   const [listBrand, setListBrand] = useState([]);
-  const [description, setDescription] = useState();
+  const [Description, setDescription] = useState();
   const [mortgage, setMortgage] = useState();
   const [rules, setRules] = useState();
-  const [address, setAddress] = useState();
+  const [Address_booking, setAddress_booking] = useState();
   const [ward, setWard] = useState({});
   const [listWard, setListWard] = useState([]);
   const [district, setDistrict] = useState({});
   const [listDistrict, setListDistrict] = useState([]);
   const [province, setProvince] = useState({});
   const [listProvince, setListProvince] = useState([]);
-  const [price, setPrice] = useState();
+  const [Price, setPrice] = useState();
   const [seats, setSeats] = useState({});
   const [listSeat, setListSeat] = useState([]);
   const [fuel, setFuel] = useState({});
@@ -41,6 +46,12 @@ const AddCar = ({ navigation }) => {
   const [listFeature, setListFeature] = useState([]);
   const [selectedLicense, setSelectedLicense] = useState([]);
   const [listLicense, setListLicense] = useState([]);
+
+  // START TOASTCUSTOM MESSAGE
+  const [isShowToast, setIsShowToast] = useState(false);
+  const [content, setContent] = useState();
+  const [type, setType] = useState();
+  // END TOASTCUSTOM MESSAGE
 
   // fetch list brand
   useEffect(async () => {
@@ -87,7 +98,6 @@ const AddCar = ({ navigation }) => {
     let fetchDataListWard = await getListWard(district.id);
 
     const { success, data } = fetchDataListWard.data;
-    console.log({ success, data })
     if(success) {
       // change format list ward to match with select box
       let LIST_WARD = data.map(ward => ({
@@ -155,7 +165,7 @@ const AddCar = ({ navigation }) => {
 
   // change format list seat to match with select box
   const LIST_BRAND = listBrand.map(brand => ({
-    id: brand.code,
+    id: brand.id,
     item: brand.name
   }));
 
@@ -235,13 +245,60 @@ const AddCar = ({ navigation }) => {
     return (item) => setSelectedLicense(xorBy(selectedLicense, [item], 'id'));
   }
 
-  const handleRegisterCar = () => {
+  const showToast = ({ content, type }) => {
+    setIsShowToast(true);
+    setContent(content);
+    setType(type);
+    setTimeout(() => {
+      setIsShowToast(false);
+    }, 1500)
+  }
 
+  const handleRegisterCar = async () => {
+    Keyboard.dismiss();
+
+    // let body = {
+    //   Name, BrandId: brand.id, Description, Price, 
+    //   Mortage: mortgage, Rules: rules, Address_booking, 
+    //   WardId: ward.id, DistrictId: district.id, ProvinceId: province.id, 
+    //   Seats: seats.id, Fuel: fuel.id, FuelConsumption: fuelConsumption.id, 
+    //   Tranmission: tranmission.id, SelectedFeature: selectedFeature, 
+    //   SelectedLicense: selectedLicense,
+    // };
+
+    // let { error, message } = checkValidDataCar(body);
+    // if(error) {
+    //   showToast({ content: message, type: 'warning' });
+    //   return;
+    // }
+
+    try {
+      // nối các đặc điểm tính năng thành chuỗi server cần
+      // let Detail_ids = returnDetailIDS(bodyData);
+      // body.Detail_ids = Detail_ids;
+
+      let resultCreateCar = await createCar();
+      console.log({ resultCreateCar }) 
+      // let { success, data } = resultCreateCar.data;
+      // if(success) {
+      //   showToast({ content: 'Đăng ký xe thành công', type: 'success' });
+      //   setTimeout(() => {
+      //     navigation.navigate('ListCarUserScreen');
+      //   }, 1500);
+      // }
+    } catch (error) {
+      console.log({ error })
+    } 
   }
     
   return (
     <>
       <SafeAreaView style={{ flex: 1, }}>
+        <ToastCustom 
+          isShowToast={isShowToast}
+          contentToast={content}
+          typeToast={type}
+        />
         <View style={ styles.header }>
           <FontAwesome5 name="chevron-left" size={28} color="black" onPress={() => navigation.goBack()} />
           <Text style={{ fontSize: 20, fontWeight: 'bold', marginLeft: 10 }}>Xe Của Bạn</Text>
@@ -258,6 +315,7 @@ const AddCar = ({ navigation }) => {
               <TextInput 
                 style={ styles.inputStyle }
                 placeholder='Nhập tên xe'
+                onChangeText={(val) => setName(val)}
               />
             </View>
 
@@ -462,7 +520,7 @@ const AddCar = ({ navigation }) => {
                 multiline={true}
                 numberOfLines={10}
                 placeholder='Nhập địa chỉ lấy xe'
-                onChangeText={(val) => setAddress({val})}/>
+                onChangeText={(val) => setAddress_booking({val})}/>
             </View>
 
             <View style={{ width: '100%', margin: 15, }}>

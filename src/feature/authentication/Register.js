@@ -49,7 +49,7 @@ const Register = ({ navigation }) => {
       return;
     }
 
-    if(!checkPhone(Phone)) {
+    if(!checkPhone(PhoneNumber)) {
       showToast({ content: 'Số điện thoại không hợp lệ' });
       return;
     }
@@ -70,7 +70,6 @@ const Register = ({ navigation }) => {
     registerUser(body)
       .then(res => {
         const { message, success, data } = res.data;
-
         if(!success) {
           showToast({ content: message });
           return;
@@ -81,8 +80,8 @@ const Register = ({ navigation }) => {
           navigation.goBack();
         }, 3000);
       })
-      .catch(err => {
-        console.log({ err });
+      .catch(error => {
+        console.log({ error });
         return;
       })
     

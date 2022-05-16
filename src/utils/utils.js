@@ -36,7 +36,8 @@ export {
   getDateTime,
   callNumber,
   convertObjectToFormData,
-  // parseJWT
+  checkValidDataCar,
+  returnDetailIDS,
 }
 
 function callNumber(phone) {
@@ -385,12 +386,113 @@ function convertObjectToFormData(object) {
   return formData;
 }
 
-// function parseJWT(token) {
-//   var base64Url = token.split('.')[1];
-//   var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-//   var jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-//       return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-//   }).join(''));
+// Kiểm tra thông tin đầu vào của xe
+const checkValidDataCar = (infoDataCar) => {
+  const { 
+    Name, BrandId, Description, Price, 
+    Mortage, Rules, Address_booking, 
+    WardId, DistrictId, ProvinceId, 
+    Seats, Fuel, FuelConsumption, 
+    Tranmission, SelectedFeature, 
+    SelectedLicense,
+  } = infoDataCar;
 
-//   return JSON.parse(jsonPayload);
-// };
+  if(!Name) 
+    return {
+      error: true,
+      message: 'Nhập tên xe của bạn'
+    }
+
+  if(!BrandId)
+    return {
+      error: true,
+      message: 'Nhập thương hiệu xe của bạn'
+    }
+
+  if(!Price)
+    return {
+      error: true,
+      message: 'Nhập giá thuê xe của bạn'
+    }
+
+  if(!Address_booking || !WardId || !DistrictId || !ProvinceId) 
+    return {
+      error: true,
+      message: 'Nhập thông tin địa chỉ để thuê xe của bạn'
+    }
+
+  if(!Seats) 
+    return {
+      error: true,
+      message: 'Nhập số ghế xe của bạn'
+    }
+
+  if(!Fuel) 
+    return {
+      error: true,
+      message: 'Nhập nhiên liệu của xe bạn'
+    }
+
+  if(!FuelConsumption) 
+    return {
+      error: true,
+      message: 'Nhập mức tiêu thụ nhiên liệu của xe bạn'
+    }
+
+  if(!Tranmission) 
+    return {
+      error: true,
+      message: 'Nhập truyền động của xe bạn'
+    }
+
+  if(!Description)
+    return {
+      error: true,
+      message: 'Nhập mô tả xe của bạn'
+    }
+
+  if(!Mortage) 
+    return {
+      error: true,
+      message: 'Nhập tài sản thế chấp để thuê xe của bạn'
+    }
+
+  if(!Rules) 
+    return {
+      error: true,
+      message: 'Nhập điều khoản để thuê xe của bạn'
+    }
+
+  if(SelectedFeature.length <= 0)
+    return {
+      error: true,
+      message: 'Nhập các tính năng của xe bạn'
+    }
+
+  if(SelectedLicense.length <= 0)
+    return {
+      error: true,
+      message: 'Nhập các giấy tờ thuê xe bạn'
+    }
+
+  return {
+    error: false,
+    message: 'validate_done'
+  }
+}
+
+// Kiểm tra thông tin đầu vào của xe
+const returnDetailIDS = (infoDataCar) => {
+  const { 
+    Seats, Fuel, FuelConsumption, 
+    Tranmission, SelectedFeature, 
+    SelectedLicense,
+  } = infoDataCar;
+
+  let Detail_ids_GroupFeature = SelectedFeature.map(feature => feature.id).join(',');
+  let Detail_ids_GroupLicense = SelectedLicense.map(license => license.id).join(',');
+
+  let Detail_ids = `${Seats},${Fuel},${FuelConsumption},${Tranmission},${Detail_ids_GroupFeature},${Detail_ids_GroupLicense}`
+
+  return Detail_ids;
+}
