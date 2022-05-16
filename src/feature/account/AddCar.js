@@ -257,35 +257,39 @@ const AddCar = ({ navigation }) => {
   const handleRegisterCar = async () => {
     Keyboard.dismiss();
 
-    // let body = {
-    //   Name, BrandId: brand.id, Description, Price, 
-    //   Mortage: mortgage, Rules: rules, Address_booking, 
-    //   WardId: ward.id, DistrictId: district.id, ProvinceId: province.id, 
-    //   Seats: seats.id, Fuel: fuel.id, FuelConsumption: fuelConsumption.id, 
-    //   Tranmission: tranmission.id, SelectedFeature: selectedFeature, 
-    //   SelectedLicense: selectedLicense,
-    // };
+    let bodyData = {
+      Name, BrandId: brand.id, Description, Price, 
+      Mortage: mortgage, Rules: rules, Address_booking, 
+      WardId: ward.id, DistrictId: district.id, ProvinceId: province.id, 
+      Seats: seats.id, Fuel: fuel.id, FuelConsumption: fuelConsumption.id, 
+      Tranmission: tranmission.id, SelectedFeature: selectedFeature, 
+      SelectedLicense: selectedLicense,
+    };
 
-    // let { error, message } = checkValidDataCar(body);
-    // if(error) {
-    //   showToast({ content: message, type: 'warning' });
-    //   return;
-    // }
+    let { error, message } = checkValidDataCar(bodyData);
+    if(error) {
+      showToast({ content: message, type: 'warning' });
+      return;
+    }
 
     try {
-      // nối các đặc điểm tính năng thành chuỗi server cần
-      // let Detail_ids = returnDetailIDS(bodyData);
-      // body.Detail_ids = Detail_ids;
+      let body = {
+        Name, BrandId: brand.id, Description, Price, 
+        Address_booking, WardId: ward.id, DistrictId: district.id, ProvinceId: province.id, 
+      };
 
-      let resultCreateCar = await createCar();
-      console.log({ resultCreateCar }) 
-      // let { success, data } = resultCreateCar.data;
-      // if(success) {
-      //   showToast({ content: 'Đăng ký xe thành công', type: 'success' });
-      //   setTimeout(() => {
-      //     navigation.navigate('ListCarUserScreen');
-      //   }, 1500);
-      // }
+      // nối các đặc điểm tính năng thành chuỗi server cần
+      let Detail_ids = returnDetailIDS(bodyData);
+      body.Detail_ids = Detail_ids;
+
+      let resultCreateCar = await createCar(body);
+      let { success, data } = resultCreateCar.data;
+      if(success) {
+        showToast({ content: 'Đăng ký xe thành công', type: 'success' });
+        setTimeout(() => {
+          navigation.navigate('ListCarUserScreen');
+        }, 1500);
+      }
     } catch (error) {
       console.log({ error })
     } 
@@ -399,7 +403,7 @@ const AddCar = ({ navigation }) => {
                 multiline={true}
                 numberOfLines={10}
                 placeholder='Nhập mô tả'
-                onChangeText={(val) => setDescription({val})}/>
+                onChangeText={(val) => setDescription(val)}/>
             </View>
 
             <View style={{ width: '100%', margin: 25, }}>
@@ -442,7 +446,7 @@ const AddCar = ({ navigation }) => {
                 multiline={true}
                 numberOfLines={10}
                 placeholder='Nhập giá cho thuê xe'
-                onChangeText={(val) => setPrice({val})}/>
+                onChangeText={(val) => setPrice(val)}/>
             </View>
 
             {
@@ -520,7 +524,7 @@ const AddCar = ({ navigation }) => {
                 multiline={true}
                 numberOfLines={10}
                 placeholder='Nhập địa chỉ lấy xe'
-                onChangeText={(val) => setAddress_booking({val})}/>
+                onChangeText={(val) => setAddress_booking(val)}/>
             </View>
 
             <View style={{ width: '100%', margin: 15, }}>
@@ -533,7 +537,7 @@ const AddCar = ({ navigation }) => {
                 multiline={true}
                 numberOfLines={10}
                 placeholder='Nhập tài sản thế chấp'
-                onChangeText={(val) => setMortgage({val})}/>
+                onChangeText={(val) => setMortgage(val)}/>
             </View>
 
             <View style={{ width: '100%', margin: 15, }}>
@@ -546,7 +550,7 @@ const AddCar = ({ navigation }) => {
                 multiline={true}
                 numberOfLines={10}
                 placeholder='Nhập điều khoản'
-                onChangeText={(val) => setRules({val})}/>
+                onChangeText={(val) => setRules(val)}/>
             </View>
           </View>
         </ScrollView>

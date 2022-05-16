@@ -17,26 +17,21 @@ export async function getListBrand() {
 }
 
 export async function createCar(infoCar) {
-    const body = {
-        Name: 'Innova Create',
-        Description: 'Mô tả',
-        Price: 800000,
-        BrandId: 1,
-        ProvinceId: 1,
-        DistrictId: 1,
-        WardId: 1,
-        Address_booking: 'Đây là địa chỉ giao hàng',
-        Rules: 'Luật lệ',
-        Detail_ids: '36,44,48,42,58,57,76,77',
-        Img: [
-            '23735981_1984746101783827_4900956991247485239_o.jpg',
-            '1563357733-sjf.jpg',
-        ]
-    }
+    // const body = {
+    //     Name: 'Innova Create',
+    //     Description: 'asaassa',
+    //     Price: 800000,
+    //     BrandId: 1,
+    //     ProvinceId: 1,
+    //     DistrictId: 1,
+    //     WardId: 1,
+    //     Address_booking: 'Đây là địa chỉ giao hàng',
+    //     Rules: 'Luật lệ',
+    //     Detail_ids: '36,44,48,42,58,57,76,77',
+    // }
 
-    //const parseInfoCarBody = convertObjectToFormData(infoCar);
-
-    return await requestFileAPI(`${ENDPOINT.REGISTER_CAR}`, method.POST, body, 'multipart/form-data');
+    const parseInfoCarBody = convertObjectToFormData(infoCar);
+    return await requestFileAPI(`${ENDPOINT.REGISTER_CAR}`, method.POST, parseInfoCarBody, 'multipart/form-data');
 }
 
 export async function getInfoAboutCar(code) {
