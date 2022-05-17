@@ -20,7 +20,7 @@ import DatePicker from 'react-native-date-picker';
 import ToastCustom from '../../components/ToastCustom';
 import { COLORS } from '../../constant/colors';
 import { PARAMS_CONSTANT } from '../../constant/param';
-import { getInfoAboutCar, getListBrand, getListProvince, getListDistrict, getListWard, createCar } from '../../api/general';
+import { bookingCar } from '../../api/general';
 import { checkValidDataCar, returnDetailIDS, convertDateTimeToString } from '../../utils/utils';
 
 const BorrowCar = ({ navigation, route }) => {
@@ -36,6 +36,13 @@ const BorrowCar = ({ navigation, route }) => {
   const [showTimeEnd, setShowTimeEnd] = useState(false);
   const [textTimeEnd, setTextTimeEnd] = useState(convertDateTimeToString(new Date(new Date().getTime() + (24 * 60 * 60 * 1000))));
 
+  const [infoSeats, setInfoSeats] = useState(car.details.find(detail => detail.detailType.code === 'SOGHE'));
+  const [infoTranmission, setInfoTranmission] = useState(car.details.find(detail => detail.detailType.code === 'TRUYENDONG'));
+  const [infoFuel, setInfoFuel] = useState(car.details.find(detail => detail.detailType.code === 'NHIENLIEU'));
+  const [infoFuelConsumption, setInfoFuelConsumption] = useState(car.details.find(detail => detail.detailType.code === 'MUCTIEUTHUNHIENLIEU'));
+  const [listFeature, setListFeature] = useState(car.details.filter(detail => detail.detailType.code == 'TINHNANG'))
+  const [listLicense, setListLicense] = useState(car.details.filter(detail => detail.detailType.code == 'GIAYTOTHUEXE'))
+
   // START TOASTCUSTOM MESSAGE
   const [isShowToast, setIsShowToast] = useState(false);
   const [content, setContent] = useState();
@@ -44,6 +51,15 @@ const BorrowCar = ({ navigation, route }) => {
 
   // useEffect(() => {
   // }, []);
+
+  const showToast = ({ content, type }) => {
+    setIsShowToast(true);
+    setContent(content);
+    setType(type);
+    setTimeout(() => {
+      setIsShowToast(false);
+    }, 1500)
+  }
 
   const onChangeTimeStart = (event, selectedDate) => {
     const currentDate = selectedDate || startDate;
@@ -72,6 +88,58 @@ const BorrowCar = ({ navigation, route }) => {
     setShowTimeEnd(true),
     setModeEnd(currentMode);
   }
+
+  const validateInfoBorrorwCar = (body) => {
+    let { car_id, startBooking, endBooking } = body;
+
+    if(!car_id) 
+      return {
+        error: true,
+        message: 'Không thể lấy thông tin xe',
+      }
+
+    if(!startBooking)
+      return {
+        error: true,
+        message: 'Vui lòng chọn ngày bắt đầu thuê xe',
+      }
+
+    if(!endBooking) 
+      return {
+        error: true,
+        message: 'Vui lòng chọn ngày trả xe',
+      }
+
+    return {
+      error: false,
+      message: 'validate_done',
+    }
+  }
+
+  const handleBorrowCar = async () => {
+    let body = {
+      car_id: car.id,
+      startBooking: startDate,
+      endBooking: startDate,
+    }
+
+    let { error, message } = validateInfoBorrorwCar(body);
+    if(error) {
+      showToast({ content: message, type: 'warning' });
+      return;
+    }
+
+    let resultCallBookingCar = await bookingCar(body);
+    let { success, data, message: messageBookingCar } = resultCallBookingCar.data;
+
+    if(success) {
+      showToast({ content: 'Bạn đã đặt xe thành công. Chủ xe sẽ liên hệ với bạn trong vòng 24h', type: 'success' });
+      navigation.navigate('HomeScreen');
+    } else {
+      showToast({ content: messageBookingCar, type: 'success' });
+      return;
+    }
+  }
     
   return (
     <>
@@ -96,7 +164,6 @@ const BorrowCar = ({ navigation, route }) => {
           </View>
 
           <View style={styles.infoOwnerCar}>
-            <ScrollView nestedScrollEnabled={true}>
               <Text style={ styles.titleInfoStyle }>Thông tin chủ xe</Text>
               <View style={{ alignItems: 'center', }}>
                   {
@@ -135,19 +202,37 @@ const BorrowCar = ({ navigation, route }) => {
               <Text style={{ marginLeft: 10, }}>
                 Số điện thoại: { car.ownerCar && car.ownerCar.phoneNumber } 
               </Text>
-            </ScrollView>
           </View>
 
           <View style={styles.infoDetailCar}>
-            <ScrollView nestedScrollEnabled={true}>
               <Text style={ styles.titleInfoStyle }>Giấy tờ thuê xe (Bắt buộc)</Text>
-            </ScrollView>
+              
+              <View style={{ margin: 25, flex: 1, }}>
+                { 
+                  listLicense.map(license => (
+                    <View style={{ marginBottom: 10, borderWidth: 1, borderColor: 'black', padding: 10, borderRadius: 20, }}>
+                      <Text style={{ fontSize: 18, color: 'black', fontStyle: 'italic' }}>
+                        {
+                          license.val
+                        }
+                      </Text>
+                    </View> 
+                  ))
+                }
+              </View>
           </View>
 
           <View style={styles.infoDetailCar}>
-            <ScrollView nestedScrollEnabled={true}>
               <Text style={ styles.titleInfoStyle }>Tài sản thế chấp</Text>
-            </ScrollView>
+          </View>
+
+          <View style={styles.infoDetailCar}>
+            <Text style={ styles.titleInfoStyle }>Điều khoản</Text>
+            <Text>
+              {
+                car.rules
+              }
+            </Text>
           </View>
 
           <View style={styles.infoInputTimeBorrow}>
@@ -221,25 +306,37 @@ const BorrowCar = ({ navigation, route }) => {
           <View style={styles.infoPriceCar}>
               <Text style={ styles.titleInfoStyle }>Địa chỉ giao nhận xe</Text>
               <Text style={{ marginLeft: 10, }}>
-                Địa chỉ: phường Long Thạnh Mỹ, TP. Thủ Đức, TP. Hồ Chí Minh 
+                Địa chỉ: { car.address } 
               </Text>
               <Text style={{ marginLeft: 10, }}>
-                Địa chỉ cụ thể: số 221 đường Nguyễn Xiển 
+                Địa chỉ cụ thể: { car.address } 
               </Text>
           </View>
 
           <View style={styles.infoPriceCar}>
               <Text style={ styles.titleInfoStyle }>Chi tiết giá</Text>
               <Text style={{ marginLeft: 10, }}>
-                Đơn giá thuê: 800,000đ/ngày 
+                Đơn giá thuê: <NumberFormat
+                  value={ car.price }
+                  displayType="text"
+                  thousandSeparator
+                  prefix="đ"
+                  renderText={(value) => <Text style={{ fontWeight: 'bold' }}>{value}/ngày</Text>}
+                /> 
               </Text>
               <Text style={{ marginLeft: 10, }}>
-                Tổng cộng: 800,000đ 
+                Tổng cộng: <NumberFormat
+                  value={ car.price }
+                  displayType="text"
+                  thousandSeparator
+                  prefix="đ"
+                  renderText={(value) => <Text style={{ fontWeight: 'bold' }}>{value}/ngày</Text>}
+                /> 
               </Text>
           </View>
         </ScrollView>
         <View style={styles.infoUserStyle}>
-          <TouchableOpacity activeOpacity={0.8} style={ styles.btnStyle } onPress={() => console.log('press')}>
+          <TouchableOpacity activeOpacity={0.8} style={ styles.btnStyle } onPress={handleBorrowCar}>
             <View>
               <Text style={{ color: 'white', fontSize: 15, fontWeight: 'bold', }}>Thuê xe</Text>
             </View>
@@ -285,7 +382,6 @@ const styles = StyleSheet.create({
 
   infoDetailCar: {
     width: contentWidth,
-    height: 200,
     marginLeft: 21,
     marginBottom: 20,
     borderWidth: 1,
@@ -295,7 +391,7 @@ const styles = StyleSheet.create({
 
   infoPriceCar: {
     width: contentWidth,
-    height: 100,
+    height: 150,
     marginLeft: 21,
     marginBottom: 20,
     borderWidth: 1,

@@ -27,6 +27,11 @@ export async function createCar(infoCar) {
     return await requestFileAPI(`${ENDPOINT.REGISTER_CAR}`, method.POST, parseInfoCarBody, 'multipart/form-data');
 }
 
+export async function bookingCar(infoCar) {
+
+    return await requestAPI(`${ENDPOINT.BOOKING_CAR}`, method.POST, infoCar);
+}
+
 export async function getInfoAboutCar(code) {
  
     return await requestAPI(`${ENDPOINT.DETAIL_INFO}?code=${code}`, method.GET);

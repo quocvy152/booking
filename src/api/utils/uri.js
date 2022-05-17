@@ -20,6 +20,7 @@ export const ENDPOINT = {
   REGISTER_CAR: `${VERSION_1}${BASE_CARS}`,
   REGISTER_CAR_V2: `${VERSION_2}${BASE_CARS}`,
   DETAIL_INFO: `${VERSION_1}/Detail`,
+  BOOKING_CAR: `${VERSION_1}${BASE_CARS}/booking-car`,
 
   // Brands
   LIST_BRAND: `${VERSION_1}${BASE_BRANDS}`,
