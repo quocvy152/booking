@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, SafeAreaView, Text, View, TouchableOpacity, Image, ScrollView, FlatList, Dimensions, TextInput, Keyboard } from 'react-native';
+import { StyleSheet, SafeAreaView, Text, View, TouchableOpacity, Image, ScrollView, FlatList, Dimensions, TextInput, Keyboard, Button } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesome5 } from '@expo/vector-icons';
 import NumberFormat from 'react-number-format';
@@ -11,15 +11,18 @@ import SelectBox from 'react-native-multi-selectbox';
 import { xorBy } from 'lodash';
 const { width } = Dimensions.get('screen');
 const contentWidth = width - 42;
-import axios from 'axios';
+// import * as ImagePicker from 'react-native-image-picker';
+import * as ImagePicker from 'expo-image-picker';
 
 import ToastCustom from '../../components/ToastCustom';
 import { COLORS } from '../../constant/colors';
 import { PARAMS_CONSTANT } from '../../../src/constant/param';
 import { getInfoAboutCar, getListBrand, getListProvince, getListDistrict, getListWard, createCar } from '../../api/general';
-import { checkValidDataCar, returnDetailIDS, convertObjectToFormData } from '../../utils/utils';
+import { checkValidDataCar, returnDetailIDS, } from '../../utils/utils';
 
 const AddCar = ({ navigation }) => {
+  const [Img, setImg] = useState(null);
+  const [InfoImg, setInfoImg] = useState({});
   const [Name, setName] = useState();
   const [brand, setBrand] = useState({});
   const [listBrand, setListBrand] = useState([]);
@@ -263,7 +266,7 @@ const AddCar = ({ navigation }) => {
       WardId: ward.id, DistrictId: district.id, ProvinceId: province.id, 
       Seats: seats.id, Fuel: fuel.id, FuelConsumption: fuelConsumption.id, 
       Tranmission: tranmission.id, SelectedFeature: selectedFeature, 
-      SelectedLicense: selectedLicense,
+      SelectedLicense: selectedLicense, Img
     };
 
     let { error, message } = checkValidDataCar(bodyData);
@@ -276,6 +279,11 @@ const AddCar = ({ navigation }) => {
       let body = {
         Name, BrandId: brand.id, Description, Price, 
         Address_booking, WardId: ward.id, DistrictId: district.id, ProvinceId: province.id, 
+        Img: {
+          uri: Img,
+          type: 'image/jpeg',
+          name: Img,
+        }
       };
 
       // nối các đặc điểm tính năng thành chuỗi server cần
@@ -294,6 +302,30 @@ const AddCar = ({ navigation }) => {
       console.log({ error })
     } 
   }
+
+  const handleChoosePhoto = async () => {
+    const options = {
+      mediaType: 'photo',
+      quality: 1,
+    };
+
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    let { cancelled, height, type, width, uri } = result;
+    if(!cancelled) {
+      setImg(uri);
+      setInfoImg({
+        uri: Img,
+        type,
+        name: Img,
+      });
+    }
+  };
     
   return (
     <>
@@ -309,7 +341,28 @@ const AddCar = ({ navigation }) => {
         </View>
         <ScrollView nestedScrollEnabled={true}>
           <View style={styles.infoUserStyle}>
-            <Image source={require('../../resources/images/mazda-6-2020-26469.png')} style={ styles.avatarStyle } />
+            {
+              Img ?
+              (<Image source={{ uri: Img }} style={ styles.avatarStyle } />) :
+              (<Image source={require('../../resources/images/mazda-6-2020-26469.png')} style={ styles.avatarStyle } />)
+            }
+
+            <View style={{ width: '100%', marginBottom: 30 }}>
+                <TouchableOpacity 
+                  activeOpacity={0.8} 
+                  style={[ 
+                    styles.btnStyleUploadPhoto, 
+                    { backgroundColor: COLORS.WHITE, borderWidth: 1, borderColor: COLORS.DEFAULT_BACKGROUND }
+                  ]}
+                  onPress={handleChoosePhoto}>
+                  <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', }}>
+                    <FontAwesome5 name="upload" size={18} color={ COLORS.DEFAULT_BACKGROUND } style={{ marginRight: 5, }} /> 
+                    <Text style={{ color: COLORS.DEFAULT_BACKGROUND, fontSize: 15, fontWeight: 'bold', }}>
+                      Tải ảnh xe của bạn
+                    </Text>
+                  </View>
+              </TouchableOpacity>
+            </View>
 
             <View style={{ width: '100%', }}>
               <View style={{ flexDirection: 'row', alignItems: 'center', }}>
@@ -617,6 +670,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: 6,
     margin: 30,
+  },
+
+  btnStyleUploadPhoto: {
+    height: 38,
+    backgroundColor: COLORS.DEFAULT_BACKGROUND,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 6,
   },
 });
 

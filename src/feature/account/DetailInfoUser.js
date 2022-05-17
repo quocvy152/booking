@@ -23,17 +23,6 @@ const DetailInfoUser = ({ navigation, route }) => {
   const [Username, setUsername] = useState(infoUser ? infoUser.username : '');
   const [resourcePath, setResourcePath] = useState();
 
-  // const pickPicture = () => {
-  //   ImagePicker.openPicker({
-  //     width: 300,
-  //     height: 400,
-  //     cropping: true,
-  //   }).then(image => {
-  //     setUri(image.path);
-  //     props.onChange?.(image);
-  //   });
-  // };
-
   return (
     <SafeAreaView>
       <StatusBar style='dark' />

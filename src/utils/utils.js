@@ -38,6 +38,7 @@ export {
   convertObjectToFormData,
   checkValidDataCar,
   returnDetailIDS,
+  convertDateTimeToString,
 }
 
 function callNumber(phone) {
@@ -395,8 +396,14 @@ const checkValidDataCar = (infoDataCar) => {
     WardId, DistrictId, ProvinceId, 
     Seats, Fuel, FuelConsumption, 
     Tranmission, SelectedFeature, 
-    SelectedLicense,
+    SelectedLicense, Img
   } = infoDataCar;
+
+  if(!Img) 
+    return {
+      error: true,
+      message: 'Vui lòng đăng tải hình ảnh xe của bạn'
+    }
 
   if(!Name) 
     return {
@@ -496,4 +503,13 @@ const returnDetailIDS = (infoDataCar) => {
   let Detail_ids = `${Seats},${Fuel},${FuelConsumption},${Tranmission},${Detail_ids_GroupFeature},${Detail_ids_GroupLicense}`
 
   return Detail_ids;
+}
+
+const convertDateTimeToString = (dateTime) => {
+  console.log({ dateTime })
+  let tempDate = new Date(dateTime);
+  let fDate = tempDate.getDate() + '/' + (tempDate.getMonth() + 1) + '/' + tempDate.getFullYear();
+  let fTime = tempDate.getHours() + ' giờ ' + ' - ' + tempDate.getMinutes() + ' phút';
+
+  return fDate + ' ' + fTime;
 }

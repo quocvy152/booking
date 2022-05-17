@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, SafeAreaView, Text, View, TouchableOpacity, Image, ScrollView, FlatList, Dimensions } from 'react-native';
+import { StyleSheet, SafeAreaView, Text, View, TouchableOpacity, Image, ScrollView, FlatList, Dimensions, Button } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesome5 } from '@expo/vector-icons';
 import NumberFormat from 'react-number-format';
@@ -13,7 +13,7 @@ import CARS from '../../constant/cars';
 import TextInputCustom from '../../components/TextInputCustom';
 import { TouchableHighlight } from 'react-native-gesture-handler';
 import images from '../../resources/images/index';
-import { getListBrand } from '../../api/general';
+import { getListBrand, getListCarPrepare } from '../../api/general';
 
 const { width } = Dimensions.get('screen');
 const cardWidth = width / 2 - 20;
@@ -23,7 +23,11 @@ const Home = ({ navigation }) => {
   const name = infoUser?.name;
   const avatar = infoUser ? infoUser.avatar : '';
   const [listBrand, setListBrand] = useState([]);
+  const [listCar, setListCar] = useState([]);
   const [selectedCategorIndex, setSelectedCategorIndex] = useState();
+  const [pageIndex, setPageIndex] = useState(0);
+  const [limit, setLimit] = useState(10);
+  const [totalPage, setTotalPage] = useState();
 
   const fetchListBrand = async () => {
     let listBrandAPI = await getListBrand();
@@ -78,15 +82,23 @@ const Home = ({ navigation }) => {
           onPress={() => navigation.navigate('CarDetailScreen', car)}
         >
           <View style={ styles.card }>
-            <View style={{ alignItems: 'center', top: -20 }}>
-              <Image source={ car.image } style={{ height: 120, width: 120, borderRadius: 60, resizeMode: 'contain' }} />
+            <View style={{ alignItems: 'center', top: -15 }}>
+              {
+                car.images && car.images.length ?
+                (
+                  <Image source={{ uri: car.images[0] && car.images[0].url }} style={{ height: 120, width: 120, borderRadius: 60, resizeMode: 'contain' }} />
+                ) : (
+                  <Image source={require('../../resources/images/mazda-6-2020-26469.png')} style={{ height: 120, width: 120, borderRadius: 60, resizeMode: 'contain' }} />
+                )
+              }
+              
             </View>
             <View style={{ marginHorizontal: 20, top: -30 }}>
               <Text style={{ fontSize: 15, fontWeight: 'bold' }}>{ car.name && car.name.length > 16 ? car.name.slice(0, 16) + '...' : car.name }</Text>
               <Text style={{ fontSize: 15, color: COLORS.DEFAULT_TEXT }}>
-                Loại: 
+                Hiệu: 
                 <Text style={{ fontWeight: 'bold', color: 'black' }}>
-                  { '  ' + car.seat }
+                  { '  ' + car.brandName }
                 </Text> 
               </Text>
             </View>
@@ -99,11 +111,11 @@ const Home = ({ navigation }) => {
               }}
             >
               <NumberFormat
-                value={ car.priceBorrow }
+                value={ car.price }
                 displayType="text"
                 thousandSeparator
                 prefix="đ"
-                renderText={(value) => <Text style={{ fontWeight: 'bold' }}>{value}</Text>}
+                renderText={(value) => <Text style={{ fontWeight: 'bold' }}>{value}/ ngày</Text>}
               />
             </View>
           </View> 
@@ -111,7 +123,38 @@ const Home = ({ navigation }) => {
       </>
     );
   }
-    
+
+  const fetchDataListCarPrepare = async () => {
+    const querys = `pageIndex=${pageIndex}&limit=${limit}`;
+
+    let resultListCarPrepare = await getListCarPrepare(querys);
+    const { data, success } = resultListCarPrepare.data;
+    if(success) {
+      setListCar(data.items);
+      setTotalPage(data.totalPage);
+    }
+  }
+
+  const previousPage = () => {
+    if(pageIndex == 0) {
+      setPageIndex(0);
+    } else {
+      setPageIndex(pageIndex - 1);
+    }
+  }
+
+  const nextPage = () => {
+    if(pageIndex == totalPage) {
+      setPageIndex(totalPage);
+    } else {
+      setPageIndex(pageIndex + 1);
+    }
+  }
+
+  useEffect(() => { 
+    fetchDataListCarPrepare();
+  }, [pageIndex])
+
   return (
     <>
       <SafeAreaView style={{ flex: 1, }}>
@@ -151,12 +194,37 @@ const Home = ({ navigation }) => {
         <View>
           <ListCategories />
         </View>
-        <FlatList 
-          showsVerticalScrollIndicator={false}
-          numColumns={2}
-          data={CARS}
-          renderItem={({ item }) => <Card car={item} />}
-        />
+
+        {
+          listCar.length ?
+          (
+            <FlatList 
+              showsVerticalScrollIndicator={false}
+              numColumns={2}
+              //onEndReachedThreshold={0.5}
+              //onEndReached={() => setPageIndex(pageIndex + 1)}
+              data={listCar}
+              renderItem={({ item }) => <Card car={item} />}
+            />
+          ) : (
+            <></>
+          )
+        }
+
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', }}>
+          <Button 
+            title='Trang trước'
+            onPress={previousPage}
+          />
+          <View style={{ marginLeft: 65, marginRight: 65, }}>
+            <Text>{ pageIndex == 0 ? pageIndex + 1 : pageIndex } / { totalPage }</Text>
+          </View>
+          <Button 
+            title='Trang kế tiếp'
+            onPress={nextPage}
+          />
+        </View>
+        
       </SafeAreaView>
     </>
   );

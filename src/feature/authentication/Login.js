@@ -29,7 +29,7 @@ const Login = () => {
   useEffect(async () => {
     const token = await AsyncStorage.getItem(AsyncStorageContstants.AUTH_USER_TOKEN);
     if(token) {
-      fetchInfoUser();
+      await fetchInfoUser();
       navigate.navigate('HomeScreen');
     }
   }, );

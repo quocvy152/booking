@@ -12,6 +12,7 @@ import DetailInfoUser from './src/feature/account/DetailInfoUser';
 import ListCarUser from './src/feature/account/ListCarUser';
 import ListTripUser from './src/feature/account/ListTripUser';
 import AddCar from './src/feature/account/AddCar';
+import BorrowCar from './src/feature/account/BorrowCar';
 import { Provider } from 'react-redux';
 import store from './src/store/index';
 
@@ -36,6 +37,7 @@ export default function App() {
           <Stack.Screen name='AddCarScreen' component={AddCar} /> 
           <Stack.Screen name='ListTripUserScreen' component={ListTripUser} /> 
           <Stack.Screen name='CarDetailScreen' component={CarDetail} /> 
+          <Stack.Screen name='BorrowCarScreen' component={BorrowCar} /> 
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>

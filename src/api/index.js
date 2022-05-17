@@ -14,7 +14,7 @@ export async function requestAPI(path, method, body, injectHeader) {
       headers.token = token
     }
 
-    const url = `${DEV_ENVI.BASE_URL}${path}`;
+    const url = `${DEV_ENVI.BASE_URL_V2}${path}`;
 
     let objMeta = {
       method,
@@ -25,7 +25,7 @@ export async function requestAPI(path, method, body, injectHeader) {
     if(body) 
       objMeta.data = body
 
-    //console.log({ objMeta });
+    console.log({ objMeta });
 
     return await axios(objMeta);
 }
@@ -40,7 +40,7 @@ export async function requestFileAPI(path, method, body, type, injectHeader) {
     headers.Authorization = `Bearer ${token}`
   }
 
-  const url = `${DEV_ENVI.BASE_URL}${path}`;
+  const url = `${DEV_ENVI.BASE_URL_V2}${path}`;
 
   let objMeta = {
     method,

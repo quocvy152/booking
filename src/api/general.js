@@ -16,21 +16,14 @@ export async function getListBrand() {
     return await requestAPI(`${ENDPOINT.LIST_BRAND}`, method.GET);
 }
 
-export async function createCar(infoCar) {
-    // const body = {
-    //     Name: 'Innova Create',
-    //     Description: 'asaassa',
-    //     Price: 800000,
-    //     BrandId: 1,
-    //     ProvinceId: 1,
-    //     DistrictId: 1,
-    //     WardId: 1,
-    //     Address_booking: 'Đây là địa chỉ giao hàng',
-    //     Rules: 'Luật lệ',
-    //     Detail_ids: '36,44,48,42,58,57,76,77',
-    // }
+export async function getListCarPrepare(querys) {
+ 
+    return await requestAPI(`${ENDPOINT.LIST_CAR_PREPARE}?${querys}`, method.GET);
+}
 
+export async function createCar(infoCar) {
     const parseInfoCarBody = convertObjectToFormData(infoCar);
+
     return await requestFileAPI(`${ENDPOINT.REGISTER_CAR}`, method.POST, parseInfoCarBody, 'multipart/form-data');
 }
 
