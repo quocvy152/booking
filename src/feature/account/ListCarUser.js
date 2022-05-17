@@ -13,7 +13,7 @@ import CARS from '../../constant/cars';
 import TextInputCustom from '../../components/TextInputCustom';
 import { TouchableHighlight } from 'react-native-gesture-handler';
 import images from '../../resources/images/index';
-import { getListBrand } from '../../api/general';
+import { getListMyCar } from '../../api/general';
 import ButtonCustom from '../../components/ButtonCustom';
 import { backgroundColor } from 'react-native/Libraries/Components/View/ReactNativeStyleAttributes';
 const { width } = Dimensions.get('screen');
@@ -24,8 +24,26 @@ const ListCarUser = ({ navigation }) => {
   const infoUser = useSelector(state => state.auth.infoUser);
   const name = infoUser?.name;
   const avatar = infoUser ? infoUser.avatar : '';
+  const [listCarRegister, setListCarRegister] = useState([]);
+
+  const fetchMyListCarRegister = async () => {
+    let TYPE_GET_MY_CAR_REGISTER = 'personal';
+    let resultListCarRegister = await getListMyCar(TYPE_GET_MY_CAR_REGISTER);
+    let { success, data } = resultListCarRegister.data;
+
+    if(success) {
+      setListCarRegister(data);
+    }
+  }
+
+  useEffect(() => {
+    fetchMyListCarRegister();
+  }, []);
 
   const Card = ({ car }) => {
+    car.PREVIOUS_SCREEN_NAME = 'Thông Tin Của Bạn';
+    car.ROUTE_NAME = 'ListCarUserScreen';
+
     return (
       <>
         <TouchableOpacity 
@@ -33,15 +51,23 @@ const ListCarUser = ({ navigation }) => {
           onPress={() => navigation.navigate('CarDetailScreen', car)}
         >
           <View style={ styles.card }>
-            <View style={{ alignItems: 'center', top: -20 }}>
-              <Image source={ car.image } style={{ height: 120, width: 120, borderRadius: 60, resizeMode: 'contain' }} />
+            <View style={{ alignItems: 'center', top: -15 }}>
+              {
+                car.images && car.images.length ?
+                (
+                  <Image source={{ uri: car.images[0] && car.images[0].url }} style={{ height: 120, width: 120, borderRadius: 60, resizeMode: 'contain' }} />
+                ) : (
+                  <Image source={require('../../resources/images/mazda-6-2020-26469.png')} style={{ height: 120, width: 120, borderRadius: 60, resizeMode: 'contain' }} />
+                )
+              }
+              
             </View>
             <View style={{ marginHorizontal: 20, top: -30 }}>
               <Text style={{ fontSize: 15, fontWeight: 'bold' }}>{ car.name && car.name.length > 16 ? car.name.slice(0, 16) + '...' : car.name }</Text>
               <Text style={{ fontSize: 15, color: COLORS.DEFAULT_TEXT }}>
-                Loại: 
+                Hiệu: 
                 <Text style={{ fontWeight: 'bold', color: 'black' }}>
-                  { '  ' + car.seat }
+                  { '  ' + car.brandName }
                 </Text> 
               </Text>
             </View>
@@ -54,11 +80,11 @@ const ListCarUser = ({ navigation }) => {
               }}
             >
               <NumberFormat
-                value={ car.priceBorrow }
+                value={ car.price }
                 displayType="text"
                 thousandSeparator
                 prefix="đ"
-                renderText={(value) => <Text style={{ fontWeight: 'bold' }}>{value}</Text>}
+                renderText={(value) => <Text style={{ fontWeight: 'bold' }}>{value}/ ngày</Text>}
               />
             </View>
           </View> 
@@ -87,7 +113,36 @@ const ListCarUser = ({ navigation }) => {
               />
             </View>
         </View>
-        <View style={{ width: contentWidth, flexDirection: 'row', marginLeft: 10, }}>
+
+        <View style={{ justifyContent: 'center', alignItems: 'center', margin: 10, flexDirection: 'row' }}>
+          <FontAwesome5 name="car" size={20} color="#000080" style={{ marginRight: 10, }} />
+          <Text style={{ color: '#000080', fontSize: 20, fontWeight: 'bold' }}>Danh sách xe bạn đã đăng ký</Text>
+        </View>
+        
+        {
+          listCarRegister.length ?
+          (
+            <FlatList 
+              showsVerticalScrollIndicator={false}
+              numColumns={2}
+              data={listCarRegister}
+              renderItem={({ item }) => <Card car={item} />}
+            />
+          ) : 
+          (
+            <>
+            <View style={{ alignItems: 'center', justifyContent: 'center', marginTop: 20, }}>
+              <Image 
+                  source={require('../../resources/images/bg_emptyPNG.png')}
+                  style={{ width: 300, height: 300, resizeMode: 'contain' }}
+              />
+              <Text style={{ textAlign: 'center', fontSize: 17, fontStyle: 'italic', }}>Bạn chưa đăng ký xe nào</Text>
+            </View>
+            </>
+          )
+        }
+        
+        <View style={{ width: contentWidth, flexDirection: 'row', marginLeft: 10, marginBottom: 25, }}>
           <TouchableOpacity activeOpacity={0.8} style={ styles.btnStyle } onPress={() => navigation.navigate("AddCarScreen")}>
             <View>
               <Text style={{ color: 'white', fontSize: 15, fontWeight: 'bold', }}>Đăng ký xe</Text>
@@ -105,29 +160,6 @@ const ListCarUser = ({ navigation }) => {
             </View>
           </TouchableOpacity>
         </View>
-        {
-          infoUser && infoUser.cars && infoUser.cars.length ?
-          (
-            <FlatList 
-              showsVerticalScrollIndicator={false}
-              numColumns={2}
-              data={CARS}
-              renderItem={({ item }) => <Card car={item} />}
-            />
-          ) : 
-          (
-            <>
-            <View style={{ alignItems: 'center', justifyContent: 'center', marginTop: 20, }}>
-              <Image 
-                  source={require('../../resources/images/bg_emptyPNG.png')}
-                  style={{ width: 300, height: 300, resizeMode: 'contain' }}
-              />
-              <Text style={{ textAlign: 'center', fontSize: 17, fontStyle: 'italic', }}>Bạn chưa đăng ký xe nào</Text>
-            </View>
-            </>
-          )
-        }
-        
       </SafeAreaView>
     </>
   );

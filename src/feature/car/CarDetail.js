@@ -1,32 +1,91 @@
 import React, { Component, useState } from 'react';
-import { View, Text, StyleSheet, Image, Dimensions, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Image, Dimensions, ScrollView, Alert } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { removeCar } from '../../api/general';
 
 const { width } = Dimensions.get('screen');
 const contentWidth = width - 20;
 
-
 import { COLORS } from '../../constant/colors';
 import ButtonCustom from '../../components/ButtonCustom';
 import { StatusBar } from 'expo-status-bar';
+import ToastCustom from '../../components/ToastCustom';
 
 const CarDetail = ({ navigation, route }) => {
   const car = route.params;
-  console.log({  ID: car.id})
+  const PREVIOUS_SCREEN_NAME = route.params.PREVIOUS_SCREEN_NAME;
+  const ROUTE_NAME = route.params.ROUTE_NAME;
   const [infoSeats, setInfoSeats] = useState(car.details.find(detail => detail.detailType.code === 'SOGHE'));
   const [infoTranmission, setInfoTranmission] = useState(car.details.find(detail => detail.detailType.code === 'TRUYENDONG'));
   const [infoFuel, setInfoFuel] = useState(car.details.find(detail => detail.detailType.code === 'NHIENLIEU'));
   const [infoFuelConsumption, setInfoFuelConsumption] = useState(car.details.find(detail => detail.detailType.code === 'MUCTIEUTHUNHIENLIEU'));
-  const [listFeature, setListFeature] = useState(car.details.filter(detail => detail.detailType.code == 'TINHNANG'))
-  const [listLicense, setListLicense] = useState(car.details.filter(detail => detail.detailType.code == 'GIAYTOTHUEXE'))
+  const [listFeature, setListFeature] = useState(car.details.filter(detail => detail.detailType.code == 'TINHNANG'));
+  const [listLicense, setListLicense] = useState(car.details.filter(detail => detail.detailType.code == 'GIAYTOTHUEXE'));
+
+   // START TOASTCUSTOM MESSAGE
+   const [isShowToast, setIsShowToast] = useState(false);
+   const [content, setContent] = useState();
+   const [type, setType] = useState();
+   // END TOASTCUSTOM MESSAGE
+
+  const showToast = ({ content, type }) => {
+    setIsShowToast(true);
+    setContent(content);
+    setType(type);
+    setTimeout(() => {
+      setIsShowToast(false);
+    }, 1500)
+  }
+
+  const handleCancelRegisterCar = async () => {
+    let carID = car.id;
+    let resultRemoveCar = await removeCar(carID);
+    let { success, data, message } = resultRemoveCar.data;
+    console.log({ success, data, message })
+    if(success) {
+      showToast({ content: 'Hủy đăng ký xe thành công', type: 'success' });
+      setTimeout(() => {
+        navigation.navigate('ListCarUserScreen');
+      }, 1500)
+    } else {
+      showToast({ content: message, type: 'error' });
+      return;
+    }
+  }
+
+  const alert = () =>
+    Alert.alert(
+      "Thông Báo",
+      "Bạn có chắc chắn muốn hủy đăng ký xe không ?",
+      [
+        {
+          text: "Không",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel"
+        },
+        { text: "Có", onPress: handleCancelRegisterCar }
+      ]
+    );
 
   return (
     <SafeAreaView style={{ backgroundColor: COLORS.WHITE, flex: 1, flexDirection: 'column', }}>
       <StatusBar style='dark' />
+      <ToastCustom 
+          isShowToast={isShowToast}
+          contentToast={content}
+          typeToast={type}
+        />
       <View style={ styles.header }>
         <FontAwesome5 name="chevron-left" size={28} color="black" onPress={navigation.goBack} />
-        <Text style={{ fontSize: 20, fontWeight: 'bold', marginLeft: 10 }}>Trang chủ</Text>
+        {
+          PREVIOUS_SCREEN_NAME ?  
+          (
+            <Text style={{ fontSize: 20, fontWeight: 'bold', marginLeft: 10 }}>{ PREVIOUS_SCREEN_NAME }</Text>
+          ) : (
+            <Text style={{ fontSize: 20, fontWeight: 'bold', marginLeft: 10 }}>Trang chủ</Text>
+          )
+        }
       </View>
 
       <View style={ styles.body }>
@@ -190,16 +249,60 @@ const CarDetail = ({ navigation, route }) => {
               </View>
 
             </View>
-            <View style={ styles.btnParagraph }>
-              <ButtonCustom 
-                title='Thuê xe'
-                color={ COLORS.WHITE }
-                titleStyle={{ color: COLORS.DEFAULT_BACKGROUND, fontWeight: 'bold', fontSize: 20 }}
-                btnHeight={60}
-                btnWidth={contentWidth}
-                btnAction={() => navigation.navigate('BorrowCarScreen', car)}
-              />
-            </View>
+            {
+              ROUTE_NAME ?
+              (
+                ROUTE_NAME == 'ListCarUserScreen' ?
+                (
+                  <View style={ styles.groupBtnParagraph }>
+                    <ButtonCustom 
+                      title='Cập nhật xe'
+                      color='#FFD700'
+                      btnIcon='edit'
+                      titleStyle={{ color: 'white', fontWeight: 'bold', fontSize: 20 }}
+                      btnHeight={60}
+                      btnWidth={contentWidth}
+                      btnAction={() => navigation.navigate('UpdateCarScreen', car)}
+                    />
+                    <View style={{ marginBottom: 20, }}></View>
+
+                    <ButtonCustom 
+                      title='Hủy đăng ký xe'
+                      color='red'
+                      btnIcon='luggage-cart'
+                      titleStyle={{ color: 'white', fontWeight: 'bold', fontSize: 20 }}
+                      btnHeight={60}
+                      btnWidth={contentWidth}
+                      btnAction={alert}
+                    />
+                  </View>
+                ) : (
+                  <View style={ styles.btnParagraph }>
+                    <ButtonCustom 
+                      title='Hủy đặt xe'
+                      color='yellow'
+                      titleStyle={{ color: COLORS.DEFAULT_BACKGROUND, fontWeight: 'bold', fontSize: 20 }}
+                      btnHeight={60}
+                      btnIcon='holly-berry'
+                      btnWidth={contentWidth}
+                      btnAction={() => navigation.navigate('BorrowCarScreen', car)}
+                    />
+                  </View>
+                )
+              ) : (
+                <View style={ styles.btnParagraph }>
+                  <ButtonCustom 
+                    title='Thuê xe'
+                    color={ COLORS.WHITE }
+                    titleStyle={{ color: COLORS.DEFAULT_BACKGROUND, fontWeight: 'bold', fontSize: 20 }}
+                    btnHeight={60}
+                    btnWidth={contentWidth}
+                    btnAction={() => navigation.navigate('BorrowCarScreen', car)}
+                  />
+                </View>
+              )
+            }
+            
           </View>
         </ScrollView>
       </View>
@@ -247,6 +350,14 @@ const styles = StyleSheet.create({
 
   btnParagraph: {
     height: 150,
+    marginTop: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 40,
+  },
+  
+  groupBtnParagraph: {
+    height: 250,
     marginTop: 20,
     justifyContent: 'center',
     alignItems: 'center',

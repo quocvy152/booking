@@ -27,9 +27,39 @@ export async function createCar(infoCar) {
     return await requestFileAPI(`${ENDPOINT.REGISTER_CAR}`, method.POST, parseInfoCarBody, 'multipart/form-data');
 }
 
+export async function updateCar(infoCar) {
+    const body = {
+        id: 67,
+        name: "string",
+        description: "string",
+        price: 220000,
+        brandId: 1,
+        provinceId: 1,
+        districtId: 1,
+        wardId: 1,
+        address_booking: "sssss",
+        rules: "ssss",
+        detail_ids: "34,21"
+      }
+
+    const parseInfoCarBody = convertObjectToFormData(body);
+
+    return await requestAPI(`${ENDPOINT.REGISTER_CAR}`, method.PUT, parseInfoCarBody);
+}
+
 export async function bookingCar(infoCar) {
 
     return await requestAPI(`${ENDPOINT.BOOKING_CAR}`, method.POST, infoCar);
+}
+
+export async function getListMyCar(type) {
+
+    return await requestAPI(`${ENDPOINT.GET_LIST_MY_CAR}?type=${type}`, method.GET);
+}
+
+export async function removeCar(carID) {
+
+    return await requestAPI(`${ENDPOINT.REMOVE_CAR}?carId=${carID}`, method.DELETE);
 }
 
 export async function getInfoAboutCar(code) {

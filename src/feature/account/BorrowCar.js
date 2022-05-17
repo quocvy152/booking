@@ -130,13 +130,14 @@ const BorrowCar = ({ navigation, route }) => {
     }
 
     let resultCallBookingCar = await bookingCar(body);
-    let { success, data, message: messageBookingCar } = resultCallBookingCar.data;
-
+    let { success, data: messageBookingCar } = resultCallBookingCar.data;
     if(success) {
-      showToast({ content: 'Bạn đã đặt xe thành công. Chủ xe sẽ liên hệ với bạn trong vòng 24h', type: 'success' });
-      navigation.navigate('HomeScreen');
-    } else {
       showToast({ content: messageBookingCar, type: 'success' });
+      setTimeout(() => {
+        navigation.navigate('HomeScreen');
+      }, 1500);
+    } else {
+      showToast({ content: messageBookingCar, type: 'warning' });
       return;
     }
   }
