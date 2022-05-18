@@ -2,7 +2,7 @@ import React, { Component, useState } from 'react';
 import { View, Text, StyleSheet, Image, Dimensions, ScrollView, Alert } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { removeCar } from '../../api/general';
+import { removeCar, cancelBookingCar } from '../../api/general';
 
 const { width } = Dimensions.get('screen');
 const contentWidth = width - 20;
@@ -66,6 +66,35 @@ const CarDetail = ({ navigation, route }) => {
         { text: "Có", onPress: handleCancelRegisterCar }
       ]
     );
+
+    const alertBooking = () =>
+    Alert.alert(
+      "Thông Báo",
+      "Bạn có chắc chắn muốn hủy xe đã đặt không ?",
+      [
+        {
+          text: "Không",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel"
+        },
+        { text: "Có", onPress: handleCancelBooking }
+      ]
+    );
+
+  const handleCancelBooking = async () => {
+    let carID = car.id;
+    let resultCancelBooking = await cancelBookingCar(carID);
+    let { success, data, message } = resultCancelBooking.data;
+    if(success) {
+      showToast({ content: 'Hủy đặt xe thành công', type: 'success' });
+      setTimeout(() => {
+        navigation.navigate('ListTripUserScreen');
+      }, 1500)
+    } else {
+      showToast({ content: message, type: 'error' });
+      return;
+    }
+  }
 
   return (
     <SafeAreaView style={{ backgroundColor: COLORS.WHITE, flex: 1, flexDirection: 'column', }}>
@@ -284,7 +313,7 @@ const CarDetail = ({ navigation, route }) => {
                       btnHeight={60}
                       btnIcon='holly-berry'
                       btnWidth={contentWidth}
-                      btnAction={() => navigation.navigate('BorrowCarScreen', car)}
+                      btnAction={alertBooking}
                     />
                   </View>
                 )

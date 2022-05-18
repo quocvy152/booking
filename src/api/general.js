@@ -50,7 +50,7 @@ export async function removeCar(carID) {
 
 export async function cancelBookingCar(carID) {
 
-    return await requestAPI(`${ENDPOINT.REMOVE_CAR}?carId=${carID}`, method.PUT);
+    return await requestAPI(`${ENDPOINT.CANCEL_BOOKING_CAR}?carId=${carID}`, method.PUT);
 }
 
 export async function getInfoAboutCar(code) {
