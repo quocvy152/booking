@@ -29,6 +29,9 @@ const Home = ({ navigation }) => {
   const [limit, setLimit] = useState(10);
   const [totalPage, setTotalPage] = useState();
 
+  const [nameSearch, setNameSearch] = useState('');
+  const [checkReload, setCheckReload] = useState(false);
+
   const fetchListBrand = async () => {
     let listBrandAPI = await getListBrand();
     let { success, data: listBrand } = listBrandAPI.data;
@@ -82,7 +85,7 @@ const Home = ({ navigation }) => {
           onPress={() => navigation.navigate('CarDetailScreen', car)}
         >
           <View style={ styles.card }>
-            <View style={{ alignItems: 'center', top: -15 }}>
+            <View style={{ alignItems: 'center', top: -15, height: 120, }}>
               {
                 car.images && car.images.length ?
                 (
@@ -98,7 +101,7 @@ const Home = ({ navigation }) => {
               <Text style={{ fontSize: 15, color: COLORS.DEFAULT_TEXT }}>
                 Hiệu: 
                 <Text style={{ fontWeight: 'bold', color: 'black' }}>
-                  { '  ' + car.brandName }
+                  { '  ' + car.brand.name }
                 </Text> 
               </Text>
             </View>
@@ -134,6 +137,7 @@ const Home = ({ navigation }) => {
       setTotalPage(data.totalPage);
     }
   }
+  
 
   const previousPage = () => {
     if(pageIndex == 0) {
@@ -154,6 +158,19 @@ const Home = ({ navigation }) => {
   useEffect(() => { 
     fetchDataListCarPrepare();
   }, [pageIndex])
+
+  useEffect(() => {
+    fetchDataListCarPrepare();
+  }, [checkReload]);
+
+  useEffect(() => {
+    let listCarFilter = listCar.filter(car => car.name.toLowerCase().includes(nameSearch.toLowerCase()));
+    setListCar(listCarFilter);
+
+    if(!nameSearch) {
+      setCheckReload(!checkReload);
+    }
+  }, [nameSearch]);
 
   return (
     <>
@@ -185,6 +202,7 @@ const Home = ({ navigation }) => {
                 textColor={ COLORS.DEFAULT_TEXT }
                 placeholderText='Tìm kiếm xe'
                 style={{ marginLeft: 10, borderRadius: 10, width: '95%' }}
+                textInputAction={val => setNameSearch(val)}
               />
             </View>
             <View style={ styles.sortBtn }>
@@ -207,23 +225,38 @@ const Home = ({ navigation }) => {
               renderItem={({ item }) => <Card car={item} />}
             />
           ) : (
-            <></>
+            <>
+              <View style={{ alignItems: 'center', justifyContent: 'center', marginTop: 20, marginBottom: '100%' }}>
+                <Image 
+                    source={require('../../resources/images/bg_emptyPNG.png')}
+                    style={{ width: 300, height: 300, resizeMode: 'contain' }}
+                />
+                <Text style={{ textAlign: 'center', fontSize: 17, fontStyle: 'italic', }}>Bạn chưa đăng ký xe nào</Text>
+              </View>
+            </>
           )
         }
 
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', }}>
-          <Button 
-            title='Trang trước'
-            onPress={previousPage}
-          />
-          <View style={{ marginLeft: 65, marginRight: 65, }}>
-            <Text>{ pageIndex == 0 ? pageIndex + 1 : pageIndex } / { totalPage }</Text>
-          </View>
-          <Button 
-            title='Trang kế tiếp'
-            onPress={nextPage}
-          />
-        </View>
+        {
+          listCar.length >= 10 ? 
+          (
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', }}>
+              <Button 
+                title='Trang trước'
+                onPress={previousPage}
+              />
+              <View style={{ marginLeft: 65, marginRight: 65, }}>
+                <Text>{ pageIndex == 0 ? pageIndex + 1 : pageIndex } / { totalPage }</Text>
+              </View>
+              <Button 
+                title='Trang kế tiếp'
+                onPress={nextPage}
+              />
+            </View>
+          ) : (
+            <></>
+          )
+        }
         
       </SafeAreaView>
     </>

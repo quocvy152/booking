@@ -20,11 +20,13 @@ const { width } = Dimensions.get('screen');
 const cardWidth = width / 2 - 20;
 const contentWidth = width - 20;
 
-const ListCarUser = ({ navigation }) => {
+const ListCarUser = ({ navigation, route }) => {
   const infoUser = useSelector(state => state.auth.infoUser);
   const name = infoUser?.name;
   const avatar = infoUser ? infoUser.avatar : '';
   const [listCarRegister, setListCarRegister] = useState([]);
+  const [nameSearch, setNameSearch] = useState('');
+  const [checkReload, setCheckReload] = useState(false);
 
   const fetchMyListCarRegister = async () => {
     let TYPE_GET_MY_CAR_REGISTER = 'personal';
@@ -38,7 +40,15 @@ const ListCarUser = ({ navigation }) => {
 
   useEffect(() => {
     fetchMyListCarRegister();
-  }, []);
+  }, [checkReload]);
+
+  useEffect(() => {
+    let listCarFilter = listCarRegister.filter(car => car.name.toLowerCase().includes(nameSearch.toLowerCase()));
+    setListCarRegister(listCarFilter);
+    if(!nameSearch) {
+      setCheckReload(!checkReload);
+    }
+  }, [nameSearch]);
 
   const Card = ({ car }) => {
     car.PREVIOUS_SCREEN_NAME = 'Thông Tin Của Bạn';
@@ -67,7 +77,7 @@ const ListCarUser = ({ navigation }) => {
               <Text style={{ fontSize: 15, color: COLORS.DEFAULT_TEXT }}>
                 Hiệu: 
                 <Text style={{ fontWeight: 'bold', color: 'black' }}>
-                  { '  ' + car.brandName }
+                  { '  ' + car.brand.name }
                 </Text> 
               </Text>
             </View>
@@ -110,6 +120,7 @@ const ListCarUser = ({ navigation }) => {
                 textColor={ COLORS.DEFAULT_TEXT }
                 placeholderText='Tìm kiếm xe'
                 style={{ marginLeft: 10, borderRadius: 10, width: '95%' }}
+                textInputAction={val => setNameSearch(val)}
               />
             </View>
         </View>
@@ -131,13 +142,13 @@ const ListCarUser = ({ navigation }) => {
           ) : 
           (
             <>
-            <View style={{ alignItems: 'center', justifyContent: 'center', marginTop: 20, }}>
-              <Image 
-                  source={require('../../resources/images/bg_emptyPNG.png')}
-                  style={{ width: 300, height: 300, resizeMode: 'contain' }}
-              />
-              <Text style={{ textAlign: 'center', fontSize: 17, fontStyle: 'italic', }}>Bạn chưa đăng ký xe nào</Text>
-            </View>
+              <View style={{ alignItems: 'center', justifyContent: 'center', marginTop: 20, }}>
+                <Image 
+                    source={require('../../resources/images/bg_emptyPNG.png')}
+                    style={{ width: 300, height: 300, resizeMode: 'contain' }}
+                />
+                <Text style={{ textAlign: 'center', fontSize: 17, fontStyle: 'italic', }}>Bạn chưa đăng ký xe nào</Text>
+              </View>
             </>
           )
         }

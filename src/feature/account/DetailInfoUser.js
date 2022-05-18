@@ -13,6 +13,7 @@ import ButtonCustom from '../../components/ButtonCustom';
 import { StatusBar } from 'expo-status-bar';
 import images from '../../resources/images';
 import { TextInput } from 'react-native-gesture-handler';
+import ToastCustom from '../../components/ToastCustom';
 
 const DetailInfoUser = ({ navigation, route }) => {
   const infoUser = useSelector(state => state.auth.infoUser);
@@ -23,9 +24,65 @@ const DetailInfoUser = ({ navigation, route }) => {
   const [Username, setUsername] = useState(infoUser ? infoUser.username : '');
   const [resourcePath, setResourcePath] = useState();
 
+  // START TOASTCUSTOM MESSAGE
+  const [isShowToast, setIsShowToast] = useState(false);
+  const [content, setContent] = useState();
+  const [type, setType] = useState();
+  // END TOASTCUSTOM MESSAGE
+
+  const handleUpdateInfoUser = () => {
+    let body = {
+      name, 
+      email,
+      phone,
+      Username
+    };
+
+    if(!name) {
+      showToast({ content: 'Vui lòng nhập tên' });
+      return;
+    }
+
+    if(!email) {
+      showToast({ content: 'Vui lòng nhập email' });
+      return;
+    }
+
+    if(!phone) {
+      showToast({ content: 'Vui lòng nhập số điện thoại' });
+      return;
+    }
+
+    if(!Username) {
+      showToast({ content: 'Vui lòng nhập tài khoản' });
+      return;
+    }
+
+    // CALL API
+
+    showToast({ content: 'Cập nhật tài khoản thành công', type: 'success' });
+    setTimeout(() => {
+      navigation.goBack();
+    }, 1500);
+  }
+
+  const showToast = ({ content, type }) => {
+    setIsShowToast(true);
+    setContent(content);
+    setType(type);
+    setTimeout(() => {
+      setIsShowToast(false);
+    }, 1500)
+  }
+
   return (
     <SafeAreaView>
       <StatusBar style='dark' />
+      <ToastCustom 
+          isShowToast={isShowToast}
+          contentToast={content}
+          typeToast={type}
+        />
       <View style={ styles.navigateStyle }>
         <Icon name="chevron-left" size={28} color="black" onPress={navigation.goBack} style={{ marginLeft: 15 }} />
         <Text style={{ fontSize: 20, fontWeight: 'bold', marginLeft: 10 }}>Thông Tin Của Bạn</Text>
@@ -61,7 +118,7 @@ const DetailInfoUser = ({ navigation, route }) => {
           onChangeText={val => setPhone(val)} 
           keyboardType='number-pad'
         />
-        <TouchableOpacity activeOpacity={0.8} style={ styles.btnStyle }>
+        <TouchableOpacity activeOpacity={0.8} style={ styles.btnStyle } onPress={handleUpdateInfoUser}>
           <View>
             <Text style={{ color: 'white', fontSize: 15, fontWeight: 'bold', }}>Cập nhật tải khoản</Text>
           </View>

@@ -25,6 +25,8 @@ const ListTripUser = ({ navigation, route }) => {
   const name = infoUser?.name;
   const avatar = infoUser ? infoUser.avatar : '';
   const [listTrip, setListTrip] = useState([]);
+  const [nameSearch, setNameSearch] = useState('');
+  const [checkReload, setCheckReload] = useState(false);
 
   const fetchListTrip = async () => {
     let TYPE_GET_LIST_TRIP = 'booking';
@@ -38,7 +40,15 @@ const ListTripUser = ({ navigation, route }) => {
 
   useEffect(() => {
     fetchListTrip();
-  }, []);
+  }, [checkReload]);
+
+  useEffect(() => {
+    let listCarFilter = listTrip.filter(car => car.name.toLowerCase().includes(nameSearch.toLowerCase()));
+    setListTrip(listCarFilter);
+    if(!nameSearch) {
+      setCheckReload(!checkReload);
+    }
+  }, [nameSearch]);
 
   const Card = ({ car }) => {
     car.PREVIOUS_SCREEN_NAME = 'Thông Tin Của Bạn';
@@ -67,7 +77,7 @@ const ListTripUser = ({ navigation, route }) => {
               <Text style={{ fontSize: 15, color: COLORS.DEFAULT_TEXT }}>
                 Hiệu: 
                 <Text style={{ fontWeight: 'bold', color: 'black' }}>
-                  { '  ' + car.brandName }
+                  { '  ' + car.brand.name }
                 </Text> 
               </Text>
             </View>
@@ -110,6 +120,7 @@ const ListTripUser = ({ navigation, route }) => {
                 textColor={ COLORS.DEFAULT_TEXT }
                 placeholderText='Tìm kiếm chuyến đi'
                 style={{ marginLeft: 10, borderRadius: 10, width: '95%' }}
+                textInputAction={val => setNameSearch(val)}
               />
             </View>
         </View>

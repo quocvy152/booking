@@ -28,7 +28,6 @@ const UpdateCar = ({ navigation, route }) => {
   const infoFuelConsumption = car.details.find(detail => detail.detailType.code === 'MUCTIEUTHUNHIENLIEU');
   //let listFeatureSelected = car.details.filter(detail => detail.detailType.code === 'TINHNANG').map(detail => ({ id: detail.id, item: detail.val }));
   //let listLicenseSelected = car.details.filter(detail => detail.detailType.code === 'GIAYTOTHUEXE').map(detail => ({ id: detail.id, item: detail.val }));
-
   const [Img, setImg] = useState(car.images && car.images[0] && car.images[0].url);
   const [InfoImg, setInfoImg] = useState({});
   const [Name, setName] = useState(car.name);
@@ -291,11 +290,11 @@ const UpdateCar = ({ navigation, route }) => {
       SelectedLicense: selectedLicense, Img
     };
 
-    // let { error, message } = checkValidDataCar(bodyData);
-    // if(error) {
-    //   showToast({ content: message, type: 'warning' });
-    //   return;
-    // }
+    let { error, message } = checkValidDataCar(bodyData);
+    if(error) {
+      showToast({ content: message, type: 'warning' });
+      return;
+    }
 
     try {
       let body = {
@@ -313,7 +312,7 @@ const UpdateCar = ({ navigation, route }) => {
       body.Detail_ids = Detail_ids;
 
       let resultUpdateCar = await updateCar(body);
-      let { success, data } = resultUpdateCar.data;
+      let { success, data, message } = resultUpdateCar.data;
       if(success) {
         showToast({ content: 'Cập nhật xe thành công', type: 'success' });
         setTimeout(() => {

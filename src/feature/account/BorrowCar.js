@@ -130,7 +130,7 @@ const BorrowCar = ({ navigation, route }) => {
     }
 
     let resultCallBookingCar = await bookingCar(body);
-    let { success, data: messageBookingCar } = resultCallBookingCar.data;
+    let { success, message: messageBookingCar, data } = resultCallBookingCar.data;
     if(success) {
       showToast({ content: messageBookingCar, type: 'success' });
       setTimeout(() => {

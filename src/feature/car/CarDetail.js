@@ -42,7 +42,6 @@ const CarDetail = ({ navigation, route }) => {
     let carID = car.id;
     let resultRemoveCar = await removeCar(carID);
     let { success, data, message } = resultRemoveCar.data;
-    console.log({ success, data, message })
     if(success) {
       showToast({ content: 'Hủy đăng ký xe thành công', type: 'success' });
       setTimeout(() => {
@@ -259,7 +258,7 @@ const CarDetail = ({ navigation, route }) => {
                       title='Cập nhật xe'
                       color='#FFD700'
                       btnIcon='edit'
-                      titleStyle={{ color: 'white', fontWeight: 'bold', fontSize: 20 }}
+                      titleStyle={{ color: 'white', fontWeight: 'bold', fontSize: 20, marginLeft: 10, }}
                       btnHeight={60}
                       btnWidth={contentWidth}
                       btnAction={() => navigation.navigate('UpdateCarScreen', car)}
@@ -270,7 +269,7 @@ const CarDetail = ({ navigation, route }) => {
                       title='Hủy đăng ký xe'
                       color='red'
                       btnIcon='luggage-cart'
-                      titleStyle={{ color: 'white', fontWeight: 'bold', fontSize: 20 }}
+                      titleStyle={{ color: 'white', fontWeight: 'bold', fontSize: 20, marginLeft: 10, }}
                       btnHeight={60}
                       btnWidth={contentWidth}
                       btnAction={alert}
@@ -281,7 +280,7 @@ const CarDetail = ({ navigation, route }) => {
                     <ButtonCustom 
                       title='Hủy đặt xe'
                       color='yellow'
-                      titleStyle={{ color: COLORS.DEFAULT_BACKGROUND, fontWeight: 'bold', fontSize: 20 }}
+                      titleStyle={{ color: COLORS.DEFAULT_BACKGROUND, fontWeight: 'bold', fontSize: 20, marginLeft: 10, }}
                       btnHeight={60}
                       btnIcon='holly-berry'
                       btnWidth={contentWidth}

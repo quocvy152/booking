@@ -27,7 +27,7 @@ const ButtonCustom = ({
         onPress={btnAction}
     >
       <View style={ styles.titleBtn }>
-        <FontAwesome5 name={ btnIcon } size={24} color={ COLORS.DEFAULT_TEXT } style={{ marginRight: 10, }} />
+        <FontAwesome5 name={ btnIcon } size={24} color={ COLORS.DEFAULT_TEXT } />
         <Text style={[styles.textStyle, { ...titleStyle }]}>{title}</Text>
       </View>
     </TouchableOpacity>

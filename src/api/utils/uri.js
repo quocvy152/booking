@@ -24,6 +24,7 @@ export const ENDPOINT = {
   BOOKING_CAR: `${VERSION_1}${BASE_CARS}/booking-car`,
   GET_LIST_MY_CAR: `${VERSION_1}${BASE_CARS}/my-cars`,
   REMOVE_CAR: `${VERSION_1}${BASE_CARS}`,
+  CANCEL_BOOKING_CAR: `${VERSION_1}${BASE_CARS}/cancel-booking`,
 
   // Brands
   LIST_BRAND: `${VERSION_1}${BASE_BRANDS}`,

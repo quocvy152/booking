@@ -28,23 +28,9 @@ export async function createCar(infoCar) {
 }
 
 export async function updateCar(infoCar) {
-    const body = {
-        id: 67,
-        name: "string",
-        description: "string",
-        price: 220000,
-        brandId: 1,
-        provinceId: 1,
-        districtId: 1,
-        wardId: 1,
-        address_booking: "sssss",
-        rules: "ssss",
-        detail_ids: "34,21"
-      }
+    //const parseInfoCarBody = convertObjectToFormData(body);
 
-    const parseInfoCarBody = convertObjectToFormData(body);
-
-    return await requestAPI(`${ENDPOINT.REGISTER_CAR}`, method.PUT, parseInfoCarBody);
+    return await requestFileAPI(`${ENDPOINT.UPDATE_CAR}`, method.PUT, infoCar, 'application/json-patch+json');
 }
 
 export async function bookingCar(infoCar) {
@@ -60,6 +46,11 @@ export async function getListMyCar(type) {
 export async function removeCar(carID) {
 
     return await requestAPI(`${ENDPOINT.REMOVE_CAR}?carId=${carID}`, method.DELETE);
+}
+
+export async function cancelBookingCar(carID) {
+
+    return await requestAPI(`${ENDPOINT.REMOVE_CAR}?carId=${carID}`, method.PUT);
 }
 
 export async function getInfoAboutCar(code) {
