@@ -1,7 +1,7 @@
 // import external
 import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, SafeAreaView, Text, View, TouchableOpacity, Keyboard } from 'react-native';
+import { StyleSheet, SafeAreaView, Text, View, TouchableOpacity, Keyboard, } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesome5 } from '@expo/vector-icons';
 
@@ -30,14 +30,27 @@ const Register = ({ navigation }) => {
     setIsShowToast(true);
     setTypeToast(type);
     setContentToast(content);
+    hideLoading();
     setTimeout(() => {
       setIsShowToast(false)
     }, 1500);
 }
 // === END TOAST MESSAGE === //
 
+  // SHOW LOADING STATE
+  const [isLoading, setIsLoading] = useState(false);
+
+  const showLoading = () => {
+    setIsLoading(true);
+  }
+
+  const hideLoading = () => {
+    setIsLoading(false);
+  }
+
   const handleSubmitRegister = () => {
     Keyboard.dismiss();
+    showLoading();
 
     if(!Username || !Email || !Password || !ConfirmPassword || !PhoneNumber || !Name) {
       showToast({ content: 'Vui lòng điền thông tin đầy đủ' });
@@ -84,7 +97,6 @@ const Register = ({ navigation }) => {
         console.log({ error });
         return;
       })
-    
   }
     
   return (
@@ -177,6 +189,7 @@ const Register = ({ navigation }) => {
                   title='Đăng Ký'
                   color={ COLORS.BUTTON_AUTH_COLOR }
                   btnAction={handleSubmitRegister}
+                  btnLoading={isLoading}
               />
             </View>
         </View>

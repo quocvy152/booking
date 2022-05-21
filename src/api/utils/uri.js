@@ -14,6 +14,8 @@ export const ENDPOINT = {
   REGISTER: `${VERSION_1}${BASE_APP_USERS}/Registration`,
   RESET_PASSWORD: `${VERSION_1}${BASE_APP_USERS}/ResetPassword`,
   INFO_USER: `${VERSION_1}${BASE_APP_USERS}/Info`,
+  UPDATE_USER: `${VERSION_1}${BASE_APP_USERS}/update`,
+  CHANGE_PASSWORD: `${VERSION_1}${BASE_APP_USERS}/change-password`,
 
   // Cars
   LIST_CAR_PREPARE: `${VERSION_1}${BASE_CARS}/cars`,

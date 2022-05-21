@@ -25,7 +25,7 @@ const Home = ({ navigation }) => {
   const [listBrand, setListBrand] = useState([]);
   const [listCar, setListCar] = useState([]);
   const [selectedCategorIndex, setSelectedCategorIndex] = useState();
-  const [pageIndex, setPageIndex] = useState(0);
+  const [pageIndex, setPageIndex] = useState(1);
   const [limit, setLimit] = useState(10);
   const [totalPage, setTotalPage] = useState();
 
@@ -140,8 +140,8 @@ const Home = ({ navigation }) => {
   
 
   const previousPage = () => {
-    if(pageIndex == 0) {
-      setPageIndex(0);
+    if(pageIndex == 1) {
+      setPageIndex(1);
     } else {
       setPageIndex(pageIndex - 1);
     }
@@ -246,7 +246,7 @@ const Home = ({ navigation }) => {
                 onPress={previousPage}
               />
               <View style={{ marginLeft: 65, marginRight: 65, }}>
-                <Text>{ pageIndex == 0 ? pageIndex + 1 : pageIndex } / { totalPage }</Text>
+                <Text>{ pageIndex } / { totalPage }</Text>
               </View>
               <Button 
                 title='Trang kế tiếp'
@@ -323,7 +323,6 @@ const styles = StyleSheet.create({
     height: 220,
     width: cardWidth,
     marginHorizontal: 10,
-    marginBottom: 20,
     marginTop: 40, 
     borderRadius: 15, 
     elevation: 13,

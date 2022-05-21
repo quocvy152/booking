@@ -51,7 +51,7 @@ export async function requestFileAPI(path, method, body, type, injectHeader) {
   if(body) 
     objMeta.data = body
 
-  // console.log({ objMeta });
+  console.log({ objMeta });
 
   return await axios(objMeta);
 }

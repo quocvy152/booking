@@ -348,7 +348,7 @@ const AddCar = ({ navigation }) => {
             }
 
             <View style={{ width: '100%', marginBottom: 30 }}>
-                <TouchableOpacity 
+              <TouchableOpacity 
                   activeOpacity={0.8} 
                   style={[ 
                     styles.btnStyleUploadPhoto, 

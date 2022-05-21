@@ -1,7 +1,7 @@
 //import liraries
 import { FontAwesome5 } from '@expo/vector-icons';
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { COLORS } from '../constant/colors';
 
 const ButtonCustom = ({ 
@@ -11,6 +11,7 @@ const ButtonCustom = ({
     btnAction,
     btnHeight,
     btnWidth,
+    btnLoading,
     titleStyle
 }) => {
 
@@ -27,7 +28,14 @@ const ButtonCustom = ({
         onPress={btnAction}
     >
       <View style={ styles.titleBtn }>
-        <FontAwesome5 name={ btnIcon } size={24} color={ COLORS.DEFAULT_TEXT } />
+        {
+          btnLoading ? 
+          (
+            <ActivityIndicator size="large" color="white" style={{ marginRight: 10, }} />
+          ) : (
+            <FontAwesome5 name={ btnIcon } size={24} color={ COLORS.DEFAULT_TEXT } />
+          )
+        }
         <Text style={[styles.textStyle, { ...titleStyle }]}>{title}</Text>
       </View>
     </TouchableOpacity>

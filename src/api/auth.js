@@ -26,6 +26,16 @@ export async function getInfoUser() {
     return await requestAPI(`${ENDPOINT.INFO_USER}`, method.GET);
 };
 
+export async function updateUser(infoUserUpdate) {
+ 
+    return await requestFileAPI(`${ENDPOINT.UPDATE_USER}`, method.PUT, infoUserUpdate, 'application/json-patch+json');
+};
+
+export async function changePassword(bodyChangePass) {
+ 
+    return await requestFileAPI(`${ENDPOINT.CHANGE_PASSWORD}`, method.POST, bodyChangePass, 'application/json-patch+json');
+};
+
 export async function resetPassword(Username) {
  
     return await requestAPI(`${ENDPOINT.RESET_PASSWORD}?username=${Username}`, method.PUT);

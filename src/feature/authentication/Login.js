@@ -1,9 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, SafeAreaView, Text, View, TouchableOpacity, Image, Keyboard, } from 'react-native';
+import { 
+  StyleSheet, SafeAreaView, 
+  Text, View, TouchableOpacity, 
+  Image, Keyboard, ActivityIndicator, 
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useDispatch, useSelector } from 'react-redux';
+import Icon from '@expo/vector-icons/Entypo';
 
 import { COLORS } from '../../constant/colors';
 import images from '../../resources/images';
@@ -26,13 +31,16 @@ const Login = () => {
   const [type, setType] = useState();
   // END TOASTCUSTOM MESSAGE
 
+  // SHOW LOADING STATE
+  const [isLoading, setIsLoading] = useState(false);
+
   useEffect(async () => {
     const token = await AsyncStorage.getItem(AsyncStorageContstants.AUTH_USER_TOKEN);
     if(token) {
       await fetchInfoUser();
       navigate.navigate('HomeScreen');
     }
-  }, );
+  }, []);
 
   const openForgotPassword = () => {
     navigate.navigate('ForgotPasswordScreen');
@@ -49,6 +57,14 @@ const Login = () => {
     setTimeout(() => {
       setIsShowToast(false);
     }, 1500)
+  }
+
+  const showLoading = () => {
+    setIsLoading(true);
+  }
+
+  const hideLoading = () => {
+    setIsLoading(false);
   }
 
   const fetchInfoUser = async () => {
@@ -71,8 +87,10 @@ const Login = () => {
 
   const handleLoginSubmit = async () => {
     Keyboard.dismiss();
+    showLoading();
 
     if(!Username || !Password) {
+      hideLoading();
       showToast({ content: 'Vui lòng điền đủ thông tin' })
       return;
     }
@@ -85,17 +103,25 @@ const Login = () => {
     loginAPI(body)
       .then(res => {
         let { data: token, success, message } = res.data;
+        console.log({ token, success, message })
         if(!success) {
-          if(message == 'username or email in correct') {
-            showToast({ type: 'error', content: 'Tài khoản hoặc Email không tồn tại' })
-            return;
-          } 
+          hideLoading();
 
-          if(message == 'password in correct') {
-            showToast({ type: 'error', content: 'Mật khẩu không chính xác' })
+            showToast({ type: 'error', content: message })
             return;
-          }
+
+          // if(message == 'username or email in correct') {
+          //   showToast({ type: 'error', content: 'Tài khoản hoặc Email không tồn tại' })
+          //   return;
+          // } 
+
+          // if(message == 'password in correct') {
+          //   showToast({ type: 'error', content: 'Mật khẩu không chính xác' })
+          //   return;
+          // }
         } else {
+          hideLoading();
+
           AsyncStorage.setItem(
             AsyncStorageContstants.AUTH_USER_TOKEN,
             token,
@@ -108,7 +134,7 @@ const Login = () => {
           showToast({ type: 'success', content: 'Đăng nhập thành công' });
           setTimeout(() => {
             navigate.navigate('HomeScreen');
-          }, 1500);
+          }, 1000);
         }
       })
       .catch( err => {
@@ -129,7 +155,7 @@ const Login = () => {
         />
         <View style={ styles.content }>
             <Text style={ styles.hiText }>
-            Đăng Nhập Booking
+              Đăng Nhập Booking
             </Text>
         </View>
 
@@ -170,11 +196,12 @@ const Login = () => {
             </View>
             
             <View style={{ marginTop: 15 }}>
-            <ButtonCustom 
-                title='Đăng Nhập'
-                color='#2F4F4F'
-                btnAction={handleLoginSubmit}
-            />
+              <ButtonCustom 
+                  title='Đăng Nhập'
+                  color='#2F4F4F'
+                  btnAction={handleLoginSubmit}
+                  btnLoading={isLoading}
+              />
             </View>
         </View>
 

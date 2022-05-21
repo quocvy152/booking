@@ -6,6 +6,7 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import NumberFormat from 'react-number-format';
 import { useSelector } from 'react-redux';
 import FastImage from 'react-native-fast-image';
+import { useIsFocused } from '@react-navigation/native';
 
 import { COLORS } from '../../constant/colors';
 import CATEGORIES_CAR from '../../constant/categories';
@@ -28,7 +29,7 @@ const ListCarUser = ({ navigation, route }) => {
   const [nameSearch, setNameSearch] = useState('');
   const [checkReload, setCheckReload] = useState(false);
 
-  const fetchMyListCarRegister = async () => {
+  const fetchMyListCarRegister = async ({ navigation }) => {
     let TYPE_GET_MY_CAR_REGISTER = 'personal';
     let resultListCarRegister = await getListMyCar(TYPE_GET_MY_CAR_REGISTER);
     let { success, data } = resultListCarRegister.data;
@@ -37,6 +38,13 @@ const ListCarUser = ({ navigation, route }) => {
       setListCarRegister(data);
     }
   }
+
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      fetchMyListCarRegister();
+    });
+    return unsubscribe;
+  }, [navigation]);
 
   useEffect(() => {
     fetchMyListCarRegister();
