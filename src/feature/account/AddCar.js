@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, SafeAreaView, Text, View, TouchableOpacity, Image, ScrollView, FlatList, Dimensions, TextInput, Keyboard, Button } from 'react-native';
+import { 
+  StyleSheet, SafeAreaView, Text, 
+  View, TouchableOpacity, Image, 
+  ScrollView, FlatList, Dimensions, 
+  TextInput, Keyboard, Button, 
+  ActivityIndicator, 
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesome5 } from '@expo/vector-icons';
 import NumberFormat from 'react-number-format';
@@ -55,6 +61,9 @@ const AddCar = ({ navigation }) => {
   const [content, setContent] = useState();
   const [type, setType] = useState();
   // END TOASTCUSTOM MESSAGE
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(false);
 
   // fetch list brand
   useEffect(async () => {
@@ -252,6 +261,7 @@ const AddCar = ({ navigation }) => {
     setIsShowToast(true);
     setContent(content);
     setType(type);
+    hideLoading();
     setTimeout(() => {
       setIsShowToast(false);
     }, 1500)
@@ -259,6 +269,7 @@ const AddCar = ({ navigation }) => {
 
   const handleRegisterCar = async () => {
     Keyboard.dismiss();
+    showLoading();
 
     let bodyData = {
       Name, BrandId: brand.id, Description, Price, 
@@ -269,6 +280,7 @@ const AddCar = ({ navigation }) => {
       SelectedLicense: selectedLicense, Img
     };
 
+    // validate data of car register
     let { error, message } = checkValidDataCar(bodyData);
     if(error) {
       showToast({ content: message, type: 'warning' });
@@ -326,6 +338,16 @@ const AddCar = ({ navigation }) => {
       });
     }
   };
+
+  const showLoading = () => {
+    setIsLoading(true);
+    setIsDisabled(true);
+  }
+
+  const hideLoading = () => {
+    setIsLoading(false);
+    setIsDisabled(false);
+  }
     
   return (
     <>
@@ -608,8 +630,16 @@ const AddCar = ({ navigation }) => {
           </View>
         </ScrollView>
         <View style={styles.infoUserStyle}>
-          <TouchableOpacity activeOpacity={0.8} style={ styles.btnStyle } onPress={handleRegisterCar}>
-            <View>
+          <TouchableOpacity disabled={isDisabled} activeOpacity={0.8} style={ styles.btnStyle } onPress={handleRegisterCar}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', }}>
+              {
+                isLoading ?
+                (
+                  <ActivityIndicator size="large" color="white" style={{ marginRight: 10, }} />
+                ) : (
+                  <></>
+                )
+              }
               <Text style={{ color: 'white', fontSize: 15, fontWeight: 'bold', }}>Đăng ký xe</Text>
             </View>
           </TouchableOpacity>

@@ -28,11 +28,14 @@ const ListCarUser = ({ navigation, route }) => {
   const [listCarRegister, setListCarRegister] = useState([]);
   const [nameSearch, setNameSearch] = useState('');
   const [checkReload, setCheckReload] = useState(false);
+  const [page, setPage] = useState(0);
 
-  const fetchMyListCarRegister = async ({ navigation }) => {
+  console.log({ page })
+
+  const fetchMyListCarRegister = async ({ navigation, page }) => {
     let TYPE_GET_MY_CAR_REGISTER = 'personal';
-    let resultListCarRegister = await getListMyCar(TYPE_GET_MY_CAR_REGISTER);
-    let { success, data } = resultListCarRegister.data;
+    let resultListCarRegister = await getListMyCar(TYPE_GET_MY_CAR_REGISTER, page);
+    let { success, data: { items: data } } = resultListCarRegister.data;
 
     if(success) {
       setListCarRegister(data);
@@ -41,13 +44,13 @@ const ListCarUser = ({ navigation, route }) => {
 
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-      fetchMyListCarRegister();
+      fetchMyListCarRegister({ page });
     });
     return unsubscribe;
   }, [navigation]);
 
   useEffect(() => {
-    fetchMyListCarRegister();
+    fetchMyListCarRegister({ page });
   }, [checkReload]);
 
   useEffect(() => {
@@ -144,6 +147,8 @@ const ListCarUser = ({ navigation, route }) => {
             <FlatList 
               showsVerticalScrollIndicator={false}
               numColumns={2}
+              onEndReachedThreshold={0.5}
+              onEndReached={() => setPage(page + 1)}
               data={listCarRegister}
               renderItem={({ item }) => <Card car={item} />}
             />

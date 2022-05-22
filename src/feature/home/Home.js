@@ -164,24 +164,24 @@ const Home = ({ navigation }) => {
   }, [checkReload]);
 
   useEffect(() => {
-    let listCarFilter = listCar.filter(car => car.name.toLowerCase().includes(nameSearch.toLowerCase()));
+    let listCarFilter = listCar.filter(car => car.name.toLowerCase().includes(nameSearch.toLowerCase()) && car.brand.id == listBrand[selectedCategorIndex].id);
     setListCar(listCarFilter);
 
     if(!nameSearch) {
       setCheckReload(!checkReload);
     }
-  }, [nameSearch]);
+  }, [nameSearch, selectedCategorIndex]);
 
   return (
     <>
       <SafeAreaView style={{ flex: 1, }}>
         <View style={ styles.header }>
-          <View style={{ width: '80%' }}>
+          <View style={{ width: '80%', marginTop: 10, }}>
             <View style={{ flexDirection: 'row' }}>
               <Text style={{ fontSize: 18, color: COLORS.WHITE }}>Xin chào,</Text>
               <Text style={{ fontSize: 18, fontWeight: 'bold', marginLeft: 15, color: COLORS.WHITE }}>{ name }</Text>
             </View>
-            <Text style={{ marginTop: 5, fontSize: 18, color: COLORS.WHITE }}>
+            <Text style={{ marginTop: 5, fontSize: 18, color: COLORS.WHITE, marginTop: 10, }}>
               Bạn muốn thuê xe gì ?
             </Text>
           </View>
@@ -226,7 +226,7 @@ const Home = ({ navigation }) => {
             />
           ) : (
             <>
-              <View style={{ alignItems: 'center', justifyContent: 'center', marginTop: 20, marginBottom: '100%' }}>
+              <View style={{ alignItems: 'center', justifyContent: 'center', marginBottom: '100%' }}>
                 <Image 
                     source={require('../../resources/images/bg_emptyPNG.png')}
                     style={{ width: 300, height: 300, resizeMode: 'contain' }}
@@ -271,7 +271,7 @@ const styles = StyleSheet.create({
   },
 
   header: {
-    marginTop: 30,
+    height: 100,
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingHorizontal: 18,
@@ -323,7 +323,7 @@ const styles = StyleSheet.create({
     height: 220,
     width: cardWidth,
     marginHorizontal: 10,
-    marginTop: 40, 
+    marginTop: 20, 
     borderRadius: 15, 
     elevation: 13,
     backgroundColor: COLORS.WHITE
@@ -333,6 +333,7 @@ const styles = StyleSheet.create({
     height: 50, 
     width: 50, 
     borderRadius: 25,
+    marginTop: 10,
   },
 });
 
