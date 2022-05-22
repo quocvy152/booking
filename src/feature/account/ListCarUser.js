@@ -30,9 +30,7 @@ const ListCarUser = ({ navigation, route }) => {
   const [checkReload, setCheckReload] = useState(false);
   const [page, setPage] = useState(0);
 
-  console.log({ page })
-
-  const fetchMyListCarRegister = async ({ navigation, page }) => {
+  const fetchMyListCarRegister = async ({ page }) => {
     let TYPE_GET_MY_CAR_REGISTER = 'personal';
     let resultListCarRegister = await getListMyCar(TYPE_GET_MY_CAR_REGISTER, page);
     let { success, data: { items: data } } = resultListCarRegister.data;
@@ -249,8 +247,7 @@ const styles = StyleSheet.create({
     height: 220,
     width: cardWidth,
     marginHorizontal: 10,
-    marginBottom: 20,
-    marginTop: 40, 
+    marginTop: 15, 
     borderRadius: 15, 
     elevation: 13,
     backgroundColor: COLORS.WHITE

@@ -323,7 +323,7 @@ const styles = StyleSheet.create({
     height: 220,
     width: cardWidth,
     marginHorizontal: 10,
-    marginTop: 20, 
+    marginTop: 15, 
     borderRadius: 15, 
     elevation: 13,
     backgroundColor: COLORS.WHITE

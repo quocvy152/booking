@@ -27,19 +27,26 @@ const ListTripUser = ({ navigation, route }) => {
   const [listTrip, setListTrip] = useState([]);
   const [nameSearch, setNameSearch] = useState('');
   const [checkReload, setCheckReload] = useState(false);
+  const [page, setPage] = useState(0);
 
-  const fetchListTrip = async () => {
+  const fetchListTrip = async ({ page }) => {
     let TYPE_GET_LIST_TRIP = 'booking';
-    let resultListCarRegister = await getListMyCar(TYPE_GET_LIST_TRIP);
-    let { success, data } = resultListCarRegister.data;
-
+    let resultListCarRegister = await getListMyCar(TYPE_GET_LIST_TRIP, page);
+    let { success, data: { items: data } } = resultListCarRegister.data;
     if(success) {
       setListTrip(data);
     }
   }
 
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      fetchListTrip({ page });
+    });
+    return unsubscribe;
+  }, [navigation]);
+
   useEffect(() => {
-    fetchListTrip();
+    fetchListTrip({ page });
   }, [checkReload]);
 
   useEffect(() => {
@@ -237,8 +244,7 @@ const styles = StyleSheet.create({
     height: 220,
     width: cardWidth,
     marginHorizontal: 10,
-    marginBottom: 20,
-    marginTop: 40, 
+    marginTop: 15, 
     borderRadius: 15, 
     elevation: 13,
     backgroundColor: COLORS.WHITE

@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, SafeAreaView, Text, View, TouchableOpacity, Image, ScrollView, FlatList, Dimensions, TextInput, Keyboard, Button } from 'react-native';
+import { 
+  StyleSheet, SafeAreaView, Text, 
+  View, TouchableOpacity, Image, 
+  ScrollView, FlatList, Dimensions, 
+  TextInput, Keyboard, Button,
+  ActivityIndicator, 
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesome5 } from '@expo/vector-icons';
 import NumberFormat from 'react-number-format';
@@ -49,6 +55,8 @@ const BorrowCar = ({ navigation, route }) => {
   const [type, setType] = useState();
   // END TOASTCUSTOM MESSAGE
 
+  const [isLoading, setIsLoading] = useState(false);
+
   // useEffect(() => {
   // }, []);
 
@@ -56,9 +64,18 @@ const BorrowCar = ({ navigation, route }) => {
     setIsShowToast(true);
     setContent(content);
     setType(type);
+    hideLoading();
     setTimeout(() => {
       setIsShowToast(false);
     }, 1500)
+  }
+
+  const showLoading = () => {
+    setIsLoading(true);
+  }
+
+  const hideLoading = () => {
+    setIsLoading(false);
   }
 
   const onChangeTimeStart = (event, selectedDate) => {
@@ -117,10 +134,12 @@ const BorrowCar = ({ navigation, route }) => {
   }
 
   const handleBorrowCar = async () => {
+    showLoading();
+
     let body = {
       car_id: car.id,
       startBooking: startDate,
-      endBooking: startDate,
+      endBooking: endDate,
     }
 
     let { error, message } = validateInfoBorrorwCar(body);
@@ -131,8 +150,9 @@ const BorrowCar = ({ navigation, route }) => {
 
     let resultCallBookingCar = await bookingCar(body);
     let { success, message: messageBookingCar, data } = resultCallBookingCar.data;
+
     if(success) {
-      showToast({ content: messageBookingCar, type: 'success' });
+      showToast({ content: data, type: 'success' });
       setTimeout(() => {
         navigation.navigate('HomeScreen');
       }, 1500);
@@ -338,9 +358,15 @@ const BorrowCar = ({ navigation, route }) => {
         </ScrollView>
         <View style={styles.infoUserStyle}>
           <TouchableOpacity activeOpacity={0.8} style={ styles.btnStyle } onPress={handleBorrowCar}>
-            <View>
-              <Text style={{ color: 'white', fontSize: 15, fontWeight: 'bold', }}>Thuê xe</Text>
-            </View>
+            {
+              isLoading ?
+              (
+                <ActivityIndicator size="large" color="white" style={{ marginRight: 10, }} />
+              ) : (
+                <></>
+              )
+            }
+            <Text style={{ color: 'white', fontSize: 15, fontWeight: 'bold', }}>Thuê xe</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -432,6 +458,7 @@ const styles = StyleSheet.create({
   },
 
   btnStyle: {
+    flexDirection: 'row',
     height: 48,
     width: '100%',
     backgroundColor: COLORS.DEFAULT_BACKGROUND,

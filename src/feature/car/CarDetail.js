@@ -11,6 +11,7 @@ import { COLORS } from '../../constant/colors';
 import ButtonCustom from '../../components/ButtonCustom';
 import { StatusBar } from 'expo-status-bar';
 import ToastCustom from '../../components/ToastCustom';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 const CarDetail = ({ navigation, route }) => {
   const car = route.params;
@@ -322,8 +323,9 @@ const CarDetail = ({ navigation, route }) => {
                   <ButtonCustom 
                     title='Thuê xe'
                     color={ COLORS.WHITE }
-                    titleStyle={{ color: COLORS.DEFAULT_BACKGROUND, fontWeight: 'bold', fontSize: 20 }}
+                    titleStyle={{ color: COLORS.DEFAULT_BACKGROUND, fontWeight: 'bold', fontSize: 20, marginLeft: 10, }}
                     btnHeight={60}
+                    btnIcon='exchange-alt'
                     btnWidth={contentWidth}
                     btnAction={() => navigation.navigate('BorrowCarScreen', car)}
                   />
