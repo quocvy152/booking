@@ -3,6 +3,7 @@ const BASE_CARS      = '/Cars';
 const BASE_LOCATION  = '/Location';
 const BASE_BRANDS    = '/Brands';
 const BASE_TOKEN     = '/Token';
+const BASE_FILE      = '/File';
 
 const VERSION_1      = '/v1';
 const VERSION_2      = '/v2';
@@ -16,6 +17,10 @@ export const ENDPOINT = {
   INFO_USER: `${VERSION_1}${BASE_APP_USERS}/Info`,
   UPDATE_USER: `${VERSION_1}${BASE_APP_USERS}/update`,
   CHANGE_PASSWORD: `${VERSION_1}${BASE_APP_USERS}/change-password`,
+  CHANGE_AVATAR: `${VERSION_1}${BASE_APP_USERS}/change-avatar`,
+
+  // File
+  UPLOAD_FILE: `${VERSION_1}${BASE_FILE}/upload-file`,
 
   // Cars
   LIST_CAR_PREPARE: `${VERSION_1}${BASE_CARS}/cars`,

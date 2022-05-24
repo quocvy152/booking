@@ -1,4 +1,4 @@
-import React, { Component, useState } from 'react';
+import React, { Component, useEffect, useState } from 'react';
 import {
   View, Text, StyleSheet, Image, 
   Dimensions, ScrollView, TouchableOpacity, 
@@ -20,14 +20,15 @@ import { StatusBar } from 'expo-status-bar';
 import images from '../../resources/images';
 import { TextInput } from 'react-native-gesture-handler';
 import ToastCustom from '../../components/ToastCustom';
-import { updateUser, changePassword } from '../../api/auth';
+import { updateUser, changePassword, changeAvatar, } from '../../api/auth';
 import { updateInfoUser } from '../../store/auth';
 import { isFulfilled } from '@reduxjs/toolkit';
 
 const DetailInfoUser = ({ navigation, route }) => {
   const infoUser = useSelector(state => state.auth.infoUser);
-  console.log({ infoUser })
   const [Img, setImg] = useState(infoUser ? infoUser.avatar : '');
+  const [ImgUpdate, setImgUpdate] = useState(null);
+  const [InfoImgUpdate, setInfoImgUpdate] = useState({});
   // const avatar = infoUser ? infoUser.avatar : '';
   const [name, setName] = useState(infoUser ? infoUser.name : '');
   const [email, setEmail] = useState(infoUser ? infoUser.email : '');
@@ -36,7 +37,6 @@ const DetailInfoUser = ({ navigation, route }) => {
   const [password, setPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const dispatch = useDispatch();
 
   // START TOASTCUSTOM MESSAGE
   const [isShowToast, setIsShowToast] = useState(false);
@@ -49,6 +49,14 @@ const DetailInfoUser = ({ navigation, route }) => {
   const [isLoadingChangePass, setIsLoadingChangePass] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
   const [isDisabledChangePass, setIsDisabledChangePass] = useState(false);
+
+  const dispatch = useDispatch();
+
+  // useEffect(() => {
+  //   setInfoImgUpdate({
+      
+  //   })
+  // }, [ImgUpdate])
 
   const showLoading = () => {
     setIsLoading(true);
@@ -68,53 +76,6 @@ const DetailInfoUser = ({ navigation, route }) => {
   const hideLoadingChangePass = () => {
     setIsLoadingChangePass(false);
     setIsDisabledChangePass(false);
-  }
-
-  const handleUpdateInfoUser = async () => {
-    Keyboard.dismiss();
-    showLoading();
-
-    let body = {
-      name, 
-      email,
-      phoneNumber: phone,
-    };
-
-    if(!name) {
-      showToast({ content: 'Vui lòng nhập tên' });
-      hideLoading();
-      return;
-    }
-
-    if(!email) {
-      showToast({ content: 'Vui lòng nhập email' });
-      hideLoading();
-      return;
-    }
-
-    if(!phone) {
-      showToast({ content: 'Vui lòng nhập số điện thoại' });
-      hideLoading();
-      return;
-    }
-
-    // CALL API
-    const resultUpdateInfoUser = await updateUser(body);
-    const { success, data, message } = resultUpdateInfoUser.data;
-
-    if(success) {
-      showToast({ content: 'Cập nhật thông tin tài khoản thành công', type: 'success' });
-      hideLoading();
-      dispatch(updateInfoUser({ infoUser: data }));
-      // setTimeout(() => {
-      //   navigation.goBack();
-      // }, 1500);
-      return;
-    } else {
-      showToast({ content: message, type: 'error' });
-      hideLoading();
-      return;
-    }
   }
 
   const showToast = ({ content, type }) => {
@@ -141,12 +102,7 @@ const DetailInfoUser = ({ navigation, route }) => {
 
     let { cancelled, height, type, width, uri } = result;
     if(!cancelled) {
-      setImg(uri);
-      setInfoImg({
-        uri: Img,
-        type,
-        name: Img,
-      });
+      setImgUpdate(uri);
     }
   };
 
@@ -192,6 +148,66 @@ const DetailInfoUser = ({ navigation, route }) => {
     }
   }
 
+  const handleUpdateInfoUser = async () => {
+    Keyboard.dismiss();
+    showLoading();
+
+    let body = {
+      name, 
+      email,
+      phoneNumber: phone,
+    };
+
+    if(!name) {
+      showToast({ content: 'Vui lòng nhập tên' });
+      hideLoading();
+      return;
+    }
+
+    if(!email) {
+      showToast({ content: 'Vui lòng nhập email' });
+      hideLoading();
+      return;
+    }
+
+    if(!phone) {
+      showToast({ content: 'Vui lòng nhập số điện thoại' });
+      hideLoading();
+      return;
+    }
+
+    if(ImgUpdate) {
+      const resultChangeAvatar = await changeAvatar({
+        file: {
+          uri: ImgUpdate,
+          type: 'image/*',
+          name: ImgUpdate,
+        },
+      });
+      const { success, data, message } = resultChangeAvatar.data;
+      if(!success) {
+        showToast({ content: message, type: 'error' });
+        hideLoading();
+        return;
+      }
+    }
+
+    // CALL API
+    const resultUpdateInfoUser = await updateUser(body);
+    const { success, data, message } = resultUpdateInfoUser.data;
+
+    if(success) {
+      showToast({ content: 'Cập nhật thông tin tài khoản thành công', type: 'success' });
+      hideLoading();
+      dispatch(updateInfoUser({ infoUser: data }));
+      return;
+    } else {
+      showToast({ content: message, type: 'error' });
+      hideLoading();
+      return;
+    }
+  }
+
   return (
     <SafeAreaView>
       <StatusBar style='dark' />
@@ -206,9 +222,15 @@ const DetailInfoUser = ({ navigation, route }) => {
       </View>
       <View style={styles.infoUserStyle}>
         {
-          Img ? 
-          (<Image source={{ uri: Img }} style={ styles.avatarStyle }/>) : 
-          (<Image source={require('../../resources/images/user-300x300.png')} style={ styles.avatarStyle } />)
+          ImgUpdate ?
+          (
+            <Image source={{ uri: ImgUpdate }} style={ styles.avatarStyle }/>
+          ) : 
+          (
+            Img ?
+            (<Image source={{ uri: Img }} style={ styles.avatarStyle }/>) : 
+            (<Image source={require('../../resources/images/user-300x300.png')} style={ styles.avatarStyle } />)
+          )
         }
 
         {/* Input file avatar user */}

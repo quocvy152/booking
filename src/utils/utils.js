@@ -381,7 +381,6 @@ function convertObjectToFormData(object) {
   var formData = new FormData();
 
   for (var key in object) {
-    console.log({ __typeof: typeof(object[key]) })
     formData.append(key, object[key]);
   }
 

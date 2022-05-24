@@ -40,3 +40,9 @@ export async function resetPassword(Username) {
  
     return await requestAPI(`${ENDPOINT.RESET_PASSWORD}?username=${Username}`, method.PUT);
 };
+
+export async function changeAvatar(infoAvatar) {
+    const parseBody = convertObjectToFormData(infoAvatar);
+
+    return await requestFileAPI(`${ENDPOINT.CHANGE_AVATAR}`, method.POST, parseBody, 'multipart/form-data;');
+}

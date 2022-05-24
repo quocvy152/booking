@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, Dimensions, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 const { width } = Dimensions.get('screen');
 const contentWidth = width - 30;
+import { getListMyCar } from '../../api/general';
 
 import { COLORS } from '../../constant/colors';
 import ButtonCustom from '../../components/ButtonCustom';
@@ -16,6 +17,7 @@ import images from '../../resources/images';
 const InfoUser = ({ navigation, route }) => {
   const infoUser = useSelector(state => state.auth.infoUser);
   const avatar = infoUser ? infoUser.avatar : '';
+  const [totalMyCar, setTotalMyCar] = useState();
 
   const handleLogoutBtn = async () => {
     await AsyncStorage.clear();
@@ -36,6 +38,15 @@ const InfoUser = ({ navigation, route }) => {
       ]
     );
 
+    useEffect(async () => {
+      let TYPE_LIST_MY_CAR = 'personal';
+      let resultGetListMyCar = await getListMyCar(TYPE_LIST_MY_CAR, 0);
+      const { success, data: { items: data } } = resultGetListMyCar.data;
+      if(success) {
+        setTotalMyCar(data.length);
+      }
+    }, []);
+
   return (
     <SafeAreaView>
       <StatusBar style='dark' />
@@ -47,7 +58,9 @@ const InfoUser = ({ navigation, route }) => {
         }
         <View style={{ marginLeft: 20, justifyContent: 'center' }}>
           <Text style={ styles.userName }>{ infoUser.name }</Text>
-          <Text style={{ fontStyle: 'italic', color: '#e6b800' }}>Số xe: { infoUser.length ? infoUser.length : '0' }</Text>
+          <Text style={{ fontStyle: 'italic', color: '#e6b800' }}>
+            Số xe đã đăng ký trên nền tảng: <Text style={{ fontSize: 18, fontWeight: 'bold', }}>{ totalMyCar ? totalMyCar : '0' }</Text>
+          </Text>
         </View>
       </View>
       <View style={ styles.accountStyle }>

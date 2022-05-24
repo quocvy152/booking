@@ -231,7 +231,7 @@ const Home = ({ navigation }) => {
                     source={require('../../resources/images/bg_emptyPNG.png')}
                     style={{ width: 300, height: 300, resizeMode: 'contain' }}
                 />
-                <Text style={{ textAlign: 'center', fontSize: 17, fontStyle: 'italic', }}>Bạn chưa đăng ký xe nào</Text>
+                <Text style={{ textAlign: 'center', fontSize: 17, fontStyle: 'italic', }}>Không tìm thấy kết quả phù hợp</Text>
               </View>
             </>
           )
