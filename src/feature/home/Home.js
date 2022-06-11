@@ -165,6 +165,7 @@ const Home = ({ navigation }) => {
 
   useEffect(() => {
     let listCarFilter = listCar.filter(car => car.name.toLowerCase().includes(nameSearch.toLowerCase()) && car.brand.id == listBrand[selectedCategorIndex].id);
+    console.log({ LENGTH: listCarFilter.length })
     setListCar(listCarFilter);
 
     if(!nameSearch) {

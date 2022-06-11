@@ -20,18 +20,18 @@ const { width } = Dimensions.get('screen');
 const cardWidth = width / 2 - 20;
 const contentWidth = width - 20;
 
-const ListTripUser = ({ navigation, route }) => {
+const ListTripUserWaitApprove = ({ navigation, route }) => {
   const infoUser = useSelector(state => state.auth.infoUser);
   const name = infoUser?.name;
   const avatar = infoUser ? infoUser.avatar : '';
   const [listTrip, setListTrip] = useState([]);
   const [nameSearch, setNameSearch] = useState('');
   const [checkReload, setCheckReload] = useState(false);
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(1);  
 
   const fetchListTrip = async ({ page }) => {
-    let TYPE_GET_LIST_TRIP = 1;
-    let resultListCarRegister = await getListMyCar(TYPE_GET_LIST_TRIP, page);
+    let TYPE_GET_LIST_TRIP_WAIT_APPROVE = 0;
+    let resultListCarRegister = await getListMyCar(TYPE_GET_LIST_TRIP_WAIT_APPROVE, page);
     let { success, data: { items: data } } = resultListCarRegister.data;
     if(success) {
       setListTrip(data);
@@ -59,7 +59,7 @@ const ListTripUser = ({ navigation, route }) => {
 
   const Card = ({ car }) => {
     car.PREVIOUS_SCREEN_NAME = 'Thông Tin Của Bạn';
-    car.ROUTE_NAME = 'ListTripUserScreen';
+    car.ROUTE_NAME = 'ListTripUserWaitApproveScreen';
 
     return (
       <>
@@ -133,8 +133,8 @@ const ListTripUser = ({ navigation, route }) => {
         </View>
 
         <View style={{ justifyContent: 'center', alignItems: 'center', margin: 10, flexDirection: 'row' }}>
-          <FontAwesome5 name="tripadvisor" size={20} color="#8B4513" style={{ marginRight: 10, }} />
-          <Text style={{ color: '#8B4513', fontSize: 20, fontWeight: 'bold' }}>Danh sách xe bạn đã thuê</Text>
+          <FontAwesome5 name="check-square" size={20} color="#808000" style={{ marginRight: 10, }} />
+          <Text style={{ color: '#808000', fontSize: 20, fontWeight: 'bold' }}>Danh sách xe thuê đợi duyệt</Text>
         </View>
         
         {
@@ -267,4 +267,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ListTripUser;
+export default ListTripUserWaitApprove;

@@ -39,11 +39,13 @@ const InfoUser = ({ navigation, route }) => {
     );
 
     useEffect(async () => {
-      let TYPE_LIST_MY_CAR = 'personal';
-      let resultGetListMyCar = await getListMyCar(TYPE_LIST_MY_CAR, 0);
-      const { success, data: { items: data } } = resultGetListMyCar.data;
+      let TYPE_LIST_MY_CAR = '';
+      let resultGetListMyCar = await getListMyCar(TYPE_LIST_MY_CAR, 1);
+      const { success, data: { items: data }, message } = resultGetListMyCar.data;
       if(success) {
         setTotalMyCar(data.length);
+      } else {
+        console.log({ message })
       }
     }, []);
 
@@ -94,10 +96,16 @@ const InfoUser = ({ navigation, route }) => {
           </TouchableOpacity>
         </View>
         <View style={{ flexDirection: 'row', }}>
-          <TouchableOpacity activeOpacity={0.6}>
+          <TouchableOpacity activeOpacity={0.6} onPress={() => navigation.navigate('ListTripUserWaitApproveScreen')}>
+            <View style={ styles.tabStyle }>
+              <FontAwesome5 name="check-square" size={24} color="#808000" />
+              <Text style={{ marginTop: 16, fontSize: 15 }}>Xe thuê chờ duyệt</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity activeOpacity={0.6} onPress={() => navigation.navigate('ListTripUserPayedScreen')}>
             <View style={ styles.tabStyle }>
               <FontAwesome5 name="hands-helping" size={24} color="#3E89A8" />
-              <Text style={{ marginTop: 16, fontSize: 15 }}>Liên hệ và góp ý</Text>
+              <Text style={{ marginTop: 16, fontSize: 15 }}>Xe đã trả</Text>
             </View>
           </TouchableOpacity>
         </View>

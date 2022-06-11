@@ -20,7 +20,7 @@ const { width } = Dimensions.get('screen');
 const cardWidth = width / 2 - 20;
 const contentWidth = width - 20;
 
-const ListTripUser = ({ navigation, route }) => {
+const ListTripUserPayed = ({ navigation, route }) => {
   const infoUser = useSelector(state => state.auth.infoUser);
   const name = infoUser?.name;
   const avatar = infoUser ? infoUser.avatar : '';
@@ -30,8 +30,8 @@ const ListTripUser = ({ navigation, route }) => {
   const [page, setPage] = useState(1);
 
   const fetchListTrip = async ({ page }) => {
-    let TYPE_GET_LIST_TRIP = 1;
-    let resultListCarRegister = await getListMyCar(TYPE_GET_LIST_TRIP, page);
+    let TYPE_GET_LIST_TRIP_PAYED = 3;
+    let resultListCarRegister = await getListMyCar(TYPE_GET_LIST_TRIP_PAYED, page);
     let { success, data: { items: data } } = resultListCarRegister.data;
     if(success) {
       setListTrip(data);
@@ -59,7 +59,7 @@ const ListTripUser = ({ navigation, route }) => {
 
   const Card = ({ car }) => {
     car.PREVIOUS_SCREEN_NAME = 'Thông Tin Của Bạn';
-    car.ROUTE_NAME = 'ListTripUserScreen';
+    car.ROUTE_NAME = 'ListTripUserPayedScreen';
 
     return (
       <>
@@ -133,8 +133,8 @@ const ListTripUser = ({ navigation, route }) => {
         </View>
 
         <View style={{ justifyContent: 'center', alignItems: 'center', margin: 10, flexDirection: 'row' }}>
-          <FontAwesome5 name="tripadvisor" size={20} color="#8B4513" style={{ marginRight: 10, }} />
-          <Text style={{ color: '#8B4513', fontSize: 20, fontWeight: 'bold' }}>Danh sách xe bạn đã thuê</Text>
+          <FontAwesome5 name="hands-helping" size={20} color="#3E89A8" style={{ marginRight: 10, }} />
+          <Text style={{ color: '#3E89A8', fontSize: 20, fontWeight: 'bold' }}>Danh sách xe bạn đã trả</Text>
         </View>
         
         {
@@ -267,4 +267,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ListTripUser;
+export default ListTripUserPayed;

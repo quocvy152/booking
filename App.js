@@ -11,6 +11,8 @@ import InfoUser from './src/feature/account/InfoUser';
 import DetailInfoUser from './src/feature/account/DetailInfoUser';
 import ListCarUser from './src/feature/account/ListCarUser';
 import ListTripUser from './src/feature/account/ListTripUser';
+import ListTripUserWaitApprove from './src/feature/account/ListTripUserWaitApprove';
+import ListTripUserPayed from './src/feature/account/ListTripUserPayed';
 import AddCar from './src/feature/account/AddCar';
 import UpdateCar from './src/feature/account/UpdateCar';
 import BorrowCar from './src/feature/account/BorrowCar';
@@ -37,6 +39,8 @@ export default function App() {
           <Stack.Screen name='ListCarUserScreen' component={ListCarUser} /> 
           <Stack.Screen name='AddCarScreen' component={AddCar} /> 
           <Stack.Screen name='ListTripUserScreen' component={ListTripUser} /> 
+          <Stack.Screen name='ListTripUserWaitApproveScreen' component={ListTripUserWaitApprove} /> 
+          <Stack.Screen name='ListTripUserPayedScreen' component={ListTripUserPayed} /> 
           <Stack.Screen name='CarDetailScreen' component={CarDetail} /> 
           <Stack.Screen name='UpdateCarScreen' component={UpdateCar} /> 
           <Stack.Screen name='BorrowCarScreen' component={BorrowCar} /> 

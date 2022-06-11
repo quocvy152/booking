@@ -28,10 +28,10 @@ const ListCarUser = ({ navigation, route }) => {
   const [listCarRegister, setListCarRegister] = useState([]);
   const [nameSearch, setNameSearch] = useState('');
   const [checkReload, setCheckReload] = useState(false);
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(1);
 
   const fetchMyListCarRegister = async ({ page }) => {
-    let TYPE_GET_MY_CAR_REGISTER = 'personal';
+    let TYPE_GET_MY_CAR_REGISTER = '';
     let resultListCarRegister = await getListMyCar(TYPE_GET_MY_CAR_REGISTER, page);
     let { success, data: { items: data } } = resultListCarRegister.data;
 
@@ -135,8 +135,8 @@ const ListCarUser = ({ navigation, route }) => {
         </View>
 
         <View style={{ justifyContent: 'center', alignItems: 'center', margin: 10, flexDirection: 'row' }}>
-          <FontAwesome5 name="car" size={20} color="#000080" style={{ marginRight: 10, }} />
-          <Text style={{ color: '#000080', fontSize: 20, fontWeight: 'bold' }}>Danh sách xe bạn đã đăng ký</Text>
+          <FontAwesome5 name="car" size={20} color="#37A604" style={{ marginRight: 10, }} />
+          <Text style={{ color: '#37A604', fontSize: 20, fontWeight: 'bold' }}>Danh sách xe bạn đã đăng ký</Text>
         </View>
         
         {

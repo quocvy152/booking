@@ -178,7 +178,7 @@ const DetailInfoUser = ({ navigation, route }) => {
 
     if(ImgUpdate) {
       const resultChangeAvatar = await changeAvatar({
-        file: {
+        avatar: {
           uri: ImgUpdate,
           type: 'image/*',
           name: ImgUpdate,
