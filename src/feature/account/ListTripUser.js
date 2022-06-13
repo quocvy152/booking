@@ -154,7 +154,7 @@ const ListTripUser = ({ navigation, route }) => {
                   source={require('../../resources/images/trip.png')}
                   style={{ width: 300, height: 200, resizeMode: 'contain' }}
               />
-              <Text style={{ textAlign: 'center', fontSize: 17, fontStyle: 'italic', width: contentWidth, marginTop: 30 }}>Bạn chưa có chuyến nào, hãy thuê ngay một chiếc xe để trải nghiệm dịch vụ</Text>
+              <Text style={{ textAlign: 'center', fontSize: 17, fontStyle: 'italic', width: contentWidth, marginTop: 30 }}>Bạn chưa thuê chuyến xe nào, hãy thuê ngay một chiếc xe để trải nghiệm dịch vụ</Text>
             </View>
             </>
           )

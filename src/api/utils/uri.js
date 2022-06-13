@@ -30,6 +30,7 @@ export const ENDPOINT = {
   DETAIL_INFO: `${VERSION_1}/Detail`,
   BOOKING_CAR: `${VERSION_1}${BASE_CARS}/booking-car`,
   GET_LIST_MY_CAR: `${VERSION_1}${BASE_CARS}/my-cars`,
+  GET_LIST_CAR_BOOKING: `${VERSION_1}${BASE_CARS}/bookings-cars`,
   REMOVE_CAR: `${VERSION_1}${BASE_CARS}`,
   CANCEL_BOOKING_CAR: `${VERSION_1}${BASE_CARS}/cancel-booking`,
 

@@ -220,123 +220,125 @@ const DetailInfoUser = ({ navigation, route }) => {
         <Icon name="chevron-left" size={28} color="black" onPress={navigation.goBack} style={{ marginLeft: 15 }} />
         <Text style={{ fontSize: 20, fontWeight: 'bold', marginLeft: 10 }}>Thông Tin Của Bạn</Text>
       </View>
-      <View style={styles.infoUserStyle}>
-        {
-          ImgUpdate ?
-          (
-            <Image source={{ uri: ImgUpdate }} style={ styles.avatarStyle }/>
-          ) : 
-          (
-            Img ?
-            (<Image source={{ uri: Img }} style={ styles.avatarStyle }/>) : 
-            (<Image source={require('../../resources/images/user-300x300.png')} style={ styles.avatarStyle } />)
-          )
-        }
-
-        {/* Input file avatar user */}
-        <TouchableOpacity 
-          activeOpacity={0.8} 
-          style={styles.btnStyleUploadPhoto}
-          onPress={handleChoosePhoto}>
-          <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', padding: 5 }}>
-            <FontAwesome5 name="camera" size={18} color={ COLORS.BUTTON_AUTH_COLOR } /> 
-            {/* <Text style={{ color: COLORS.DEFAULT_BACKGROUND, fontSize: 15, fontWeight: 'bold', }}>
-              Tải ảnh đại diện của bạn
-            </Text> */}
-          </View>
-        </TouchableOpacity>
-
-        <TextInput 
-          style={ styles.inputStyle }
-          placeholder='Nhập tên tải khoản'
-          value={Username}
-          onChangeText={val => setUsername(val)}
-          editable={false} 
-          selectTextOnFocus={false} 
-        />
-
-        <TextInput 
-          style={ styles.inputStyle }
-          placeholder='Nhập tên'
-          value={name}
-          onChangeText={val => setName(val)} 
-        />
-        
-        <TextInput 
-          style={ styles.inputStyle }
-          placeholder='Nhập email'
-          value={email}
-          onChangeText={val => setEmail(val)} 
-        />
-        
-        <TextInput 
-          style={ styles.inputStyle }
-          placeholder='Nhập số điện thoại'
-          value={phone}
-          onChangeText={val => setPhone(val)} 
-          keyboardType='number-pad'
-        />
-
-        <TouchableOpacity 
-          activeOpacity={0.8} 
-          style={[styles.btnStyle, { marginBottom: 20, }]} 
-          onPress={handleUpdateInfoUser}
-          disabled={isDisabled}
-        >
+      <ScrollView contentContainerStyle={{ paddingBottom: 85 }}>
+        <View style={styles.infoUserStyle}>
           {
-            isLoading ?
+            ImgUpdate ?
             (
-              <ActivityIndicator size="large" color="white" style={{ marginRight: 10, }} />
-            ) : (
-              <></>
+              <Image source={{ uri: ImgUpdate }} style={ styles.avatarStyle }/>
+            ) : 
+            (
+              Img ?
+              (<Image source={{ uri: Img }} style={ styles.avatarStyle }/>) : 
+              (<Image source={require('../../resources/images/user-300x300.png')} style={ styles.avatarStyle } />)
             )
           }
-          <View>
-            <Text style={{ color: 'white', fontSize: 15, fontWeight: 'bold', }}>Cập nhật tài khoản</Text>
-          </View>
-        </TouchableOpacity>
 
-        <TextInput 
-          style={ styles.inputStyle }
-          value={password}
-          secureTextEntry={true}
-          onChangeText={val => setPassword(val)} 
-          placeholder='Nhập mật khẩu cũ'
-        />
+          {/* Input file avatar user */}
+          <TouchableOpacity 
+            activeOpacity={0.8} 
+            style={styles.btnStyleUploadPhoto}
+            onPress={handleChoosePhoto}>
+            <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', padding: 5 }}>
+              <FontAwesome5 name="camera" size={18} color={ COLORS.BUTTON_AUTH_COLOR } /> 
+              {/* <Text style={{ color: COLORS.DEFAULT_BACKGROUND, fontSize: 15, fontWeight: 'bold', }}>
+                Tải ảnh đại diện của bạn
+              </Text> */}
+            </View>
+          </TouchableOpacity>
 
-        <TextInput 
-          style={ styles.inputStyle }
-          value={newPassword}
-          secureTextEntry={true}
-          onChangeText={val => setNewPassword(val)} 
-          placeholder='Nhập mật khẩu mới'
-        />
+          <TextInput 
+            style={ styles.inputStyle }
+            placeholder='Nhập tên tải khoản'
+            value={Username}
+            onChangeText={val => setUsername(val)}
+            editable={false} 
+            selectTextOnFocus={false} 
+          />
 
-        <TextInput 
-          style={ styles.inputStyle }
-          value={confirmPassword}
-          secureTextEntry={true}
-          placeholder='Nhập mật khẩu xác nhận'
-          onChangeText={val => setConfirmPassword(val)} 
-        />
+          <TextInput 
+            style={ styles.inputStyle }
+            placeholder='Nhập tên'
+            value={name}
+            onChangeText={val => setName(val)} 
+          />
+          
+          <TextInput 
+            style={ styles.inputStyle }
+            placeholder='Nhập email'
+            value={email}
+            onChangeText={val => setEmail(val)} 
+          />
+          
+          <TextInput 
+            style={ styles.inputStyle }
+            placeholder='Nhập số điện thoại'
+            value={phone}
+            onChangeText={val => setPhone(val)} 
+            keyboardType='number-pad'
+          />
 
-        <TouchableOpacity 
-          activeOpacity={0.8} 
-          style={styles.btnChangePasswordStyle} 
-          onPress={handleChangePass}
-          disabled={isDisabledChangePass}
-        >
+          <TouchableOpacity 
+            activeOpacity={0.8} 
+            style={[styles.btnStyle, { marginBottom: 20, }]} 
+            onPress={handleUpdateInfoUser}
+            disabled={isDisabled}
+          >
             {
-              isLoadingChangePass ?
+              isLoading ?
               (
-                <ActivityIndicator size="large" color={COLORS.DEFAULT_BACKGROUND} style={{ marginRight: 10, }} />
+                <ActivityIndicator size="large" color="white" style={{ marginRight: 10, }} />
               ) : (
                 <></>
               )
             }
-            <Text style={{ color: COLORS.DEFAULT_BACKGROUND, fontSize: 15, fontWeight: 'bold', }}>Đổi mật khẩu</Text>
-        </TouchableOpacity>
-      </View>
+            <View>
+              <Text style={{ color: 'white', fontSize: 15, fontWeight: 'bold', }}>Cập nhật tài khoản</Text>
+            </View>
+          </TouchableOpacity>
+
+          <TextInput 
+            style={ styles.inputStyle }
+            value={password}
+            secureTextEntry={true}
+            onChangeText={val => setPassword(val)} 
+            placeholder='Nhập mật khẩu cũ'
+          />
+
+          <TextInput 
+            style={ styles.inputStyle }
+            value={newPassword}
+            secureTextEntry={true}
+            onChangeText={val => setNewPassword(val)} 
+            placeholder='Nhập mật khẩu mới'
+          />
+
+          <TextInput 
+            style={ styles.inputStyle }
+            value={confirmPassword}
+            secureTextEntry={true}
+            placeholder='Nhập mật khẩu xác nhận'
+            onChangeText={val => setConfirmPassword(val)} 
+          />
+
+          <TouchableOpacity 
+            activeOpacity={0.8} 
+            style={styles.btnChangePasswordStyle} 
+            onPress={handleChangePass}
+            disabled={isDisabledChangePass}
+          >
+              {
+                isLoadingChangePass ?
+                (
+                  <ActivityIndicator size="large" color={COLORS.DEFAULT_BACKGROUND} style={{ marginRight: 10, }} />
+                ) : (
+                  <></>
+                )
+              }
+              <Text style={{ color: COLORS.DEFAULT_BACKGROUND, fontSize: 15, fontWeight: 'bold', }}>Đổi mật khẩu</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };

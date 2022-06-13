@@ -20,18 +20,18 @@ const { width } = Dimensions.get('screen');
 const cardWidth = width / 2 - 20;
 const contentWidth = width - 20;
 
-const ListTripUserPayed = ({ navigation, route }) => {
+const ListCarWaitApprove = ({ navigation, route }) => {
   const infoUser = useSelector(state => state.auth.infoUser);
   const name = infoUser?.name;
   const avatar = infoUser ? infoUser.avatar : '';
   const [listTrip, setListTrip] = useState([]);
   const [nameSearch, setNameSearch] = useState('');
   const [checkReload, setCheckReload] = useState(false);
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(1);  
 
   const fetchListTrip = async ({ page }) => {
-    let TYPE_GET_LIST_TRIP_PAYED = 3;
-    let resultListCarRegister = await getListCarBooking(TYPE_GET_LIST_TRIP_PAYED, page);
+    let TYPE_GET_LIST_CAR_WAIT_PAYED = 2;
+    let resultListCarRegister = await getListMyCar(TYPE_GET_LIST_CAR_WAIT_PAYED, page);
     let { success, data: { items: data } } = resultListCarRegister.data;
     if(success) {
       setListTrip(data);
@@ -59,7 +59,7 @@ const ListTripUserPayed = ({ navigation, route }) => {
 
   const Card = ({ car }) => {
     car.PREVIOUS_SCREEN_NAME = 'Thông Tin Của Bạn';
-    car.ROUTE_NAME = 'ListTripUserPayedScreen';
+    car.ROUTE_NAME = 'ListCarWaitApproveScreen';
 
     return (
       <>
@@ -125,7 +125,7 @@ const ListTripUserPayed = ({ navigation, route }) => {
               <TextInputCustom
                 icon='search'
                 textColor={ COLORS.DEFAULT_TEXT }
-                placeholderText='Tìm kiếm chuyến đi'
+                placeholderText='Tìm kiếm xe'
                 style={{ marginLeft: 10, borderRadius: 10, width: '95%' }}
                 textInputAction={val => setNameSearch(val)}
               />
@@ -133,8 +133,8 @@ const ListTripUserPayed = ({ navigation, route }) => {
         </View>
 
         <View style={{ justifyContent: 'center', alignItems: 'center', margin: 10, flexDirection: 'row' }}>
-          <FontAwesome5 name="hands-helping" size={20} color="#3E89A8" style={{ marginRight: 10, }} />
-          <Text style={{ color: '#3E89A8', fontSize: 20, fontWeight: 'bold' }}>Danh sách xe bạn đã trả</Text>
+          <FontAwesome5 name="list-ul" size={20} color="#808000" style={{ marginRight: 10, }} />
+          <Text style={{ color: '#808000', fontSize: 20, fontWeight: 'bold' }}>Danh sách yêu cầu duyệt thuê xe</Text>
         </View>
         
         {
@@ -154,7 +154,7 @@ const ListTripUserPayed = ({ navigation, route }) => {
                   source={require('../../resources/images/trip.png')}
                   style={{ width: 300, height: 200, resizeMode: 'contain' }}
               />
-              <Text style={{ textAlign: 'center', fontSize: 17, fontStyle: 'italic', width: contentWidth, marginTop: 30 }}>Bạn chưa có chuyến nào, hãy thuê ngay một chiếc xe để trải nghiệm dịch vụ</Text>
+              <Text style={{ textAlign: 'center', fontSize: 17, fontStyle: 'italic', width: contentWidth, marginTop: 30 }}>Bạn chưa có yêu cầu duyệt thuê xe nào. Hãy đợi bạn nhé</Text>
             </View>
             </>
           )
@@ -267,4 +267,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ListTripUserPayed;
+export default ListCarWaitApprove;

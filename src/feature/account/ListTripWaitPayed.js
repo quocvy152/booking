@@ -13,14 +13,14 @@ import CARS from '../../constant/cars';
 import TextInputCustom from '../../components/TextInputCustom';
 import { TouchableHighlight } from 'react-native-gesture-handler';
 import images from '../../resources/images/index';
-import { getListMyCar } from '../../api/general';
+import { getListCarBooking } from '../../api/general';
 import ButtonCustom from '../../components/ButtonCustom';
 import { backgroundColor } from 'react-native/Libraries/Components/View/ReactNativeStyleAttributes';
 const { width } = Dimensions.get('screen');
 const cardWidth = width / 2 - 20;
 const contentWidth = width - 20;
 
-const ListTripUserPayed = ({ navigation, route }) => {
+const ListTripWaitPayed = ({ navigation, route }) => {
   const infoUser = useSelector(state => state.auth.infoUser);
   const name = infoUser?.name;
   const avatar = infoUser ? infoUser.avatar : '';
@@ -30,8 +30,8 @@ const ListTripUserPayed = ({ navigation, route }) => {
   const [page, setPage] = useState(1);
 
   const fetchListTrip = async ({ page }) => {
-    let TYPE_GET_LIST_TRIP_PAYED = 3;
-    let resultListCarRegister = await getListCarBooking(TYPE_GET_LIST_TRIP_PAYED, page);
+    let TYPE_GET_LIST_TRIP_WAIT_PAYED = 2;
+    let resultListCarRegister = await getListCarBooking(TYPE_GET_LIST_TRIP_WAIT_PAYED, page);
     let { success, data: { items: data } } = resultListCarRegister.data;
     if(success) {
       setListTrip(data);
@@ -59,7 +59,7 @@ const ListTripUserPayed = ({ navigation, route }) => {
 
   const Card = ({ car }) => {
     car.PREVIOUS_SCREEN_NAME = 'Thông Tin Của Bạn';
-    car.ROUTE_NAME = 'ListTripUserPayedScreen';
+    car.ROUTE_NAME = 'ListTripWaitPayedScreen';
 
     return (
       <>
@@ -133,8 +133,8 @@ const ListTripUserPayed = ({ navigation, route }) => {
         </View>
 
         <View style={{ justifyContent: 'center', alignItems: 'center', margin: 10, flexDirection: 'row' }}>
-          <FontAwesome5 name="hands-helping" size={20} color="#3E89A8" style={{ marginRight: 10, }} />
-          <Text style={{ color: '#3E89A8', fontSize: 20, fontWeight: 'bold' }}>Danh sách xe bạn đã trả</Text>
+          <FontAwesome5 name="chalkboard-teacher" size={20} color="#FF4500" style={{ marginRight: 10, }} />
+          <Text style={{ color: '#FF4500', fontSize: 18, fontWeight: 'bold' }}>Danh sách đợi chủ xe chấp nhận trả xe</Text>
         </View>
         
         {
@@ -154,7 +154,7 @@ const ListTripUserPayed = ({ navigation, route }) => {
                   source={require('../../resources/images/trip.png')}
                   style={{ width: 300, height: 200, resizeMode: 'contain' }}
               />
-              <Text style={{ textAlign: 'center', fontSize: 17, fontStyle: 'italic', width: contentWidth, marginTop: 30 }}>Bạn chưa có chuyến nào, hãy thuê ngay một chiếc xe để trải nghiệm dịch vụ</Text>
+              <Text style={{ textAlign: 'center', fontSize: 17, fontStyle: 'italic', width: contentWidth, marginTop: 30 }}>Bạn chưa có chuyến xe nào đang trả xe</Text>
             </View>
             </>
           )
@@ -267,4 +267,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ListTripUserPayed;
+export default ListTripWaitPayed;

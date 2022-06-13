@@ -13,7 +13,7 @@ import CARS from '../../constant/cars';
 import TextInputCustom from '../../components/TextInputCustom';
 import { TouchableHighlight } from 'react-native-gesture-handler';
 import images from '../../resources/images/index';
-import { getListMyCar } from '../../api/general';
+import { getListMyCar, getListCarBooking } from '../../api/general';
 import ButtonCustom from '../../components/ButtonCustom';
 import { backgroundColor } from 'react-native/Libraries/Components/View/ReactNativeStyleAttributes';
 const { width } = Dimensions.get('screen');
@@ -31,7 +31,7 @@ const ListTripUserWaitApprove = ({ navigation, route }) => {
 
   const fetchListTrip = async ({ page }) => {
     let TYPE_GET_LIST_TRIP_WAIT_APPROVE = 0;
-    let resultListCarRegister = await getListMyCar(TYPE_GET_LIST_TRIP_WAIT_APPROVE, page);
+    let resultListCarRegister = await getListCarBooking(TYPE_GET_LIST_TRIP_WAIT_APPROVE, page);
     let { success, data: { items: data } } = resultListCarRegister.data;
     if(success) {
       setListTrip(data);
@@ -133,8 +133,8 @@ const ListTripUserWaitApprove = ({ navigation, route }) => {
         </View>
 
         <View style={{ justifyContent: 'center', alignItems: 'center', margin: 10, flexDirection: 'row' }}>
-          <FontAwesome5 name="check-square" size={20} color="#808000" style={{ marginRight: 10, }} />
-          <Text style={{ color: '#808000', fontSize: 20, fontWeight: 'bold' }}>Danh sách xe thuê đợi duyệt</Text>
+          <FontAwesome5 name="check-square" size={20} color="#2F4F4F" style={{ marginRight: 10, }} />
+          <Text style={{ color: '#2F4F4F', fontSize: 20, fontWeight: 'bold' }}>Danh sách xe thuê đợi duyệt</Text>
         </View>
         
         {
@@ -154,7 +154,7 @@ const ListTripUserWaitApprove = ({ navigation, route }) => {
                   source={require('../../resources/images/trip.png')}
                   style={{ width: 300, height: 200, resizeMode: 'contain' }}
               />
-              <Text style={{ textAlign: 'center', fontSize: 17, fontStyle: 'italic', width: contentWidth, marginTop: 30 }}>Bạn chưa có chuyến nào, hãy thuê ngay một chiếc xe để trải nghiệm dịch vụ</Text>
+              <Text style={{ textAlign: 'center', fontSize: 17, fontStyle: 'italic', width: contentWidth, marginTop: 30 }}>Bạn chưa thuê xe nào, hãy thuê ngay một chiếc xe để trải nghiệm dịch vụ</Text>
             </View>
             </>
           )
