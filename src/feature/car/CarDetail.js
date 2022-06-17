@@ -1,8 +1,8 @@
 import React, { Component, useState } from 'react';
-import { View, Text, StyleSheet, Image, Dimensions, ScrollView, Alert } from 'react-native';
+import { View, Text, StyleSheet, Image, Dimensions, ScrollView, Alert, Button } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { removeCar, cancelBookingCar } from '../../api/general';
+import { removeCar, cancelBookingCar, acceptBookingCar, payedBookingCar, acceptPayedBookingCar } from '../../api/general';
 
 const { width } = Dimensions.get('screen');
 const contentWidth = width - 20;
@@ -12,6 +12,7 @@ import ButtonCustom from '../../components/ButtonCustom';
 import { StatusBar } from 'expo-status-bar';
 import ToastCustom from '../../components/ToastCustom';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import moment from 'moment';
 
 const CarDetail = ({ navigation, route }) => {
   const car = route.params;
@@ -81,6 +82,116 @@ const CarDetail = ({ navigation, route }) => {
         { text: "Có", onPress: handleCancelBooking }
       ]
     );
+
+    const alertAcceptBooking = () =>
+    Alert.alert(
+      "Thông Báo",
+      "Bạn có chắc chắn chấp nhận yêu cầu thuê xe này không ?",
+      [
+        {
+          text: "Không",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel"
+        },
+        { text: "Có", onPress: handleAcceptBooking }
+      ]
+    );
+
+    const alertAcceptPayedBooking = () =>
+    Alert.alert(
+      "Thông Báo",
+      "Bạn có chắc chắn chấp nhận yêu cầu trả xe này không ?",
+      [
+        {
+          text: "Không",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel"
+        },
+        { text: "Có", onPress: handleAcceptPayedBooking }
+      ]
+    );
+
+    const alertPayedBooking = () =>
+    Alert.alert(
+      "Thông Báo",
+      "Bạn có chắc chắn trả xe (thanh toán) xe này không ?",
+      [
+        {
+          text: "Không",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel"
+        },
+        { text: "Có", onPress: handlePayedBooking }
+      ]
+    );
+
+  const handleAcceptPayedBooking = async () => {
+    let carID = car.id;
+
+    const bodyAcceptBooking = {
+      appUserId: car.bookings.bookedByUserId,
+      carID: carID,
+      startBooking: car.bookings.startBooking,
+      endBooking: car.bookings.endBooking,
+    }
+
+    let resultAcceptPayedBooking = await acceptPayedBookingCar(bodyAcceptBooking);
+    let { success, data, message } = resultAcceptPayedBooking.data;
+    if(success) {
+      showToast({ content: data, type: 'success' });
+      setTimeout(() => {
+        navigation.navigate('ListCarWaitApproveScreen');
+      }, 1500)
+    } else {
+      showToast({ content: message, type: 'error' });
+      return;
+    }
+  }
+
+  const handlePayedBooking = async () => {
+    let carID = car.id;
+
+    const bodyPayedBooking = {
+      car_id: carID,
+      startBooking: car.bookings.startBooking,
+      endBooking: car.bookings.endBooking,
+    }
+
+    let resultPayedBooking = await payedBookingCar(bodyPayedBooking);
+    let { success, data, message } = resultPayedBooking.data;
+    if(success) {
+      showToast({ content: data, type: 'success' });
+      setTimeout(() => {
+        navigation.navigate('ListTripWaitPayedScreen');
+      }, 1500)
+    } else {
+      showToast({ content: message, type: 'error' });
+      return;
+    }
+  }
+
+  const handleAcceptBooking = async () => {
+    let carID = car.id;
+
+    const bodyCancelBooking = {
+      appUserId: car.bookings.bookedByUserId,
+      carID: carID,
+      startBooking: car.bookings.startBooking,
+      endBooking: car.bookings.endBooking,
+    }
+
+    let resultAcceptBooking = await acceptBookingCar(bodyCancelBooking);
+    let { success, data, message } = resultAcceptBooking.data;
+    if(success) {
+      showToast({ content: data, type: 'success' });
+      setTimeout(() => {
+        navigation.navigate('ListCarWaitApproveScreen');
+      }, 1500)
+    } else {
+      showToast({ content: message, type: 'error' });
+      return;
+    }
+  }
 
   const handleCancelBooking = async () => {
     let carID = car.id;
@@ -352,6 +463,203 @@ const CarDetail = ({ navigation, route }) => {
                 <></>
               )
             }
+
+            {
+              ROUTE_NAME == 'ListTripUserScreen' ? 
+              (
+                <>
+                  <View style={[styles.btnGroupParagraph, { flexDirection: 'row', }]}>
+                    <TouchableOpacity 
+                      onPress={alertPayedBooking}
+                      style={{ 
+                        backgroundColor: '#FF8C00', 
+                        height: 50, 
+                        width: contentWidth / 2 - 5, 
+                        justifyContent: 'center', 
+                        alignItems: 'center',
+                        marginRight: 10,  
+                        borderRadius: 5,
+                      }}
+                    >
+                      <View style={{ flexDirection: 'row', alignItems: 'center', }}>
+                        <FontAwesome5 name="history" size={20} color="white" />
+                        <Text style={styles.titleButton}>Trả xe</Text>
+                      </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity 
+                      onPress={alertBooking}
+                      style={{ 
+                        backgroundColor: '#2F4F4F', 
+                        height: 50, 
+                        width: contentWidth / 2 - 5, 
+                        justifyContent: 'center', 
+                        alignItems: 'center',
+                        borderRadius: 5,
+                      }}
+                    >
+                      <View style={{ flexDirection: 'row', alignItems: 'center', }}>
+                        <FontAwesome5 name="unlink" size={20} color="white" />
+                        <Text style={styles.titleButton}>Hủy thuê xe</Text>
+                      </View>
+                    </TouchableOpacity>
+                  </View>
+                </>
+              ) : (
+                <></>
+              )
+            }
+            {
+              ROUTE_NAME == 'ListCarWaitApproveScreen' ?
+              (
+                <>
+                  <View style={{ borderWidth: 1, borderColor: 'white', marginTop: 20, paddingBottom: 20, }}>
+                    <Text style={{ color: COLORS.WHITE, textAlign: 'justify', marginHorizontal: 20, marginTop: 18, lineHeight: 22, fontSize: 21, fontWeight: 'bold' }}>Thời gian thuê xe</Text>
+                    <View style={{ margin: 25, flex: 1, }}>
+                      { 
+                        <>
+                          <Text style={{ fontSize: 18, color: 'white', fontStyle: 'italic' }}>
+                          {
+                            'Ngày bắt đầu: ' + moment(car?.bookings?.startBooking).format('L') + ' ' + moment(car?.bookings?.startBooking).format('LT')
+                          }
+                          </Text>
+
+                          <Text style={{ fontSize: 18, color: 'white', fontStyle: 'italic' }}>
+                          {
+                            'Ngày kết thúc: ' + moment(car?.bookings?.endBooking).format('L') + ' ' + moment(car?.bookings?.endBooking).format('LT')
+                          }
+                          </Text>
+                        </>
+                      }
+                    </View>
+                  </View>
+                  <View style={ styles.btnParagraph }>
+                    <ButtonCustom 
+                      title='Chấp nhận cho thuê xe'
+                      color='#2F4F4F'
+                      titleStyle={{ color: 'white', fontWeight: 'bold', fontSize: 20, marginLeft: 10, }}
+                      btnHeight={60}
+                      btnIcon='check-double'
+                      btnWidth={contentWidth}
+                      btnAction={alertAcceptBooking}
+                    />
+                  </View>
+                </>
+              ) : (
+                <></>
+              )
+            }
+            {
+              ROUTE_NAME == 'ListCarWaitPayedScreen' ?
+              (
+                <>
+                  <View style={{ borderWidth: 1, borderColor: 'white', marginTop: 20, paddingBottom: 20, }}>
+                    <Text style={{ color: COLORS.WHITE, textAlign: 'justify', marginHorizontal: 20, marginTop: 18, lineHeight: 22, fontSize: 21, fontWeight: 'bold' }}>Thời gian thuê xe</Text>
+                    <View style={{ margin: 25, flex: 1, }}>
+                      { 
+                        <>
+                          <Text style={{ fontSize: 18, color: 'white', fontStyle: 'italic' }}>
+                          {
+                            'Ngày bắt đầu: ' + moment(car?.bookings?.startBooking).format('L') + ' ' + moment(car?.bookings?.startBooking).format('LT')
+                          }
+                          </Text>
+
+                          <Text style={{ fontSize: 18, color: 'white', fontStyle: 'italic' }}>
+                          {
+                            'Ngày kết thúc: ' + moment(car?.bookings?.endBooking).format('L') + ' ' + moment(car?.bookings?.endBooking).format('LT')
+                          }
+                          </Text>
+                        </>
+                      }
+                    </View>
+                  </View>
+                  <View style={ styles.btnParagraph }>
+                    <ButtonCustom 
+                      title='Chấp nhận cho trả xe'
+                      color='#CD5C5C'
+                      titleStyle={{ color: 'white', fontWeight: 'bold', fontSize: 20, marginLeft: 10, }}
+                      btnHeight={60}
+                      btnIcon='flag-checkered'
+                      btnWidth={contentWidth}
+                      btnAction={alertAcceptPayedBooking}
+                    />
+                  </View>
+                </>
+              ) : (
+                <></>
+              )
+            }
+            {
+              ROUTE_NAME == 'ListTripUserPayedScreen' ?
+              (
+                <>
+                  <View style={{ borderWidth: 1, borderColor: 'white', marginTop: 20, paddingBottom: 20, }}>
+                    <Text style={{ color: COLORS.WHITE, textAlign: 'justify', marginHorizontal: 20, marginTop: 18, lineHeight: 22, fontSize: 21, fontWeight: 'bold' }}>Thời gian thuê xe</Text>
+                    <View style={{ margin: 25, flex: 1, }}>
+                      { 
+                        <>
+                          <Text style={{ fontSize: 18, color: 'white', fontStyle: 'italic' }}>
+                          {
+                            'Ngày bắt đầu: ' + moment(car?.bookings?.startBooking).format('L') + ' ' + moment(car?.bookings?.startBooking).format('LT')
+                          }
+                          </Text>
+
+                          <Text style={{ fontSize: 18, color: 'white', fontStyle: 'italic' }}>
+                          {
+                            'Ngày kết thúc: ' + moment(car?.bookings?.endBooking).format('L') + ' ' + moment(car?.bookings?.endBooking).format('LT')
+                          }
+                          </Text>
+                        </>
+                      }
+                    </View>
+                  </View>
+                  <View style={ styles.btnParagraph }>
+                    <ButtonCustom 
+                      title='Tiếp tục thuê xe'
+                      color='#000080'
+                      titleStyle={{ color: 'white', fontWeight: 'bold', fontSize: 20, marginLeft: 10, }}
+                      btnHeight={60}
+                      btnIcon='car'
+                      btnWidth={contentWidth}
+                      btnAction={() => navigation.navigate('BorrowCarScreen', car)}
+                    />
+                  </View>
+                </>
+              ) : (
+                <></>
+              )
+            }
+            {
+              ROUTE_NAME == 'ListTripWaitPayedScreen' ?
+              (
+                <>
+                  <View style={{ borderWidth: 1, borderColor: 'white', marginTop: 20, paddingBottom: 20, }}>
+                    <Text style={{ color: COLORS.WHITE, textAlign: 'justify', marginHorizontal: 20, marginTop: 18, lineHeight: 22, fontSize: 21, fontWeight: 'bold' }}>Thời gian thuê xe</Text>
+                    <View style={{ margin: 25, flex: 1, }}>
+                      { 
+                        <>
+                          <Text style={{ fontSize: 18, color: 'white', fontStyle: 'italic' }}>
+                          {
+                            'Ngày bắt đầu: ' + moment(car?.bookings?.startBooking).format('L') + ' ' + moment(car?.bookings?.startBooking).format('LT')
+                          }
+                          </Text>
+
+                          <Text style={{ fontSize: 18, color: 'white', fontStyle: 'italic' }}>
+                          {
+                            'Ngày kết thúc: ' + moment(car?.bookings?.endBooking).format('L') + ' ' + moment(car?.bookings?.endBooking).format('LT')
+                          }
+                          </Text>
+                        </>
+                      }
+                    </View>
+                  </View>
+                  <View style={{paddingBottom: 90}}>
+                    
+                  </View>
+                </>
+              ) : (
+                <></>
+              )
+            }
             
           </View>
         </ScrollView>
@@ -405,6 +713,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 40,
   },
+
+  btnGroupParagraph: {
+    height: 150,
+    marginTop: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 40,
+  },
   
   groupBtnParagraph: {
     height: 250,
@@ -413,6 +729,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 40,
   },  
+
+  titleButton: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 18,
+    marginLeft: 10,
+  },
 });
 
 export default CarDetail;

@@ -8,7 +8,6 @@ import { useSelector } from 'react-redux';
 import FastImage from 'react-native-fast-image';
 const unwind = require('javascript-unwind');
 const moment = require('moment');
-moment.locale()
 
 import { COLORS } from '../../constant/colors';
 import CATEGORIES_CAR from '../../constant/categories';
@@ -259,7 +258,7 @@ const styles = StyleSheet.create({
   },
 
   card: {
-    height: 300,
+    height: 305,
     width: cardWidth,
     marginHorizontal: 10,
     marginTop: 15, 

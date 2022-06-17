@@ -13,7 +13,7 @@ import CARS from '../../constant/cars';
 import TextInputCustom from '../../components/TextInputCustom';
 import { TouchableHighlight } from 'react-native-gesture-handler';
 import images from '../../resources/images/index';
-import { getListMyCar } from '../../api/general';
+import { getListMyCar, getListCarBooking } from '../../api/general';
 import ButtonCustom from '../../components/ButtonCustom';
 import { backgroundColor } from 'react-native/Libraries/Components/View/ReactNativeStyleAttributes';
 const { width } = Dimensions.get('screen');

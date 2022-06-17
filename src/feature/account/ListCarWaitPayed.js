@@ -6,6 +6,7 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import NumberFormat from 'react-number-format';
 import { useSelector } from 'react-redux';
 import FastImage from 'react-native-fast-image';
+const unwind = require('javascript-unwind');
 
 import { COLORS } from '../../constant/colors';
 import CATEGORIES_CAR from '../../constant/categories';
@@ -30,11 +31,12 @@ const ListCarWaitPayed = ({ navigation, route }) => {
   const [page, setPage] = useState(1);  
 
   const fetchListTrip = async ({ page }) => {
-    let TYPE_GET_LIST_CAR_WAIT_APPROVE = 0;
+    let TYPE_GET_LIST_CAR_WAIT_APPROVE = 2;
     let resultListCarRegister = await getListMyCar(TYPE_GET_LIST_CAR_WAIT_APPROVE, page);
     let { success, data: { items: data } } = resultListCarRegister.data;
     if(success) {
-      setListTrip(data);
+      let listCarWaitPayedAfterSplitBooking = unwind(data, 'bookings');
+      setListTrip(listCarWaitPayedAfterSplitBooking);
     }
   }
 

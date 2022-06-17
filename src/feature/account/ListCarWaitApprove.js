@@ -6,6 +6,8 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import NumberFormat from 'react-number-format';
 import { useSelector } from 'react-redux';
 import FastImage from 'react-native-fast-image';
+const unwind = require('javascript-unwind');
+const moment = require('moment');
 
 import { COLORS } from '../../constant/colors';
 import CATEGORIES_CAR from '../../constant/categories';
@@ -13,7 +15,7 @@ import CARS from '../../constant/cars';
 import TextInputCustom from '../../components/TextInputCustom';
 import { TouchableHighlight } from 'react-native-gesture-handler';
 import images from '../../resources/images/index';
-import { getListMyCar } from '../../api/general';
+import { getListMyCar, acceptBookingCar } from '../../api/general';
 import ButtonCustom from '../../components/ButtonCustom';
 import { backgroundColor } from 'react-native/Libraries/Components/View/ReactNativeStyleAttributes';
 const { width } = Dimensions.get('screen');
@@ -30,11 +32,12 @@ const ListCarWaitApprove = ({ navigation, route }) => {
   const [page, setPage] = useState(1);  
 
   const fetchListTrip = async ({ page }) => {
-    let TYPE_GET_LIST_CAR_WAIT_PAYED = 2;
+    let TYPE_GET_LIST_CAR_WAIT_PAYED = 0;
     let resultListCarRegister = await getListMyCar(TYPE_GET_LIST_CAR_WAIT_PAYED, page);
     let { success, data: { items: data } } = resultListCarRegister.data;
     if(success) {
-      setListTrip(data);
+      let listCarAfterSplitBooking = unwind(data, 'bookings');
+      setListTrip(listCarAfterSplitBooking);
     }
   }
 
@@ -87,10 +90,24 @@ const ListCarWaitApprove = ({ navigation, route }) => {
                   { '  ' + car.brand.name }
                 </Text> 
               </Text>
+              <Text style={{ marginTop: 10, fontSize: 15, color: COLORS.DEFAULT_TEXT }}>
+                Ngày BĐ: 
+                <Text style={{ fontWeight: 'bold', color: 'green' }}>
+                  { 
+                    '  ' + moment(car.bookings.startBooking).format('L') + ' ' + moment(car.bookings.startBooking).format('LT')  
+                  }
+                </Text> 
+              </Text>
+              <Text style={{ fontSize: 15, color: COLORS.DEFAULT_TEXT }}>
+                Ngày KT: 
+                <Text style={{ fontWeight: 'bold', color: '#FFD700' }}>
+                  { '  ' + moment(car.bookings.endBooking).format('L') + ' ' + moment(car.bookings.endBooking).format('LT')  }
+                </Text> 
+              </Text>
             </View>
             <View
               style={{
-                marginTop: 10,
+                top: -20,
                 marginHorizontal: 20,
                 flexDirection: 'row',
                 justifyContent: 'space-between',
@@ -241,7 +258,7 @@ const styles = StyleSheet.create({
   },
 
   card: {
-    height: 220,
+    height: 305,
     width: cardWidth,
     marginHorizontal: 10,
     marginTop: 15, 

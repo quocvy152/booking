@@ -5,15 +5,13 @@ import { useNavigation } from '@react-navigation/native';
 import { FontAwesome5 } from '@expo/vector-icons';
 import NumberFormat from 'react-number-format';
 import { useSelector } from 'react-redux';
-import FastImage from 'react-native-fast-image';
+const unwind = require('javascript-unwind');
 
 import { COLORS } from '../../constant/colors';
-import CATEGORIES_CAR from '../../constant/categories';
-import CARS from '../../constant/cars';
 import TextInputCustom from '../../components/TextInputCustom';
 import { TouchableHighlight } from 'react-native-gesture-handler';
 import images from '../../resources/images/index';
-import { getListMyCar } from '../../api/general';
+import { getListMyCar, getListCarBooking } from '../../api/general';
 import ButtonCustom from '../../components/ButtonCustom';
 import { backgroundColor } from 'react-native/Libraries/Components/View/ReactNativeStyleAttributes';
 const { width } = Dimensions.get('screen');
@@ -31,10 +29,11 @@ const ListTripUser = ({ navigation, route }) => {
 
   const fetchListTrip = async ({ page }) => {
     let TYPE_GET_LIST_TRIP = 1;
-    let resultListCarRegister = await getListMyCar(TYPE_GET_LIST_TRIP, page);
+    let resultListCarRegister = await getListCarBooking(TYPE_GET_LIST_TRIP, page);
     let { success, data: { items: data } } = resultListCarRegister.data;
     if(success) {
-      setListTrip(data);
+      let listTripAfterSplitBooking = unwind(data, 'bookings');
+      setListTrip(listTripAfterSplitBooking);
     }
   }
 
