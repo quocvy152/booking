@@ -84,12 +84,19 @@ const CarDetail = ({ navigation, route }) => {
 
   const handleCancelBooking = async () => {
     let carID = car.id;
-    let resultCancelBooking = await cancelBookingCar(carID);
+
+    const bodyCancelBooking = {
+      car_id: carID,
+      startBooking: car.bookings.startBooking,
+      endBooking: car.bookings.endBooking,
+    }
+
+    let resultCancelBooking = await cancelBookingCar(bodyCancelBooking);
     let { success, data, message } = resultCancelBooking.data;
     if(success) {
-      showToast({ content: 'Hủy đặt xe thành công', type: 'success' });
+      showToast({ content: data, type: 'success' });
       setTimeout(() => {
-        navigation.navigate('ListTripUserScreen');
+        navigation.navigate('ListTripUserWaitApproveScreen');
       }, 1500)
     } else {
       showToast({ content: message, type: 'error' });
@@ -279,46 +286,8 @@ const CarDetail = ({ navigation, route }) => {
 
             </View>
             {
-              ROUTE_NAME ?
+              !ROUTE_NAME ?
               (
-                ROUTE_NAME == 'ListCarUserScreen' ?
-                (
-                  <View style={ styles.groupBtnParagraph }>
-                    <ButtonCustom 
-                      title='Cập nhật xe'
-                      color='#FFD700'
-                      btnIcon='edit'
-                      titleStyle={{ color: 'white', fontWeight: 'bold', fontSize: 20, marginLeft: 10, }}
-                      btnHeight={60}
-                      btnWidth={contentWidth}
-                      btnAction={() => navigation.navigate('UpdateCarScreen', car)}
-                    />
-                    <View style={{ marginBottom: 20, }}></View>
-
-                    <ButtonCustom 
-                      title='Hủy đăng ký xe'
-                      color='red'
-                      btnIcon='luggage-cart'
-                      titleStyle={{ color: 'white', fontWeight: 'bold', fontSize: 20, marginLeft: 10, }}
-                      btnHeight={60}
-                      btnWidth={contentWidth}
-                      btnAction={alert}
-                    />
-                  </View>
-                ) : (
-                  <View style={ styles.btnParagraph }>
-                    <ButtonCustom 
-                      title='Hủy đặt xe'
-                      color='yellow'
-                      titleStyle={{ color: COLORS.DEFAULT_BACKGROUND, fontWeight: 'bold', fontSize: 20, marginLeft: 10, }}
-                      btnHeight={60}
-                      btnIcon='holly-berry'
-                      btnWidth={contentWidth}
-                      btnAction={alertBooking}
-                    />
-                  </View>
-                )
-              ) : (
                 <View style={ styles.btnParagraph }>
                   <ButtonCustom 
                     title='Thuê xe'
@@ -330,6 +299,57 @@ const CarDetail = ({ navigation, route }) => {
                     btnAction={() => navigation.navigate('BorrowCarScreen', car)}
                   />
                 </View>
+              ) : (
+                <></>
+              )
+            }
+
+            {
+              ROUTE_NAME == 'ListCarUserScreen' ?
+              (
+                <View style={ styles.groupBtnParagraph }>
+                  <ButtonCustom 
+                    title='Cập nhật xe'
+                    color='#FFD700'
+                    btnIcon='edit'
+                    titleStyle={{ color: 'white', fontWeight: 'bold', fontSize: 20, marginLeft: 10, }}
+                    btnHeight={60}
+                    btnWidth={contentWidth}
+                    btnAction={() => navigation.navigate('UpdateCarScreen', car)}
+                  />
+                  <View style={{ marginBottom: 20, }}></View>
+
+                  <ButtonCustom 
+                    title='Hủy đăng ký xe'
+                    color='red'
+                    btnIcon='luggage-cart'
+                    titleStyle={{ color: 'white', fontWeight: 'bold', fontSize: 20, marginLeft: 10, }}
+                    btnHeight={60}
+                    btnWidth={contentWidth}
+                    btnAction={alert}
+                  />
+                </View>
+              ) : (
+                <></>
+              ) 
+            }
+
+            {
+              ROUTE_NAME == 'ListTripUserWaitApproveScreen' ?
+              (
+                <View style={ styles.btnParagraph }>
+                  <ButtonCustom 
+                    title='Hủy đặt xe'
+                    color='yellow'
+                    titleStyle={{ color: COLORS.DEFAULT_BACKGROUND, fontWeight: 'bold', fontSize: 20, marginLeft: 10, }}
+                    btnHeight={60}
+                    btnIcon='holly-berry'
+                    btnWidth={contentWidth}
+                    btnAction={alertBooking}
+                  />
+                </View>
+              ) : (
+                <></>
               )
             }
             

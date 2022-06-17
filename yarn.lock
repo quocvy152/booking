@@ -3542,6 +3542,11 @@ isomorphic-fetch@^2.1.1:
     node-fetch "^1.0.1"
     whatwg-fetch ">=0.10.0"
 
+javascript-unwind@^1.4.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/javascript-unwind/-/javascript-unwind-1.4.0.tgz#43527dc033b4b12f6b8548eaebf2fd6283c7bcc4"
+  integrity sha512-cyjkQjFu9yD0Ae9vUmuQUG7QjolTCqWmGV03uBhbpQtyL8y0HwFCz2/fPz9hSnPiCBhJC8w/QWtcr8kSjtwhcQ==
+
 jest-get-type@^26.3.0:
   version "26.3.0"
   resolved "https://registry.npmjs.org/jest-get-type/-/jest-get-type-26.3.0.tgz"

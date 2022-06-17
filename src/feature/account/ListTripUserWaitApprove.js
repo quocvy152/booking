@@ -6,6 +6,9 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import NumberFormat from 'react-number-format';
 import { useSelector } from 'react-redux';
 import FastImage from 'react-native-fast-image';
+const unwind = require('javascript-unwind');
+const moment = require('moment');
+moment.locale()
 
 import { COLORS } from '../../constant/colors';
 import CATEGORIES_CAR from '../../constant/categories';
@@ -34,7 +37,8 @@ const ListTripUserWaitApprove = ({ navigation, route }) => {
     let resultListCarRegister = await getListCarBooking(TYPE_GET_LIST_TRIP_WAIT_APPROVE, page);
     let { success, data: { items: data } } = resultListCarRegister.data;
     if(success) {
-      setListTrip(data);
+      let listTripAfterSplitBooking = unwind(data, 'bookings');
+      setListTrip(listTripAfterSplitBooking);
     }
   }
 
@@ -87,10 +91,24 @@ const ListTripUserWaitApprove = ({ navigation, route }) => {
                   { '  ' + car.brand.name }
                 </Text> 
               </Text>
+              <Text style={{ marginTop: 10, fontSize: 15, color: COLORS.DEFAULT_TEXT }}>
+                Ngày BĐ: 
+                <Text style={{ fontWeight: 'bold', color: 'green' }}>
+                  { 
+                    '  ' + moment(car.bookings.startBooking).format('L') + ' ' + moment(car.bookings.startBooking).format('LT')  
+                  }
+                </Text> 
+              </Text>
+              <Text style={{ fontSize: 15, color: COLORS.DEFAULT_TEXT }}>
+                Ngày KT: 
+                <Text style={{ fontWeight: 'bold', color: '#FFD700' }}>
+                  { '  ' + moment(car.bookings.endBooking).format('L') + ' ' + moment(car.bookings.endBooking).format('LT')  }
+                </Text> 
+              </Text>
             </View>
             <View
               style={{
-                marginTop: 10,
+                top: -20,
                 marginHorizontal: 20,
                 flexDirection: 'row',
                 justifyContent: 'space-between',
@@ -241,7 +259,7 @@ const styles = StyleSheet.create({
   },
 
   card: {
-    height: 220,
+    height: 300,
     width: cardWidth,
     marginHorizontal: 10,
     marginTop: 15, 

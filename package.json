@@ -26,6 +26,7 @@
     "expo-linear-gradient": "^11.0.3",
     "expo-status-bar": "~1.2.0",
     "expo-updates": "~0.11.7",
+    "javascript-unwind": "^1.4.0",
     "lodash": "^4.17.21",
     "moment": "^2.29.2",
     "object-to-formdata": "^4.4.2",
