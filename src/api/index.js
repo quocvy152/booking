@@ -14,7 +14,7 @@ export async function requestAPI(path, method, body, injectHeader) {
       headers.token = token
     }
 
-    const url = `${DEV_ENVI.BASE_URL_V2}${path}`;
+    const url = `${DEV_ENVI.BOOKING_SERVER_URL}${path}`;
 
     let objMeta = {
       method,
@@ -40,7 +40,7 @@ export async function requestFileAPI(path, method, body, type, injectHeader) {
     headers.Authorization = `Bearer ${token}`
   }
 
-  const url = `${DEV_ENVI.BASE_URL_V2}${path}`;
+  const url = `${DEV_ENVI.BOOKING_SERVER_URL}${path}`;
 
   let objMeta = {
     method,
