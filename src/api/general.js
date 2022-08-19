@@ -18,7 +18,8 @@ export async function getListBrand() {
 
 export async function getListCarPrepare(querys) {
  
-    return await requestAPI(`${ENDPOINT.LIST_CAR_PREPARE}?${querys}`, method.GET);
+    // return await requestAPI(`${ENDPOINT.LIST_CAR_PREPARE}?${querys}`, method.GET);
+    return await requestAPI(`${ENDPOINT.LIST_CAR_PREPARE}`, method.GET);
 }
 
 export async function createCar(infoCar) {

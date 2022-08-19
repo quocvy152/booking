@@ -67,9 +67,9 @@ const Login = () => {
     setIsLoading(false);
   }
 
-  const fetchInfoUser = async () => {
+  const fetchInfoUser = async (userID) => {
     try {
-      let infoUserAPI = await getInfoUser();
+      let infoUserAPI = await getInfoUser(userID);
       const { success, data: infoUser } = infoUserAPI.data;
 
       if(success) {
@@ -96,15 +96,16 @@ const Login = () => {
     }
 
     let body = {
-      Username,
-      Password,
+      username: Username,
+      password: Password,
     }
 
     loginAPI(body)
       .then(res => {
-        let { data: token, success, message } = res.data;
-        console.log({ token, success, message })
-        if(!success) {
+        let { data, error, message } = res.data;
+        let { _id: userID, token } = data;
+        console.log({ token, error, message })
+        if(error) {
           hideLoading();
 
             showToast({ type: 'error', content: message })
@@ -126,10 +127,10 @@ const Login = () => {
             AsyncStorageContstants.AUTH_USER_TOKEN,
             token,
           );
-
+          console.log({ userID, token })
           // save in store Redux
           dispatch(signIn({ token }));
-          fetchInfoUser();
+          fetchInfoUser(userID);
 
           showToast({ type: 'success', content: 'Đăng nhập thành công' });
           setTimeout(() => {

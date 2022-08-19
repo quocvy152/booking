@@ -34,7 +34,7 @@ const Home = ({ navigation }) => {
 
   const fetchListBrand = async () => {
     let listBrandAPI = await getListBrand();
-    let { success, data: listBrand } = listBrandAPI.data;
+    let { error, data: listBrand } = listBrandAPI.data;
     setListBrand(listBrand);
   }
 
@@ -87,9 +87,9 @@ const Home = ({ navigation }) => {
           <View style={ styles.card }>
             <View style={{ alignItems: 'center', top: -15, height: 120, }}>
               {
-                car.images && car.images.length ?
+                car.infoCar.gallery && car.infoCar.gallery.length ?
                 (
-                  <Image source={{ uri: car.images[0] && car.images[0].url }} style={{ height: 120, width: 120, borderRadius: 60, resizeMode: 'contain' }} />
+                  <Image source={{ uri: car.infoCar.gallery[0] && car.infoCar.gallery[0].url }} style={{ height: 120, width: 120, borderRadius: 60, resizeMode: 'contain' }} />
                 ) : (
                   <Image source={require('../../resources/images/mazda-6-2020-26469.png')} style={{ height: 120, width: 120, borderRadius: 60, resizeMode: 'contain' }} />
                 )
@@ -97,11 +97,11 @@ const Home = ({ navigation }) => {
               
             </View>
             <View style={{ marginHorizontal: 20, top: -30 }}>
-              <Text style={{ fontSize: 15, fontWeight: 'bold' }}>{ car.name && car.name.length > 16 ? car.name.slice(0, 16) + '...' : car.name }</Text>
+              <Text style={{ fontSize: 15, fontWeight: 'bold' }}>{ car.infoCar.name && car.infoCar.name.length > 16 ? car.infoCar.name.slice(0, 16) + '...' : car.infoCar.name }</Text>
               <Text style={{ fontSize: 15, color: COLORS.DEFAULT_TEXT }}>
                 Hiệu: 
                 <Text style={{ fontWeight: 'bold', color: 'black' }}>
-                  { '  ' + car.brand.name }
+                  { '  ' + car.infoCar.brandID.name }
                 </Text> 
               </Text>
             </View>
@@ -114,7 +114,7 @@ const Home = ({ navigation }) => {
               }}
             >
               <NumberFormat
-                value={ car.price }
+                value={ car.infoCar.price }
                 displayType="text"
                 thousandSeparator
                 prefix="đ"
@@ -128,12 +128,13 @@ const Home = ({ navigation }) => {
   }
 
   const fetchDataListCarPrepare = async () => {
-    const querys = `pageIndex=${pageIndex}&limit=${limit}`;
+    // const querys = `pageIndex=${pageIndex}&limit=${limit}`;
+    const querys = ``;
 
     let resultListCarPrepare = await getListCarPrepare(querys);
-    const { data, success } = resultListCarPrepare.data;
-    if(success) {
-      setListCar(data.items);
+    const { data: listCar, error } = resultListCarPrepare.data;
+    if(!error) {
+      setListCar(listCar);
       setTotalPage(data.totalPage);
     }
   }
@@ -164,7 +165,7 @@ const Home = ({ navigation }) => {
   }, [checkReload]);
 
   useEffect(() => {
-    // let listCarFilter = listCar.filter(car => car.name.toLowerCase().includes(nameSearch.toLowerCase()) && car.brand.id == listBrand[selectedCategorIndex].id);
+    // let listCarFilter = listCar.filter(car => car.name.toLowerCase().includes(nameSearch.toLowerCase()) && car.brandID.id == listBrand[selectedCategorIndex].id);
     let listCarFilter = listCar.filter(car => car.name.toLowerCase().includes(nameSearch.toLowerCase()));
     setListCar(listCarFilter);
 

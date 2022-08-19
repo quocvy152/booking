@@ -10,7 +10,7 @@ export async function requestAPI(path, method, body, injectHeader) {
       ...injectHeader,
     };
     if(token) {
-      headers.Authorization = `Bearer ${token}`,
+      headers.Authorization = `${token}`,
       headers.token = token
     }
 
@@ -37,7 +37,7 @@ export async function requestFileAPI(path, method, body, type, injectHeader) {
     ...injectHeader,
   };
   if(token) {
-    headers.Authorization = `Bearer ${token}`
+    headers.Authorization = `${token}`
   }
 
   const url = `${DEV_ENVI.BOOKING_SERVER_URL}${path}`;

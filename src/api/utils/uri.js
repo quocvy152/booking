@@ -1,4 +1,4 @@
-const BASE_APP_USERS = '/AppUsers';
+const BASE_USERS = '/users';
 const BASE_CARS      = '/cars';
 const BASE_LOCATION  = '/Location';
 const BASE_BRANDS    = '/brands';
@@ -12,18 +12,19 @@ const VERSION_2      = '/v2';
 export const ENDPOINT = {
   
   // AppUsers
-  REGISTER: `${BASE_APP_USERS}/Registration`,
-  RESET_PASSWORD: `${BASE_APP_USERS}/ResetPassword`,
-  INFO_USER: `${BASE_APP_USERS}/Info`,
-  UPDATE_USER: `${BASE_APP_USERS}/update`,
-  CHANGE_PASSWORD: `${BASE_APP_USERS}/change-password`,
-  CHANGE_AVATAR: `${BASE_APP_USERS}/change-avatar`,
+  LOGIN: `${BASE_USERS}/login`,
+  REGISTER: `${BASE_USERS}/Registration`,
+  RESET_PASSWORD: `${BASE_USERS}/ResetPassword`,
+  INFO_USER: `${BASE_USERS}/`,
+  UPDATE_USER: `${BASE_USERS}/update`,
+  CHANGE_PASSWORD: `${BASE_USERS}/change-password`,
+  CHANGE_AVATAR: `${BASE_USERS}/change-avatar`,
 
   // File
   UPLOAD_FILE: `${BASE_FILE}/upload-file`,
 
   // Cars
-  LIST_CAR_PREPARE: `${BASE_CARS}/cars`,
+  LIST_CAR_PREPARE: `${BASE_CARS}`,
   REGISTER_CAR: `${BASE_CARS}`,
   UPDATE_CAR: `${BASE_CARS}`,
   REGISTER_CAR_V2: `${BASE_CARS}`,

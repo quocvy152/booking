@@ -12,7 +12,7 @@ const method = {
 
 export async function loginAPI(body) {
     
-    return await requestAPI(`${ENDPOINT.CREATE_TOKEN}`, method.POST, body);
+    return await requestAPI(`${ENDPOINT.LOGIN}`, method.POST, body);
 };
 
 export async function registerUser(body) {
@@ -21,9 +21,9 @@ export async function registerUser(body) {
     return await requestFileAPI(`${ENDPOINT.REGISTER}`, method.POST, parseBody, 'application/json');
 };
 
-export async function getInfoUser() {
+export async function getInfoUser(userID) {
  
-    return await requestAPI(`${ENDPOINT.INFO_USER}`, method.GET);
+    return await requestAPI(`${ENDPOINT.INFO_USER}${userID}`, method.GET);
 };
 
 export async function updateUser(infoUserUpdate) {
