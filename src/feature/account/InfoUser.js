@@ -16,6 +16,9 @@ import images from '../../resources/images';
 
 const InfoUser = ({ navigation, route }) => {
   const infoUser = useSelector(state => state.auth.infoUser);
+  console.log({
+    InfoUserScreen: infoUser
+  })
   const avatar = infoUser ? infoUser.avatar : '';
   const [totalMyCar, setTotalMyCar] = useState();
 

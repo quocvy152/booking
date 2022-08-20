@@ -15,7 +15,7 @@ export const ENDPOINT = {
   LOGIN: `${BASE_USERS}/login`,
   REGISTER: `${BASE_USERS}/Registration`,
   RESET_PASSWORD: `${BASE_USERS}/ResetPassword`,
-  INFO_USER: `${BASE_USERS}/`,
+  INFO_USER_CURRENT: `${BASE_USERS}/info/current`,
   UPDATE_USER: `${BASE_USERS}/update`,
   CHANGE_PASSWORD: `${BASE_USERS}/change-password`,
   CHANGE_AVATAR: `${BASE_USERS}/change-avatar`,

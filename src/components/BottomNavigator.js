@@ -14,6 +14,7 @@ const Tab = createBottomTabNavigator();
 const BottomNavigator = ({ route }) => {
   const infoUser = useSelector(state => state.auth.infoUser);
   const avatar = infoUser ? infoUser.avatar : '';
+  const name = infoUser ? (infoUser.lastName + ' ' + infoUser.firstName) : 'Tài khoản';
 
   return (
     <>
@@ -59,7 +60,7 @@ const BottomNavigator = ({ route }) => {
           }}
         />
         <Tab.Screen 
-          name={infoUser ? infoUser.name : 'Tài khoản'}
+          name={name}
           component={infoUser ? InfoCustomer : Home}
           options={{
             tabBarIcon: props => {

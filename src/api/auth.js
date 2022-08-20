@@ -21,9 +21,9 @@ export async function registerUser(body) {
     return await requestFileAPI(`${ENDPOINT.REGISTER}`, method.POST, parseBody, 'application/json');
 };
 
-export async function getInfoUser(userID) {
+export async function getInfoUser() {
  
-    return await requestAPI(`${ENDPOINT.INFO_USER}${userID}`, method.GET);
+    return await requestAPI(`${ENDPOINT.INFO_USER_CURRENT}`, method.GET);
 };
 
 export async function updateUser(infoUserUpdate) {

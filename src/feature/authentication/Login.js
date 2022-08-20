@@ -67,12 +67,12 @@ const Login = () => {
     setIsLoading(false);
   }
 
-  const fetchInfoUser = async (userID) => {
+  const fetchInfoUser = async () => {
     try {
-      let infoUserAPI = await getInfoUser(userID);
-      const { success, data: infoUser } = infoUserAPI.data;
-
-      if(success) {
+      let infoUserAPI = await getInfoUser();
+      const { error, data: infoUser } = infoUserAPI.data;
+ 
+      if(!error) {
         AsyncStorage.setItem(
           AsyncStorageContstants.AUTH_USER_INFO,
           JSON.stringify(infoUser),
@@ -127,10 +127,10 @@ const Login = () => {
             AsyncStorageContstants.AUTH_USER_TOKEN,
             token,
           );
-          console.log({ userID, token })
+
           // save in store Redux
           dispatch(signIn({ token }));
-          fetchInfoUser(userID);
+          fetchInfoUser();
 
           showToast({ type: 'success', content: 'Đăng nhập thành công' });
           setTimeout(() => {

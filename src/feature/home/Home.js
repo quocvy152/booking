@@ -20,7 +20,7 @@ const cardWidth = width / 2 - 20;
 
 const Home = ({ navigation }) => {
   const infoUser = useSelector(state => state.auth.infoUser);
-  const name = infoUser?.name;
+  const name = infoUser?.lastName + infoUser?.firstName;
   const avatar = infoUser ? infoUser.avatar : '';
   const [listBrand, setListBrand] = useState([]);
   const [listCar, setListCar] = useState([]);
