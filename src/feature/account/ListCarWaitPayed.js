@@ -24,7 +24,7 @@ const contentWidth = width - 20;
 const ListCarWaitPayed = ({ navigation, route }) => {
   const infoUser = useSelector(state => state.auth.infoUser);
   const name = infoUser?.name;
-  const avatar = infoUser ? infoUser.avatar : '';
+  const avatar = infoUser?.avatar?.path;
   const [listTrip, setListTrip] = useState([]);
   const [nameSearch, setNameSearch] = useState('');
   const [checkReload, setCheckReload] = useState(false);

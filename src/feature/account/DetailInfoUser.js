@@ -26,13 +26,13 @@ import { isFulfilled } from '@reduxjs/toolkit';
 
 const DetailInfoUser = ({ navigation, route }) => {
   const infoUser = useSelector(state => state.auth.infoUser);
-  const [Img, setImg] = useState(infoUser ? infoUser.avatar : '');
+  const [Img, setImg] = useState(infoUser?.avatar?.path);
   const [ImgUpdate, setImgUpdate] = useState(null);
   const [InfoImgUpdate, setInfoImgUpdate] = useState({});
-  // const avatar = infoUser ? infoUser.avatar : '';
-  const [name, setName] = useState(infoUser ? infoUser.name : '');
+  const [firstName, setFirstName] = useState(infoUser ? infoUser.firstName : '');
+  const [lastName, setLastName] = useState(infoUser ? infoUser.lastName : '');
   const [email, setEmail] = useState(infoUser ? infoUser.email : '');
-  const [phone, setPhone] = useState(infoUser ? infoUser.phoneNumber : '');
+  const [phone, setPhone] = useState(infoUser ? infoUser.phone : '');
   const [Username, setUsername] = useState(infoUser ? infoUser.username : '');
   const [password, setPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -135,9 +135,9 @@ const DetailInfoUser = ({ navigation, route }) => {
     }
 
     let resultChangePass = await changePassword(bodyChangePass);
-    let { success, message, data } = resultChangePass.data;
+    let { error, message, data } = resultChangePass.data;
 
-    if(success) {
+    if(error) {
       showToast({ content: data, type: 'success' });
       hideLoadingChangePass();
       return;
@@ -153,13 +153,27 @@ const DetailInfoUser = ({ navigation, route }) => {
     showLoading();
 
     let body = {
-      name, 
+      userID: infoUser._id,
+      username: infoUser.username,
+      firstName, 
+      lastName, 
       email,
-      phoneNumber: phone,
+      phone,
+      file: {
+        uri: ImgUpdate,
+        type: 'image/*',
+        name: ImgUpdate,
+      }
     };
 
-    if(!name) {
+    if(!firstName) {
       showToast({ content: 'Vui lòng nhập tên' });
+      hideLoading();
+      return;
+    }
+
+    if(!lastName) {
+      showToast({ content: 'Vui lòng nhập họ' });
       hideLoading();
       return;
     }
@@ -176,35 +190,25 @@ const DetailInfoUser = ({ navigation, route }) => {
       return;
     }
 
-    if(ImgUpdate) {
-      const resultChangeAvatar = await changeAvatar({
-        avatar: {
-          uri: ImgUpdate,
-          type: 'image/*',
-          name: ImgUpdate,
-        },
-      });
-      const { success, data, message } = resultChangeAvatar.data;
-      if(!success) {
+    try {
+      // CALL API
+      const resultUpdateInfoUser = await updateUser(body);
+      const { error, data, message } = resultUpdateInfoUser.data;
+
+      if(!error) {
+        showToast({ content: 'Cập nhật thông tin tài khoản thành công', type: 'success' });
+        hideLoading();
+        dispatch(updateInfoUser({ infoUser: data }));
+        return;
+      } else {
         showToast({ content: message, type: 'error' });
         hideLoading();
         return;
       }
-    }
-
-    // CALL API
-    const resultUpdateInfoUser = await updateUser(body);
-    const { success, data, message } = resultUpdateInfoUser.data;
-
-    if(success) {
-      showToast({ content: 'Cập nhật thông tin tài khoản thành công', type: 'success' });
+    } catch (error) {
+      console.log({ error })
+      showToast({ content: 'Xảy ra lỗi', type: 'error' });
       hideLoading();
-      dispatch(updateInfoUser({ infoUser: data }));
-      return;
-    } else {
-      showToast({ content: message, type: 'error' });
-      hideLoading();
-      return;
     }
   }
 
@@ -259,8 +263,15 @@ const DetailInfoUser = ({ navigation, route }) => {
           <TextInput 
             style={ styles.inputStyle }
             placeholder='Nhập tên'
-            value={name}
-            onChangeText={val => setName(val)} 
+            value={firstName}
+            onChangeText={val => setFirstName(val)} 
+          />
+
+          <TextInput 
+            style={ styles.inputStyle }
+            placeholder='Nhập họ'
+            value={lastName}
+            onChangeText={val => setLastName(val)} 
           />
           
           <TextInput 

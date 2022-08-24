@@ -39,6 +39,7 @@ export {
   checkValidDataCar,
   returnDetailIDS,
   convertDateTimeToString,
+  returnCharacteristicID
 }
 
 function callNumber(phone) {
@@ -390,9 +391,9 @@ function convertObjectToFormData(object) {
 // Kiểm tra thông tin đầu vào của xe
 const checkValidDataCar = (infoDataCar) => {
   const { 
-    Name, BrandId, Description, Price, 
-    Mortage, Rules, Address_booking, 
-    WardId, DistrictId, ProvinceId, 
+    name, brandID, description, price, 
+    mortage, rules, address, 
+    wardID, districtID, provinceID, 
     Seats, Fuel, FuelConsumption, 
     Tranmission, SelectedFeature, 
     SelectedLicense, Img
@@ -404,25 +405,25 @@ const checkValidDataCar = (infoDataCar) => {
       message: 'Vui lòng đăng tải hình ảnh xe của bạn'
     }
 
-  if(!Name) 
+  if(!name) 
     return {
       error: true,
       message: 'Nhập tên xe của bạn'
     }
 
-  if(!BrandId)
+  if(!brandID)
     return {
       error: true,
       message: 'Nhập thương hiệu xe của bạn'
     }
 
-  if(!Price)
+  if(!price)
     return {
       error: true,
       message: 'Nhập giá thuê xe của bạn'
     }
 
-  if(!Address_booking || !WardId || !DistrictId || !ProvinceId) 
+  if(!address || !wardID || !districtID || !provinceID) 
     return {
       error: true,
       message: 'Nhập thông tin địa chỉ để thuê xe của bạn'
@@ -452,19 +453,19 @@ const checkValidDataCar = (infoDataCar) => {
       message: 'Nhập truyền động của xe bạn'
     }
 
-  if(!Description)
+  if(!description)
     return {
       error: true,
       message: 'Nhập mô tả xe của bạn'
     }
 
-  if(!Mortage) 
+  if(!mortage) 
     return {
       error: true,
       message: 'Nhập tài sản thế chấp để thuê xe của bạn'
     }
 
-  if(!Rules) 
+  if(!rules) 
     return {
       error: true,
       message: 'Nhập điều khoản để thuê xe của bạn'
@@ -511,4 +512,10 @@ const convertDateTimeToString = (dateTime) => {
   let fTime = tempDate.getHours() + ' giờ ' + ' - ' + tempDate.getMinutes() + ' phút';
 
   return fDate + ' ' + fTime;
+}
+
+const returnCharacteristicID = (listCharacteristicID) => {
+  let strCharacteristicID = listCharacteristicID.join(',');
+
+  return strCharacteristicID;
 }

@@ -16,10 +16,7 @@ import images from '../../resources/images';
 
 const InfoUser = ({ navigation, route }) => {
   const infoUser = useSelector(state => state.auth.infoUser);
-  console.log({
-    InfoUserScreen: infoUser
-  })
-  const avatar = infoUser ? infoUser.avatar : '';
+  const avatar = infoUser?.avatar?.path;
   const [totalMyCar, setTotalMyCar] = useState();
 
   const handleLogoutBtn = async () => {
@@ -43,9 +40,10 @@ const InfoUser = ({ navigation, route }) => {
 
     useEffect(async () => {
       let TYPE_LIST_MY_CAR = '';
-      let resultGetListMyCar = await getListMyCar(TYPE_LIST_MY_CAR, 1);
-      const { success, data: { items: data }, message } = resultGetListMyCar.data;
-      if(success) {
+      let resultGetListMyCar = await getListMyCar();
+      const { error, data, message } = resultGetListMyCar.data;
+
+      if(!error) {
         setTotalMyCar(data.length);
       } else {
         console.log({ message })
@@ -62,7 +60,7 @@ const InfoUser = ({ navigation, route }) => {
           (<Image source={require('../../resources/images/user-300x300.png')} style={ styles.avatarStyle } />)
         }
         <View style={{ marginLeft: 20, justifyContent: 'center' }}>
-          <Text style={ styles.userName }>{ infoUser.name }</Text>
+          <Text style={ styles.userName }>{ infoUser.lastName + ' ' + infoUser.firstName }</Text>
           <Text style={{ fontStyle: 'italic', color: '#e6b800' }}>
             Số xe đã đăng ký trên nền tảng: <Text style={{ fontSize: 18, fontWeight: 'bold', }}>{ totalMyCar ? totalMyCar : '0' }</Text>
           </Text>

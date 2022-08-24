@@ -19,7 +19,8 @@ const Register = ({ navigation }) => {
   const [Password, setPassword] = useState();
   const [ConfirmPassword, setConfirmPassword] = useState();
   const [PhoneNumber, setPhoneNumber] = useState();
-  const [Name, setName] = useState();
+  const [firstName, setFirstName] = useState();
+  const [lastName, setLastName] = useState();
 
   // === START TOAST MESSAGE === //
   const [isShowToast, setIsShowToast]    = useState(false);
@@ -52,7 +53,7 @@ const Register = ({ navigation }) => {
     Keyboard.dismiss();
     showLoading();
 
-    if(!Username || !Email || !Password || !ConfirmPassword || !PhoneNumber || !Name) {
+    if(!Username || !Email || !Password || !ConfirmPassword || !PhoneNumber || !firstName || !lastName) {
       showToast({ content: 'Vui lòng điền thông tin đầy đủ' });
       return;
     }
@@ -73,17 +74,20 @@ const Register = ({ navigation }) => {
     }
 
     const body = {
-      Username,
-      Email,
-      Password,
-      PhoneNumber,
-      Name
+      username: Username,
+      email: Email,
+      password: Password,
+      confirmPass: ConfirmPassword,
+      phone: PhoneNumber,
+      firstName,
+      lastName,
+      role: 1 // USER
     };
 
     registerUser(body)
       .then(res => {
-        const { message, success, data } = res.data;
-        if(!success) {
+        const { message, error, data } = res.data;
+        if(error) {
           showToast({ content: message });
           return;
         }
@@ -179,7 +183,18 @@ const Register = ({ navigation }) => {
                   placeholderText='Nhập tên'
                   textColor={ COLORS.DEFAULT_TEXT }
                   textInputAction={val => {
-                    setName(val)
+                    setFirstName(val)
+                  }}
+              />
+            </View>
+
+            <View style={{ marginBottom: 10, }}> 
+              <TextInputCustom 
+                  icon='info'
+                  placeholderText='Nhập họ'
+                  textColor={ COLORS.DEFAULT_TEXT }
+                  textInputAction={val => {
+                    setLastName(val)
                   }}
               />
             </View>

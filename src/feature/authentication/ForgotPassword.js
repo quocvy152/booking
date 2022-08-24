@@ -11,7 +11,7 @@ import ToastCustom from '../../components/ToastCustom';
 import { resetPassword } from '../../api/auth';
 
 const ForgotPassword = ({ navigation }) => {
-  const [Username, setUsername] = useState();
+  const [Account, setAccount] = useState();
 
   // START TOASTCUSTOM MESSAGE
   const [isShowToast, setIsShowToast] = useState(false);
@@ -31,15 +31,19 @@ const ForgotPassword = ({ navigation }) => {
   const handleForgotPassSubmit = async () => {
     Keyboard.dismiss();
 
-    if(!Username) {
+    if(!Account) {
       showToast({ content: 'Vui lòng nhập đầy đủ thông tin' });
       return;
     }
 
-    let result = await resetPassword(Username);
-    const { success, message, data } = result.data;
+    let dataChange = {
+      account: Account
+    }
 
-    if(!success) {
+    let result = await resetPassword(dataChange);
+    const { error, message, data } = result.data;
+
+    if(error) {
       showToast({ content: message });
       return;
     } else {
@@ -75,7 +79,7 @@ const ForgotPassword = ({ navigation }) => {
                   icon='user-alt'
                   placeholderText='Nhập tài khoản hoặc email'
                   textColor={ COLORS.DEFAULT_TEXT }
-                  textInputAction={(val) => setUsername(val)}
+                  textInputAction={(val) => setAccount(val)}
                 />
             </View>
 

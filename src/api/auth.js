@@ -16,9 +16,9 @@ export async function loginAPI(body) {
 };
 
 export async function registerUser(body) {
-    const parseBody = convertObjectToFormData(body);
+    // const parseBody = convertObjectToFormData(body);
 
-    return await requestFileAPI(`${ENDPOINT.REGISTER}`, method.POST, parseBody, 'application/json');
+    return await requestFileAPI(`${ENDPOINT.REGISTER}`, method.POST, body, 'application/json');
 };
 
 export async function getInfoUser() {
@@ -27,8 +27,9 @@ export async function getInfoUser() {
 };
 
 export async function updateUser(infoUserUpdate) {
+    const parseBody = convertObjectToFormData(infoUserUpdate);
  
-    return await requestFileAPI(`${ENDPOINT.UPDATE_USER}`, method.PUT, infoUserUpdate, 'application/json-patch+json');
+    return await requestFileAPI(`${ENDPOINT.UPDATE_USER}/${infoUserUpdate.userID}`, method.PUT, parseBody, 'multipart/form-data;');
 };
 
 export async function changePassword(bodyChangePass) {
@@ -38,11 +39,11 @@ export async function changePassword(bodyChangePass) {
 
 export async function resetPassword(Username) {
  
-    return await requestAPI(`${ENDPOINT.RESET_PASSWORD}?username=${Username}`, method.PUT);
+    return await requestAPI(`${ENDPOINT.RESET_PASSWORD}`, method.PUT);
 };
 
 export async function changeAvatar(infoAvatar) {
     const parseBody = convertObjectToFormData(infoAvatar);
 
-    return await requestFileAPI(`${ENDPOINT.CHANGE_AVATAR}`, method.POST, parseBody, 'multipart/form-data;');
+    return await requestFileAPI(`${ENDPOINT.UPDATE_AVATAR}`, method.POST, parseBody, 'multipart/form-data;');
 }

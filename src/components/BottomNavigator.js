@@ -13,7 +13,7 @@ const Tab = createBottomTabNavigator();
 
 const BottomNavigator = ({ route }) => {
   const infoUser = useSelector(state => state.auth.infoUser);
-  const avatar = infoUser ? infoUser.avatar : '';
+  const avatar = infoUser?.avatar?.path;
   const name = infoUser ? (infoUser.lastName + ' ' + infoUser.firstName) : 'Tài khoản';
 
   return (

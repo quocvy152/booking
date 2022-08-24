@@ -24,18 +24,17 @@ const contentWidth = width - 20;
 const ListCarUser = ({ navigation, route }) => {
   const infoUser = useSelector(state => state.auth.infoUser);
   const name = infoUser?.name;
-  const avatar = infoUser ? infoUser.avatar : '';
+  const avatar = infoUser?.avatar?.path;
   const [listCarRegister, setListCarRegister] = useState([]);
   const [nameSearch, setNameSearch] = useState('');
   const [checkReload, setCheckReload] = useState(false);
   const [page, setPage] = useState(1);
 
   const fetchMyListCarRegister = async ({ page }) => {
-    let TYPE_GET_MY_CAR_REGISTER = '';
-    let resultListCarRegister = await getListMyCar(TYPE_GET_MY_CAR_REGISTER, page);
-    let { success, data: { items: data } } = resultListCarRegister.data;
+    let resultListCarRegister = await getListMyCar();
+    let { error, data } = resultListCarRegister.data;
 
-    if(success) {
+    if(!error) {
       setListCarRegister(data);
     }
   }
@@ -52,7 +51,7 @@ const ListCarUser = ({ navigation, route }) => {
   }, [checkReload]);
 
   useEffect(() => {
-    let listCarFilter = listCarRegister.filter(car => car.name.toLowerCase().includes(nameSearch.toLowerCase()));
+    let listCarFilter = listCarRegister.filter(car => car.infoCar.name.toLowerCase().includes(nameSearch.toLowerCase()));
     setListCarRegister(listCarFilter);
     if(!nameSearch) {
       setCheckReload(!checkReload);
@@ -72,9 +71,9 @@ const ListCarUser = ({ navigation, route }) => {
           <View style={ styles.card }>
             <View style={{ alignItems: 'center', top: -15 }}>
               {
-                car.images && car.images.length ?
+                car.infoCar.images && car.infoCar.images.length ?
                 (
-                  <Image source={{ uri: car.images[0] && car.images[0].url }} style={{ height: 120, width: 120, borderRadius: 60, resizeMode: 'contain' }} />
+                  <Image source={{ uri: car.infoCar.images[0] && car.infoCar.images[0].url }} style={{ height: 120, width: 120, borderRadius: 60, resizeMode: 'contain' }} />
                 ) : (
                   <Image source={require('../../resources/images/mazda-6-2020-26469.png')} style={{ height: 120, width: 120, borderRadius: 60, resizeMode: 'contain' }} />
                 )
@@ -82,11 +81,11 @@ const ListCarUser = ({ navigation, route }) => {
               
             </View>
             <View style={{ marginHorizontal: 20, top: -30 }}>
-              <Text style={{ fontSize: 15, fontWeight: 'bold' }}>{ car.name && car.name.length > 16 ? car.name.slice(0, 16) + '...' : car.name }</Text>
+              <Text style={{ fontSize: 15, fontWeight: 'bold' }}>{ car.infoCar.name && car.infoCar.name.length > 16 ? car.infoCar.name.slice(0, 16) + '...' : car.infoCar.name }</Text>
               <Text style={{ fontSize: 15, color: COLORS.DEFAULT_TEXT }}>
                 Hiệu: 
                 <Text style={{ fontWeight: 'bold', color: 'black' }}>
-                  { '  ' + car.brand.name }
+                  { '  ' + car.infoCar.brandID.name }
                 </Text> 
               </Text>
             </View>
@@ -99,7 +98,7 @@ const ListCarUser = ({ navigation, route }) => {
               }}
             >
               <NumberFormat
-                value={ car.price }
+                value={ car.infoCar.price }
                 displayType="text"
                 thousandSeparator
                 prefix="đ"
@@ -138,7 +137,6 @@ const ListCarUser = ({ navigation, route }) => {
           <FontAwesome5 name="car" size={20} color="#37A604" style={{ marginRight: 10, }} />
           <Text style={{ color: '#37A604', fontSize: 20, fontWeight: 'bold' }}>Danh sách xe bạn đã đăng ký</Text>
         </View>
-        
         {
           listCarRegister.length ?
           (

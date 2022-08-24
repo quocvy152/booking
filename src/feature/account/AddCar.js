@@ -12,7 +12,7 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import NumberFormat from 'react-number-format';
 import MultiSelect from 'react-native-multiple-select';
 import { useSelector } from 'react-redux';
-//nestedScrollEnabled
+//nestedScrollEnabled to Flatlist
 import SelectBox from 'react-native-multi-selectbox';
 import { xorBy } from 'lodash';
 const { width } = Dimensions.get('screen');
@@ -24,9 +24,10 @@ import ToastCustom from '../../components/ToastCustom';
 import { COLORS } from '../../constant/colors';
 import { PARAMS_CONSTANT } from '../../../src/constant/param';
 import { getInfoAboutCar, getListBrand, getListProvince, getListDistrict, getListWard, createCar } from '../../api/general';
-import { checkValidDataCar, returnDetailIDS, } from '../../utils/utils';
+import { checkValidDataCar, returnDetailIDS, returnCharacteristicID } from '../../utils/utils';
 
 const AddCar = ({ navigation }) => {
+  const infoUser = useSelector(state => state.auth.infoUser);
   const [Img, setImg] = useState(null);
   const [InfoImg, setInfoImg] = useState({});
   const [Name, setName] = useState();
@@ -69,20 +70,21 @@ const AddCar = ({ navigation }) => {
   useEffect(async () => {
     let fetchDataListBrand = await getListBrand();
 
-    const { success, data } = fetchDataListBrand.data;
-    if(success) setListBrand(data);
+    const { error, data } = fetchDataListBrand.data;
+    if(!error) setListBrand(data);
   }, []);
 
   // fetch list province
   useEffect(async () => {
     let fetchDataListProvince = await getListProvince();
 
-    const { success, data } = fetchDataListProvince.data;
-    if(success) {
+    const { error, data } = fetchDataListProvince.data;
+
+    if(!error) {
       // change format list province to match with select box
       let LIST_PROVINCE = data.map(province => ({
-        id: province.province_id,
-        item: province.province_name
+        id: province.code,
+        item: province.name
       }));
 
       setListProvince(LIST_PROVINCE);
@@ -93,14 +95,16 @@ const AddCar = ({ navigation }) => {
   useEffect(async () => {
     let fetchDataListDistrict = await getListDistrict(province.id);
 
-    const { success, data } = fetchDataListDistrict.data;
-    if(success) {
+    const { error, data } = fetchDataListDistrict.data;
+
+    if(!error) {
       // change format list district to match with select box
-      let LIST_DISTRICT = data.map(district => ({
-        id: district.district_id,
-        item: district.district_name
+      let LIST_DISTRICT = data && data.listDistrict && data.listDistrict.map(district => ({
+        id: district.code,
+        item: district.name
       }));
 
+      LIST_DISTRICT = !LIST_DISTRICT ? [] : LIST_DISTRICT;
       setListDistrict(LIST_DISTRICT);
     } 
   }, [province]);
@@ -109,14 +113,15 @@ const AddCar = ({ navigation }) => {
   useEffect(async () => {
     let fetchDataListWard = await getListWard(district.id);
 
-    const { success, data } = fetchDataListWard.data;
-    if(success) {
+    const { error, data } = fetchDataListWard.data;
+    if(!error) {
       // change format list ward to match with select box
-      let LIST_WARD = data.map(ward => ({
-        id: ward.ward_id,
-        item: ward.ward_name
+      let LIST_WARD = data && data.listWards[0] && data.listWards[0].wards.map(ward => ({
+        id: ward.code,
+        item: ward.name
       }));
 
+      LIST_WARD = !LIST_WARD ? [] : LIST_WARD;
       setListWard(LIST_WARD);
     } 
   }, [district]);
@@ -126,8 +131,9 @@ const AddCar = ({ navigation }) => {
     let SOGHE = PARAMS_CONSTANT.SOGHE;
     let fetchDataListSeat = await getInfoAboutCar(SOGHE);
 
-    const { success, data } = fetchDataListSeat.data;
-    if(success) setListSeat(data);
+    const { error, data } = fetchDataListSeat.data;
+
+    if(!error) setListSeat(data);
   }, []);
   
   // fetch list tranmission
@@ -135,8 +141,9 @@ const AddCar = ({ navigation }) => {
     let TRUYENDONG = PARAMS_CONSTANT.TRUYENDONG;
     let fetchDataListTranmission = await getInfoAboutCar(TRUYENDONG);
 
-    const { success, data } = fetchDataListTranmission.data;
-    if(success) setListTranmission(data);
+    const { error, data } = fetchDataListTranmission.data;
+
+    if(!error) setListTranmission(data);
   }, []);
 
   // fetch list fuel
@@ -144,8 +151,8 @@ const AddCar = ({ navigation }) => {
     let NHIENLIEU = PARAMS_CONSTANT.NHIENLIEU;
     let fetchDataListFuel = await getInfoAboutCar(NHIENLIEU);
 
-    const { success, data } = fetchDataListFuel.data;
-    if(success) setListFuel(data);
+    const { error, data } = fetchDataListFuel.data;
+    if(!error) setListFuel(data);
   }, []);
 
   // fetch list fuel consumption
@@ -153,8 +160,8 @@ const AddCar = ({ navigation }) => {
     let MUCTIEUTHUNHIENLIEU = PARAMS_CONSTANT.MUCTIEUTHUNHIENLIEU;
     let fetchDataListFuelConsumtion = await getInfoAboutCar(MUCTIEUTHUNHIENLIEU);
 
-    const { success, data } = fetchDataListFuelConsumtion.data;
-    if(success) setListFuelConsumption(data);
+    const { error, data } = fetchDataListFuelConsumtion.data;
+    if(!error) setListFuelConsumption(data);
   }, []);
 
   // fetch list feature
@@ -162,8 +169,8 @@ const AddCar = ({ navigation }) => {
     let TINHNANG = PARAMS_CONSTANT.TINHNANG;
     let fetchDataListFuelConsumtion = await getInfoAboutCar(TINHNANG);
 
-    const { success, data } = fetchDataListFuelConsumtion.data;
-    if(success) setListFeature(data);
+    const { error, data } = fetchDataListFuelConsumtion.data;
+    if(!error) setListFeature(data);
   }, []);
 
   // fetch list license
@@ -171,50 +178,50 @@ const AddCar = ({ navigation }) => {
     let GIAYTOTHUEXE = PARAMS_CONSTANT.GIAYTOTHUEXE;
     let fetchDataListFuelConsumtion = await getInfoAboutCar(GIAYTOTHUEXE);
 
-    const { success, data } = fetchDataListFuelConsumtion.data;
-    if(success) setListLicense(data);
+    const { error, data } = fetchDataListFuelConsumtion.data;
+    if(!error) setListLicense(data);
   }, []);
 
   // change format list seat to match with select box
   const LIST_BRAND = listBrand.map(brand => ({
-    id: brand.id,
+    id: brand._id,
     item: brand.name
   }));
 
   // change format list seat to match with select box
   const LIST_SEAT = listSeat.map(seat => ({
-    id: seat.id,
-    item: seat.val
+    id: seat._id,
+    item: seat.value
   }));
 
   // change format list tranmission to match with select box
   const LIST_TRANMISSION = listTranmission.map(tranmission => ({
-    id: tranmission.id,
-    item: tranmission.val
+    id: tranmission._id,
+    item: tranmission.value
   }));
 
   // change format list fuel to match with select box
   const LIST_FUEL = listFuel.map(fuel => ({
-    id: fuel.id,
-    item: fuel.val
+    id: fuel._id,
+    item: fuel.value
   }));
 
   // change format list fuel consumption to match with select box
   const LIST_FUEL_CONSUMPTION = listFuelConsumption.map(fuelConsumption => ({
-    id: fuelConsumption.id,
-    item: fuelConsumption.val
+    id: fuelConsumption._id,
+    item: fuelConsumption.value
   }));
 
   // change format list fuel feature to match with select box
   const LIST_FEATURE = listFeature.map(feature => ({
-    id: feature.id,
-    item: feature.val
+    id: feature._id,
+    item: feature.value
   }));
 
   // change format list fuel license to match with select box
   const LIST_LICENSE = listLicense.map(license => ({
-    id: license.id,
-    item: license.val
+    id: license._id,
+    item: license.value
   }));
 
   function onChangeProvince() {
@@ -271,40 +278,55 @@ const AddCar = ({ navigation }) => {
     Keyboard.dismiss();
     showLoading();
 
-    let bodyData = {
-      Name, BrandId: brand.id, Description, Price, 
-      Mortage: mortgage, Rules: rules, Address_booking, 
-      WardId: ward.id, DistrictId: district.id, ProvinceId: province.id, 
-      Seats: seats.id, Fuel: fuel.id, FuelConsumption: fuelConsumption.id, 
-      Tranmission: tranmission.id, SelectedFeature: selectedFeature, 
-      SelectedLicense: selectedLicense, Img
-    };
+    // let bodyData = {
+    //   name: Name, brandID: brand.id, description: Description, price: Price, 
+    //   mortage: mortgage, rules, address: Address_booking, 
+    //   wardID: ward.id, districtID: district.id, provinceID: province.id, 
+    //   listCharacteristicID: [
+    //     seats.id,
+    //     fuel.id,
+    //     fuelConsumption.id,
+    //     tranmission.id
+    //   ],
+    //   Seats: seats.id, Fuel: fuel.id, FuelConsumption: fuelConsumption.id, 
+    //   Tranmission: tranmission.id, SelectedFeature: selectedFeature, 
+    //   SelectedLicense: selectedLicense, Img
+    // };
 
-    // validate data of car register
-    let { error, message } = checkValidDataCar(bodyData);
-    if(error) {
-      showToast({ content: message, type: 'warning' });
-      return;
-    }
+    let listCharacteristicID = [
+      seats.id,
+      fuel.id,
+      fuelConsumption.id,
+      tranmission.id,
+      ...selectedLicense.map(license => license.id),
+      ...selectedFeature.map(feature => feature.id),
+    ];
 
     try {
       let body = {
-        Name, BrandId: brand.id, Description, Price, 
-        Address_booking, WardId: ward.id, DistrictId: district.id, ProvinceId: province.id, 
-        Img: {
+        name: Name, brandID: brand.id, description: Description, price: Number(Price), 
+        mortage: mortgage, rules, address: Address_booking, userID: infoUser._id,
+        wardID: ward.id, wardText: ward.item, districtID: district.id, districtText: district.item, 
+        provinceText: province.item, provinceID: province.id, status: 1, // trạng thái xe hoạt động
+        listCharacteristicID: returnCharacteristicID(listCharacteristicID),
+        file: {
           uri: Img,
-          type: 'image/jpeg',
+          type: 'image/*',
           name: Img,
         }
       };
 
-      // nối các đặc điểm tính năng thành chuỗi server cần
-      let Detail_ids = returnDetailIDS(bodyData);
-      body.Detail_ids = Detail_ids;
+       // validate data of car register
+      // let { error, message } = checkValidDataCar(bodyData);
+      // if(error) {
+      //   showToast({ content: message, type: 'warning' });
+      //   return;
+      // }
 
       let resultCreateCar = await createCar(body);
-      let { success, data } = resultCreateCar.data;
-      if(success) {
+      let { error, data } = resultCreateCar.data;
+      console.log({ error, data })
+      if(!error) {
         showToast({ content: 'Đăng ký xe thành công', type: 'success' });
         setTimeout(() => {
           navigation.navigate('ListCarUserScreen');
@@ -312,6 +334,8 @@ const AddCar = ({ navigation }) => {
       }
     } catch (error) {
       console.log({ error })
+      showToast({ content: 'Xảy ra lỗi', type: 'error' });
+      hideLoading();
     } 
   }
 
@@ -331,11 +355,11 @@ const AddCar = ({ navigation }) => {
     let { cancelled, height, type, width, uri } = result;
     if(!cancelled) {
       setImg(uri);
-      setInfoImg({
-        uri: Img,
-        type,
-        name: Img,
-      });
+      // setInfoImg({
+      //   uri: Img,
+      //   type,
+      //   name: Img,
+      // });
     }
   };
 

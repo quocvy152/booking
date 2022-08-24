@@ -22,11 +22,11 @@ export async function getListCarPrepare(querys) {
     return await requestAPI(`${ENDPOINT.LIST_CAR_PREPARE}`, method.GET);
 }
 
-export async function createCar(infoCar) {
-    const parseInfoCarBody = convertObjectToFormData(infoCar);
+export async function createCar(body) {
+    const parseBody = convertObjectToFormData(body);
 
-    return await requestFileAPI(`${ENDPOINT.REGISTER_CAR}`, method.POST, parseInfoCarBody, 'multipart/form-data');
-}
+    return await requestFileAPI(`${ENDPOINT.REGISTER_CAR_v2}`, method.POST, parseBody, 'multipart/form-data;');
+};
 
 export async function updateCar(infoCar) {
     //const parseInfoCarBody = convertObjectToFormData(body);
@@ -39,9 +39,13 @@ export async function bookingCar(infoCar) {
     return await requestAPI(`${ENDPOINT.BOOKING_CAR}`, method.POST, infoCar);
 }
 
-export async function getListMyCar(type, page) {
+// export async function getListMyCar(type, page) {
 
-    return await requestAPI(`${ENDPOINT.GET_LIST_MY_CAR}?status=${type}&pageIndex=${page}&limit=${100}`, method.GET);
+//     return await requestAPI(`${ENDPOINT.GET_LIST_MY_CAR}?status=${type}&pageIndex=${page}&limit=${100}`, method.GET);
+// }
+export async function getListMyCar() {
+
+    return await requestAPI(`${ENDPOINT.GET_LIST_MY_CAR}`, method.GET);
 }
 
 export async function getListCarBooking(type, page) {
