@@ -239,9 +239,9 @@ const CarDetail = ({ navigation, route }) => {
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={{ height: 280, justifyContent: 'center', alignItems: 'center' }} >
             {
-              car.infoCar.gallery && car.infoCar.gallery.length ?
+              car.infoCar.avatar ?
               (
-                <Image style={{ width: 220, height: 220, resizeMode: 'contain' }} source={{ uri: car.infoCar.gallery[0].url }} />
+                <Image style={{ width: 220, height: 220, resizeMode: 'contain' }} source={{ uri: car.infoCar.avatar.path }} />
               ) : (
                 <Image style={{ width: 220, height: 220, resizeMode: 'contain' }} source={require('../../resources/images/mazda-6-2020-26469.png')} />
               )
@@ -365,11 +365,6 @@ const CarDetail = ({ navigation, route }) => {
               <View style={{ borderWidth: 1, borderColor: 'white', marginTop: 20, paddingBottom: 20, }}>
                 <Text style={{ color: COLORS.WHITE, textAlign: 'justify', marginHorizontal: 20, marginTop: 18, lineHeight: 22, fontSize: 21, fontWeight: 'bold' }}>Giấy tờ thuê xe</Text>
                 <View style={{ margin: 25, flex: 1, }}>
-                  {
-                    console.log({
-                      listLicense
-                    })
-                  }
                   { 
                     listLicense.map(license => (
                       <View style={{ marginBottom: 10, borderWidth: 1, borderColor: 'white', padding: 10, borderRadius: 20, }}>

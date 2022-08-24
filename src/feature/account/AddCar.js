@@ -325,7 +325,7 @@ const AddCar = ({ navigation }) => {
 
       let resultCreateCar = await createCar(body);
       let { error, data } = resultCreateCar.data;
-      console.log({ error, data })
+
       if(!error) {
         showToast({ content: 'Đăng ký xe thành công', type: 'success' });
         setTimeout(() => {

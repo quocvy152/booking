@@ -30,7 +30,7 @@ const ListCarUser = ({ navigation, route }) => {
   const [checkReload, setCheckReload] = useState(false);
   const [page, setPage] = useState(1);
 
-  const fetchMyListCarRegister = async ({ page }) => {
+  const fetchMyListCarRegister = async () => {
     let resultListCarRegister = await getListMyCar();
     let { error, data } = resultListCarRegister.data;
 
@@ -41,13 +41,13 @@ const ListCarUser = ({ navigation, route }) => {
 
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-      fetchMyListCarRegister({ page });
+      fetchMyListCarRegister();
     });
     return unsubscribe;
   }, [navigation]);
 
   useEffect(() => {
-    fetchMyListCarRegister({ page });
+    fetchMyListCarRegister();
   }, [checkReload]);
 
   useEffect(() => {
@@ -59,6 +59,7 @@ const ListCarUser = ({ navigation, route }) => {
   }, [nameSearch]);
 
   const Card = ({ car }) => {
+
     car.PREVIOUS_SCREEN_NAME = 'Thông Tin Của Bạn';
     car.ROUTE_NAME = 'ListCarUserScreen';
 
@@ -71,9 +72,9 @@ const ListCarUser = ({ navigation, route }) => {
           <View style={ styles.card }>
             <View style={{ alignItems: 'center', top: -15 }}>
               {
-                car.infoCar.images && car.infoCar.images.length ?
+                car.infoCar.avatar ?
                 (
-                  <Image source={{ uri: car.infoCar.images[0] && car.infoCar.images[0].url }} style={{ height: 120, width: 120, borderRadius: 60, resizeMode: 'contain' }} />
+                  <Image source={{ uri: (car.infoCar.avatar && car.infoCar.avatar.path) || '../../resources/images/mazda-6-2020-26469.png' }} style={{ height: 120, width: 120, borderRadius: 60, resizeMode: 'contain' }} />
                 ) : (
                   <Image source={require('../../resources/images/mazda-6-2020-26469.png')} style={{ height: 120, width: 120, borderRadius: 60, resizeMode: 'contain' }} />
                 )
