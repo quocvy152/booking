@@ -29,9 +29,9 @@ export async function createCar(body) {
 };
 
 export async function updateCar(infoCar) {
-    //const parseInfoCarBody = convertObjectToFormData(body);
+    const parseInfoCarBody = convertObjectToFormData(infoCar);
 
-    return await requestFileAPI(`${ENDPOINT.UPDATE_CAR}`, method.PUT, infoCar, 'application/json-patch+json');
+    return await requestFileAPI(`${ENDPOINT.UPDATE_CAR}/${infoCar.id}`, method.PUT, parseInfoCarBody, 'multipart/form-data;');
 }
 
 export async function bookingCar(infoCar) {

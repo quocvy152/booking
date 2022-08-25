@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, SafeAreaView, Text, View, TouchableOpacity, Image, ScrollView, FlatList, Dimensions, TextInput, Keyboard, Button, Alert } from 'react-native';
+import { StyleSheet, SafeAreaView, Text, View, TouchableOpacity, Image, ScrollView, FlatList, Dimensions, TextInput, Keyboard, Button, Alert, ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesome5 } from '@expo/vector-icons';
 import NumberFormat from 'react-number-format';
@@ -18,39 +18,39 @@ import ToastCustom from '../../components/ToastCustom';
 import { COLORS } from '../../constant/colors';
 import { PARAMS_CONSTANT } from '../../constant/param';
 import { getInfoAboutCar, getListBrand, getListProvince, getListDistrict, getListWard, createCar, updateCar } from '../../api/general';
-import { checkValidDataCar, returnDetailIDS, } from '../../utils/utils';
+import { checkValidDataCar, returnCharacteristicID } from '../../utils/utils';
 
 const UpdateCar = ({ navigation, route }) => {
   const car = route.params;
-  const infoFuel = car.details.find(detail => detail.detailType.code === 'NHIENLIEU');
-  const infoSeats = car.details.find(detail => detail.detailType.code === 'SOGHE');
-  const infoTranmission = car.details.find(detail => detail.detailType.code === 'TRUYENDONG');
-  const infoFuelConsumption = car.details.find(detail => detail.detailType.code === 'MUCTIEUTHUNHIENLIEU');
-  //let listFeatureSelected = car.details.filter(detail => detail.detailType.code === 'TINHNANG').map(detail => ({ id: detail.id, item: detail.val }));
-  //let listLicenseSelected = car.details.filter(detail => detail.detailType.code === 'GIAYTOTHUEXE').map(detail => ({ id: detail.id, item: detail.val }));
-  const [Img, setImg] = useState(car.images && car.images[0] && car.images[0].url);
+  const infoFuel = car.details.find(detail => detail.characteristicID.characteristicTypeID.code === 'NHIENLIEU');
+  const infoSeats = car.details.find(detail => detail.characteristicID.characteristicTypeID.code === 'SOGHE');
+  const infoTranmission = car.details.find(detail => detail.characteristicID.characteristicTypeID.code === 'TRUYENDONG');
+  const infoFuelConsumption = car.details.find(detail => detail.characteristicID.characteristicTypeID.code === 'MUCTIEUTHUNHIENLIEU');
+  // let listFeatureSelected = car.details.filter(detail => detail.characteristicID.characteristicTypeID.code === 'TINHNANG').map(detail => ({ id: detail.characteristicID._id, item: detail.characteristicID.value }));
+  // let listLicenseSelected = car.details.filter(detail => detail.characteristicID.characteristicTypeID.code === 'GIAYTOTHUEXE').map(detail => ({ id: detail.characteristicID._id, item: detail.characteristicID.value }));
+  const [Img, setImg] = useState(car.infoCar.avatar && car.infoCar.avatar.path);
   const [InfoImg, setInfoImg] = useState({});
-  const [Name, setName] = useState(car.name);
-  const [brand, setBrand] = useState({ id: car.brand.id, item: car.brand.name });
+  const [Name, setName] = useState(car.infoCar.name);
+  const [brand, setBrand] = useState({ id: car.infoCar.brandID._id, item: car.infoCar.brandID.name });
   const [listBrand, setListBrand] = useState([]);
-  const [Description, setDescription] = useState(car.description);
-  const [mortgage, setMortgage] = useState(car.name);
-  const [rules, setRules] = useState(car.rules);
-  const [Address_booking, setAddress_booking] = useState(car.address);
-  const [ward, setWard] = useState({ item: car.address.split(', ')[1], id: car.wardId });
+  const [Description, setDescription] = useState(car.infoCar.description);
+  const [mortgage, setMortgage] = useState(car.infoCar.name);
+  const [rules, setRules] = useState(car.infoCar.rules);
+  const [Address_booking, setAddress_booking] = useState(car.infoCar.address);
+  const [ward, setWard] = useState({ item: car.infoCar.wardText, id: car.infoCar.wardID });
   const [listWard, setListWard] = useState([]);
-  const [district, setDistrict] = useState({ item: car.address.split(', ')[2], id: car.districtId });
+  const [district, setDistrict] = useState({ item: car.infoCar.districtText, id: car.infoCar.districtID });
   const [listDistrict, setListDistrict] = useState([]);
-  const [province, setProvince] = useState({ item: car.address.split(', ')[3], id: car.provinceId });
+  const [province, setProvince] = useState({ item: car.infoCar.provinceText, id: car.infoCar.provinceID });
   const [listProvince, setListProvince] = useState([]);
-  const [Price, setPrice] = useState(car.price);
-  const [seats, setSeats] = useState({ id: infoSeats.id, item: infoSeats.val });
+  const [Price, setPrice] = useState(car.infoCar.price);
+  const [seats, setSeats] = useState({ id: infoSeats.characteristicID._id, item: infoSeats.characteristicID.value });
   const [listSeat, setListSeat] = useState([]);
-  const [fuel, setFuel] = useState({ id: infoFuel.id, item: infoFuel.val });
+  const [fuel, setFuel] = useState({ id: infoFuel.characteristicID._id, item: infoFuel.characteristicID.value });
   const [listFuel, setListFuel] = useState([]);
-  const [fuelConsumption, setFuelConsumption] = useState({ id: infoFuelConsumption.id, item: infoFuelConsumption.val });
+  const [fuelConsumption, setFuelConsumption] = useState({ id: infoFuelConsumption.characteristicID._id, item: infoFuelConsumption.characteristicID.value });
   const [listFuelConsumption, setListFuelConsumption] = useState([]);
-  const [tranmission, setTranmission] = useState({ id: infoTranmission.id, item: infoTranmission.val });
+  const [tranmission, setTranmission] = useState({ id: infoTranmission.characteristicID._id, item: infoTranmission.characteristicID.value });
   const [listTranmission, setListTranmission] = useState([]);
   const [selectedFeature, setSelectedFeature] = useState([]);
   const [listFeature, setListFeature] = useState([]);
@@ -63,24 +63,27 @@ const UpdateCar = ({ navigation, route }) => {
   const [type, setType] = useState();
   // END TOASTCUSTOM MESSAGE
 
+  const [isLoading, setIsLoading] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(false);
+
   // fetch list brand
   useEffect(async () => {
     let fetchDataListBrand = await getListBrand();
 
-    const { success, data } = fetchDataListBrand.data;
-    if(success) setListBrand(data);
+    const { error, data } = fetchDataListBrand.data;
+    if(!error) setListBrand(data);
   }, []);
 
   // fetch list province
   useEffect(async () => {
     let fetchDataListProvince = await getListProvince();
 
-    const { success, data } = fetchDataListProvince.data;
-    if(success) {
+    const { error, data } = fetchDataListProvince.data;
+    if(!error) {
       // change format list province to match with select box
       let LIST_PROVINCE = data.map(province => ({
-        id: province.province_id,
-        item: province.province_name
+        id: province.code,
+        item: province.name
       }));
 
       setListProvince(LIST_PROVINCE);
@@ -91,12 +94,12 @@ const UpdateCar = ({ navigation, route }) => {
   useEffect(async () => {
     let fetchDataListDistrict = await getListDistrict(province.id);
 
-    const { success, data } = fetchDataListDistrict.data;
-    if(success) {
+    const { error, data } = fetchDataListDistrict.data;
+    if(!error) {
       // change format list district to match with select box
       let LIST_DISTRICT = data.map(district => ({
-        id: district.district_id,
-        item: district.district_name
+        id: district.code,
+        item: district.name
       }));
 
       setListDistrict(LIST_DISTRICT);
@@ -107,12 +110,12 @@ const UpdateCar = ({ navigation, route }) => {
   useEffect(async () => {
     let fetchDataListWard = await getListWard(district.id);
 
-    const { success, data } = fetchDataListWard.data;
-    if(success) {
+    const { error, data } = fetchDataListWard.data;
+    if(!error) {
       // change format list ward to match with select box
       let LIST_WARD = data.map(ward => ({
-        id: ward.ward_id,
-        item: ward.ward_name
+        id: ward.code,
+        item: ward.name
       }));
 
       setListWard(LIST_WARD);
@@ -124,8 +127,8 @@ const UpdateCar = ({ navigation, route }) => {
     let SOGHE = PARAMS_CONSTANT.SOGHE;
     let fetchDataListSeat = await getInfoAboutCar(SOGHE);
 
-    const { success, data } = fetchDataListSeat.data;
-    if(success) setListSeat(data);
+    const { error, data } = fetchDataListSeat.data;
+    if(!error) setListSeat(data);
   }, []);
   
   // fetch list tranmission
@@ -133,8 +136,8 @@ const UpdateCar = ({ navigation, route }) => {
     let TRUYENDONG = PARAMS_CONSTANT.TRUYENDONG;
     let fetchDataListTranmission = await getInfoAboutCar(TRUYENDONG);
 
-    const { success, data } = fetchDataListTranmission.data;
-    if(success) setListTranmission(data);
+    const { error, data } = fetchDataListTranmission.data;
+    if(!error) setListTranmission(data);
   }, []);
 
   // fetch list fuel
@@ -142,8 +145,8 @@ const UpdateCar = ({ navigation, route }) => {
     let NHIENLIEU = PARAMS_CONSTANT.NHIENLIEU;
     let fetchDataListFuel = await getInfoAboutCar(NHIENLIEU);
 
-    const { success, data } = fetchDataListFuel.data;
-    if(success) setListFuel(data);
+    const { error, data } = fetchDataListFuel.data;
+    if(!error) setListFuel(data);
   }, []);
 
   // fetch list fuel consumption
@@ -151,17 +154,17 @@ const UpdateCar = ({ navigation, route }) => {
     let MUCTIEUTHUNHIENLIEU = PARAMS_CONSTANT.MUCTIEUTHUNHIENLIEU;
     let fetchDataListFuelConsumtion = await getInfoAboutCar(MUCTIEUTHUNHIENLIEU);
 
-    const { success, data } = fetchDataListFuelConsumtion.data;
-    if(success) setListFuelConsumption(data);
+    const { error, data } = fetchDataListFuelConsumtion.data;
+    if(!error) setListFuelConsumption(data);
   }, []);
 
   // fetch list feature
   useEffect(async () => {
     let TINHNANG = PARAMS_CONSTANT.TINHNANG;
-    let fetchDataListFuelConsumtion = await getInfoAboutCar(TINHNANG);
+    let fetchDataListFeature = await getInfoAboutCar(TINHNANG);
 
-    const { success, data } = fetchDataListFuelConsumtion.data;
-    if(success) setListFeature(data);
+    const { error, data } = fetchDataListFeature.data;
+    if(!error) setListFeature(data);
   }, []);
 
   // fetch list license
@@ -169,50 +172,50 @@ const UpdateCar = ({ navigation, route }) => {
     let GIAYTOTHUEXE = PARAMS_CONSTANT.GIAYTOTHUEXE;
     let fetchDataListFuelConsumtion = await getInfoAboutCar(GIAYTOTHUEXE);
 
-    const { success, data } = fetchDataListFuelConsumtion.data;
-    if(success) setListLicense(data);
+    const { error, data } = fetchDataListFuelConsumtion.data;
+    if(!error) setListLicense(data);
   }, []);
 
   // change format list seat to match with select box
   const LIST_BRAND = listBrand.map(brand => ({
-    id: brand.id,
+    id: brand._id,
     item: brand.name
   }));
 
   // change format list seat to match with select box
   const LIST_SEAT = listSeat.map(seat => ({
-    id: seat.id,
-    item: seat.val
+    id: seat._id,
+    item: seat.value
   }));
 
   // change format list tranmission to match with select box
   const LIST_TRANMISSION = listTranmission.map(tranmission => ({
-    id: tranmission.id,
-    item: tranmission.val
+    id: tranmission._id,
+    item: tranmission.value
   }));
 
   // change format list fuel to match with select box
   const LIST_FUEL = listFuel.map(fuel => ({
-    id: fuel.id,
-    item: fuel.val
+    id: fuel._id,
+    item: fuel.value
   }));
 
   // change format list fuel consumption to match with select box
   const LIST_FUEL_CONSUMPTION = listFuelConsumption.map(fuelConsumption => ({
-    id: fuelConsumption.id,
-    item: fuelConsumption.val
+    id: fuelConsumption._id,
+    item: fuelConsumption.value
   }));
 
   // change format list fuel feature to match with select box
   const LIST_FEATURE = listFeature.map(feature => ({
-    id: feature.id,
-    item: feature.val
+    id: feature._id,
+    item: feature.value
   }));
 
   // change format list fuel license to match with select box
   const LIST_LICENSE = listLicense.map(license => ({
-    id: license.id,
-    item: license.val
+    id: license._id,
+    item: license.value
   }));
 
   function onChangeProvince() {
@@ -280,46 +283,69 @@ const UpdateCar = ({ navigation, route }) => {
 
   const handleUpdateCar = async () => {
     Keyboard.dismiss();
+    showLoading();
 
     let bodyData = {
-      id: car.id, Name, BrandId: brand.id, Description, Price, 
-      Mortage: mortgage, Rules: rules, Address_booking, 
-      WardId: ward.id, DistrictId: district.id, ProvinceId: province.id, 
+      id: car.infoCar._id, name: Name, brandID: brand.id, description: Description, price: Price, 
+      mortage: mortgage, rules, address: Address_booking, 
+      wardID: ward.id, districtID: district.id, provinceID: province.id, 
       Seats: seats.id, Fuel: fuel.id, FuelConsumption: fuelConsumption.id, 
       Tranmission: tranmission.id, SelectedFeature: selectedFeature, 
-      SelectedLicense: selectedLicense, Img
+      SelectedLicense: selectedLicense, file: {
+        uri: Img,
+        type: 'image/jpeg',
+        name: Img,
+      }
     };
 
     let { error, message } = checkValidDataCar(bodyData);
+    console.log({
+      error, message
+    })
     if(error) {
+      hideLoading();
       showToast({ content: message, type: 'warning' });
       return;
     }
 
+    let listCharacteristicID = [
+      seats.id,
+      fuel.id,
+      fuelConsumption.id,
+      tranmission.id,
+      ...selectedLicense.map(license => license.id),
+      ...selectedFeature.map(feature => feature.id),
+    ];
+
     try {
       let body = {
-        id: car.id, Name, BrandId: brand.id, Description, Price, 
-        Address_booking, WardId: ward.id, DistrictId: district.id, ProvinceId: province.id, 
-        Img: {
+        id: car.infoCar._id, name: Name, brandID: brand.id, description: Description, price: Price, 
+        address: Address_booking, wardID: ward.id, wardText: ward.item, districtID: district.id,
+        districtText: district.item, provinceID: province.id, provinceText: province.item, 
+        listCharacteristicID: returnCharacteristicID(listCharacteristicID),
+        file: {
           uri: Img,
-          type: 'image/jpeg',
+          type: 'image/*',
           name: Img,
-        }
+        },
       };
 
       // nối các đặc điểm tính năng thành chuỗi server cần
-      let Detail_ids = returnDetailIDS(bodyData);
-      body.Detail_ids = Detail_ids;
+      // let Detail_ids = returnDetailIDS(bodyData);
+      // body.Detail_ids = Detail_ids;
 
       let resultUpdateCar = await updateCar(body);
-      let { success, data, message } = resultUpdateCar.data;
-      if(success) {
+      let { error, data, message } = resultUpdateCar.data;
+
+      if(!error) {
+        hideLoading();
         showToast({ content: 'Cập nhật xe thành công', type: 'success' });
         setTimeout(() => {
           navigation.navigate('ListCarUserScreen');
         }, 1500);
       }
     } catch (error) {
+      hideLoading();
       console.log({ error })
     } 
   }
@@ -347,7 +373,17 @@ const UpdateCar = ({ navigation, route }) => {
       });
     }
   };
-    
+  
+  const showLoading = () => {
+    setIsLoading(true);
+    setIsDisabled(true);
+  }
+
+  const hideLoading = () => {
+    setIsLoading(false);
+    setIsDisabled(false);
+  }
+
   return (
     <>
       <SafeAreaView style={{ flex: 1, }}>
@@ -640,8 +676,16 @@ const UpdateCar = ({ navigation, route }) => {
           </View>
         </ScrollView>
         <View style={styles.infoUserStyle}>
-          <TouchableOpacity activeOpacity={0.8} style={ styles.btnStyle } onPress={alert}>
-            <View>
+          <TouchableOpacity disabled={isDisabled} activeOpacity={0.8} style={ styles.btnStyle } onPress={alert}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', }}>
+              {
+                isLoading ?
+                (
+                  <ActivityIndicator size="large" color="white" style={{ marginRight: 10, }} />
+                ) : (
+                  <></>
+                )
+              }
               <Text style={{ color: 'white', fontSize: 15, fontWeight: 'bold', }}>Cập nhật thông tin xe</Text>
             </View>
           </TouchableOpacity>

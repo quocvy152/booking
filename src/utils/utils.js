@@ -396,10 +396,10 @@ const checkValidDataCar = (infoDataCar) => {
     wardID, districtID, provinceID, 
     Seats, Fuel, FuelConsumption, 
     Tranmission, SelectedFeature, 
-    SelectedLicense, Img
+    SelectedLicense, file
   } = infoDataCar;
 
-  if(!Img) 
+  if(!file) 
     return {
       error: true,
       message: 'Vui lòng đăng tải hình ảnh xe của bạn'

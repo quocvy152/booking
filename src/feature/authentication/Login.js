@@ -103,8 +103,8 @@ const Login = () => {
     loginAPI(body)
       .then(res => {
         let { data, error, message } = res.data;
-        let { _id: userID, token } = data;
-        console.log({ token, error, message })
+        let { token } = data;
+        console.log({ data, error, message })
         if(error) {
           hideLoading();
 

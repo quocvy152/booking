@@ -278,20 +278,27 @@ const AddCar = ({ navigation }) => {
     Keyboard.dismiss();
     showLoading();
 
-    // let bodyData = {
-    //   name: Name, brandID: brand.id, description: Description, price: Price, 
-    //   mortage: mortgage, rules, address: Address_booking, 
-    //   wardID: ward.id, districtID: district.id, provinceID: province.id, 
-    //   listCharacteristicID: [
-    //     seats.id,
-    //     fuel.id,
-    //     fuelConsumption.id,
-    //     tranmission.id
-    //   ],
-    //   Seats: seats.id, Fuel: fuel.id, FuelConsumption: fuelConsumption.id, 
-    //   Tranmission: tranmission.id, SelectedFeature: selectedFeature, 
-    //   SelectedLicense: selectedLicense, Img
-    // };
+    let bodyData = {
+      name: Name, brandID: brand.id, description: Description, price: Number(Price), 
+      mortage: mortgage, rules, address: Address_booking, userID: infoUser._id,
+      wardID: ward.id, wardText: ward.item, districtID: district.id, districtText: district.item, 
+      provinceText: province.item, provinceID: province.id, status: 1, // trạng thái xe hoạt động
+      file: {
+        uri: Img,
+        type: 'image/*',
+        name: Img,
+      },
+      Seats: seats.id, Fuel: fuel.id, FuelConsumption: fuelConsumption.id, 
+      Tranmission: tranmission.id, SelectedFeature: selectedFeature, 
+      SelectedLicense: selectedLicense,
+    };
+
+    //  validate data of car register
+    let { error: errorCar, message } = checkValidDataCar(bodyData);
+    if(errorCar) {
+      showToast({ content: message, type: 'warning' });
+      return;
+    }
 
     let listCharacteristicID = [
       seats.id,
@@ -313,15 +320,8 @@ const AddCar = ({ navigation }) => {
           uri: Img,
           type: 'image/*',
           name: Img,
-        }
+        },
       };
-
-       // validate data of car register
-      // let { error, message } = checkValidDataCar(bodyData);
-      // if(error) {
-      //   showToast({ content: message, type: 'warning' });
-      //   return;
-      // }
 
       let resultCreateCar = await createCar(body);
       let { error, data } = resultCreateCar.data;

@@ -87,9 +87,9 @@ const Home = ({ navigation }) => {
           <View style={ styles.card }>
             <View style={{ alignItems: 'center', top: -15, height: 120, }}>
               {
-                car.infoCar.gallery && car.infoCar.gallery.length ?
+                car.infoCar.avatar ?
                 (
-                  <Image source={{ uri: car.infoCar.gallery[0] && car.infoCar.gallery[0].url }} style={{ height: 120, width: 120, borderRadius: 60, resizeMode: 'contain' }} />
+                  <Image source={{ uri: car.infoCar.avatar && car.infoCar.avatar.path }} style={{ height: 120, width: 120, borderRadius: 60, resizeMode: 'contain' }} />
                 ) : (
                   <Image source={require('../../resources/images/mazda-6-2020-26469.png')} style={{ height: 120, width: 120, borderRadius: 60, resizeMode: 'contain' }} />
                 )

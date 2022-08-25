@@ -28,7 +28,7 @@ export const ENDPOINT = {
   LIST_CAR_PREPARE: `${BASE_CARS}`,
   REGISTER_CAR: `${BASE_CARS}`,
   REGISTER_CAR_v2: `${BASE_CARS}/register`,
-  UPDATE_CAR: `${BASE_CARS}`,
+  UPDATE_CAR: `${BASE_CARS}/update`,
   REGISTER_CAR_V2: `${BASE_CARS}`,
   DETAIL_INFO: `${BASE_CHARACTERISTIC}/characteristic-type/list-detail`,
   BOOKING_CAR: `${BASE_CARS}/booking-car`,
