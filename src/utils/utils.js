@@ -506,7 +506,6 @@ const returnDetailIDS = (infoDataCar) => {
 }
 
 const convertDateTimeToString = (dateTime) => {
-  console.log({ dateTime })
   let tempDate = new Date(dateTime);
   let fDate = tempDate.getDate() + '/' + (tempDate.getMonth() + 1) + '/' + tempDate.getFullYear();
   let fTime = tempDate.getHours() + ' giờ ' + ' - ' + tempDate.getMinutes() + ' phút';

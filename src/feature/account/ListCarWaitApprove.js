@@ -32,7 +32,7 @@ const ListCarWaitApprove = ({ navigation, route }) => {
   const [page, setPage] = useState(1);  
 
   const fetchListTrip = async ({ page }) => {
-    let TYPE_GET_LIST_CAR_WAIT_PAYED = 0;
+    // let TYPE_GET_LIST_CAR_WAIT_PAYED = 0;
     let resultListCarRegister = await getListMyCar(TYPE_GET_LIST_CAR_WAIT_PAYED, page);
     let { success, data: { items: data } } = resultListCarRegister.data;
     if(success) {
@@ -61,6 +61,7 @@ const ListCarWaitApprove = ({ navigation, route }) => {
   }, [nameSearch]);
 
   const Card = ({ car }) => {
+    console.log({ car })
     car.PREVIOUS_SCREEN_NAME = 'Thông Tin Của Bạn';
     car.ROUTE_NAME = 'ListCarWaitApproveScreen';
 
@@ -73,9 +74,9 @@ const ListCarWaitApprove = ({ navigation, route }) => {
           <View style={ styles.card }>
             <View style={{ alignItems: 'center', top: -15 }}>
               {
-                car.images && car.images.length ?
+                car.avatar ?
                 (
-                  <Image source={{ uri: car.images[0] && car.images[0].url }} style={{ height: 120, width: 120, borderRadius: 60, resizeMode: 'contain' }} />
+                  <Image source={{ uri: car.avatar && car.avatar.path }} style={{ height: 120, width: 120, borderRadius: 60, resizeMode: 'contain' }} />
                 ) : (
                   <Image source={require('../../resources/images/mazda-6-2020-26469.png')} style={{ height: 120, width: 120, borderRadius: 60, resizeMode: 'contain' }} />
                 )

@@ -31,7 +31,9 @@ import { checkValidDataCar, returnDetailIDS, convertDateTimeToString } from '../
 
 const BorrowCar = ({ navigation, route }) => {
   const car = route.params;
-  const [Img, setImg] = useState(car.images.length ? car.images[0].url : null);
+  const infoUser = useSelector(state => state.auth.infoUser);
+  const infoOwner = car.infoCar && car.infoCar.userID; 
+  const [Img, setImg] = useState(car.infoCar.avatar ? car.infoCar.avatar.path : null);
   const [startDate, setStartDate] = useState(new Date());
   const [modeStart, setModeStart] = useState('date');
   const [showTimeStart, setShowTimeStart] = useState(false);
@@ -42,12 +44,14 @@ const BorrowCar = ({ navigation, route }) => {
   const [showTimeEnd, setShowTimeEnd] = useState(false);
   const [textTimeEnd, setTextTimeEnd] = useState(convertDateTimeToString(new Date(new Date().getTime() + (24 * 60 * 60 * 1000))));
 
-  const [infoSeats, setInfoSeats] = useState(car.details.find(detail => detail.detailType.code === 'SOGHE'));
-  const [infoTranmission, setInfoTranmission] = useState(car.details.find(detail => detail.detailType.code === 'TRUYENDONG'));
-  const [infoFuel, setInfoFuel] = useState(car.details.find(detail => detail.detailType.code === 'NHIENLIEU'));
-  const [infoFuelConsumption, setInfoFuelConsumption] = useState(car.details.find(detail => detail.detailType.code === 'MUCTIEUTHUNHIENLIEU'));
-  const [listFeature, setListFeature] = useState(car.details.filter(detail => detail.detailType.code == 'TINHNANG'))
-  const [listLicense, setListLicense] = useState(car.details.filter(detail => detail.detailType.code == 'GIAYTOTHUEXE'))
+  const [infoSeats, setInfoSeats] = useState(car.details.find(detail => detail.characteristicID.characteristicTypeID.code === 'SOGHE'));
+  const [infoTranmission, setInfoTranmission] = useState(car.details.find(detail => detail.characteristicID.characteristicTypeID.code === 'TRUYENDONG'));
+  const [infoFuel, setInfoFuel] = useState(car.details.find(detail => detail.characteristicID.characteristicTypeID.code === 'NHIENLIEU'));
+  const [infoFuelConsumption, setInfoFuelConsumption] = useState(car.details.find(detail => detail.characteristicID.characteristicTypeID.code === 'MUCTIEUTHUNHIENLIEU'));
+  const [listFeature, setListFeature] = useState(car.details.filter(detail => detail.characteristicID.characteristicTypeID.code == 'TINHNANG'))
+  const [listLicense, setListLicense] = useState(car.details.filter(detail => detail.characteristicID.characteristicTypeID.code == 'GIAYTOTHUEXE'))
+  const [pickUpPlace, setPickUpPlace] = useState();
+  const [dropOffPlace, setDropOffPlace] = useState();
 
   // START TOASTCUSTOM MESSAGE
   const [isShowToast, setIsShowToast] = useState(false);
@@ -107,21 +111,33 @@ const BorrowCar = ({ navigation, route }) => {
   }
 
   const validateInfoBorrorwCar = (body) => {
-    let { car_id, startBooking, endBooking } = body;
+    let { userID, carID, dropOffPlace, pickUpPlace, startTime, endTime } = body;
 
-    if(!car_id) 
+    if(!carID) 
       return {
         error: true,
         message: 'Không thể lấy thông tin xe',
       }
 
-    if(!startBooking)
+    if(!pickUpPlace) 
+      return {
+        error: true,
+        message: 'Vui lòng nhập địa chỉ nhận xe',
+      }
+
+    if(!dropOffPlace) 
+      return {
+        error: true,
+        message: 'Vui lòng nhập địa chỉ trả xe',
+      }
+
+    if(!startTime)
       return {
         error: true,
         message: 'Vui lòng chọn ngày bắt đầu thuê xe',
       }
 
-    if(!endBooking) 
+    if(!endTime) 
       return {
         error: true,
         message: 'Vui lòng chọn ngày trả xe',
@@ -137,9 +153,13 @@ const BorrowCar = ({ navigation, route }) => {
     showLoading();
 
     let body = {
-      car_id: car.id,
-      startBooking: startDate,
-      endBooking: endDate,
+      carID: car?.infoCar?._id,
+      userID: infoUser._id,
+      pickUpPlace, 
+      dropOffPlace,
+      startTime: startDate,
+      endTime: endDate,
+      price: car?.infoCar?.price
     }
 
     let { error, message } = validateInfoBorrorwCar(body);
@@ -149,10 +169,10 @@ const BorrowCar = ({ navigation, route }) => {
     }
 
     let resultCallBookingCar = await bookingCar(body);
-    let { success, message: messageBookingCar, data } = resultCallBookingCar.data;
+    let { error: errorRes, message: messageBookingCar, data } = resultCallBookingCar.data;
 
-    if(success) {
-      showToast({ content: data, type: 'success' });
+    if(!errorRes) {
+      showToast({ content: 'Bạn đã đặt thuê xe thành công. Hãy đợi chủ xe chấp nhận nhé', type: 'success' });
       setTimeout(() => {
         navigation.navigate('HomeScreen');
       }, 1500);
@@ -188,10 +208,10 @@ const BorrowCar = ({ navigation, route }) => {
               <Text style={ styles.titleInfoStyle }>Thông tin chủ xe</Text>
               <View style={{ alignItems: 'center', }}>
                   {
-                    car.ownerCar && car.ownerCar.avatar ?
+                    infoOwner.avatar ?
                     (
                       <Image 
-                        source={{ uri: car.ownerCar.avatar }}
+                        source={{ uri: infoOwner.avatar.path }}
                         style={{
                           width: 60,
                           height: 60,
@@ -218,10 +238,10 @@ const BorrowCar = ({ navigation, route }) => {
                 
               </View>
               <Text style={{ marginLeft: 10, }}>
-                Chủ xe: { car.ownerCar && car.ownerCar.name }
+                Chủ xe: { infoOwner.lastName + ' ' + infoOwner.firstName }
               </Text>
               <Text style={{ marginLeft: 10, }}>
-                Số điện thoại: { car.ownerCar && car.ownerCar.phoneNumber } 
+                Số điện thoại: { infoOwner.phone } 
               </Text>
           </View>
 
@@ -234,7 +254,7 @@ const BorrowCar = ({ navigation, route }) => {
                     <View style={{ marginBottom: 10, borderWidth: 1, borderColor: 'black', padding: 10, borderRadius: 20, }}>
                       <Text style={{ fontSize: 18, color: 'black', fontStyle: 'italic' }}>
                         {
-                          license.val
+                          license.characteristicID.value
                         }
                       </Text>
                     </View> 
@@ -245,13 +265,18 @@ const BorrowCar = ({ navigation, route }) => {
 
           <View style={styles.infoDetailCar}>
               <Text style={ styles.titleInfoStyle }>Tài sản thế chấp</Text>
+              <Text>
+              {
+                car?.infoCar?.mortage
+              }
+            </Text>
           </View>
 
           <View style={styles.infoDetailCar}>
             <Text style={ styles.titleInfoStyle }>Điều khoản</Text>
             <Text>
               {
-                car.rules
+                car?.infoCar?.rules
               }
             </Text>
           </View>
@@ -324,13 +349,31 @@ const BorrowCar = ({ navigation, route }) => {
             }
           </View>
 
+          <View style={styles.styleInputFrame}>
+              <Text style={ styles.titleInfoStyle }>Địa chỉ muốn nhận xe</Text>
+              <TextInput 
+                style={ styles.inputStyle }
+                placeholder='Nhập địa chỉ nhận xe'
+                onChangeText={(val) => setPickUpPlace(val)}
+              />
+          </View>
+
+          <View style={styles.styleInputFrame}>
+              <Text style={ styles.titleInfoStyle }>Địa chỉ trả xe</Text>
+              <TextInput 
+                style={ styles.inputStyle }
+                placeholder='Nhập địa chỉ trả xe'
+                onChangeText={(val) => setDropOffPlace(val)}
+              />
+          </View>
+
           <View style={styles.infoPriceCar}>
               <Text style={ styles.titleInfoStyle }>Địa chỉ giao nhận xe</Text>
               <Text style={{ marginLeft: 10, }}>
-                Địa chỉ: { car.address } 
+                Địa chỉ: { car?.infoCar?.wardText + ' ' + car?.infoCar?.districtText + ' ' + car?.infoCar?.provinceText } 
               </Text>
               <Text style={{ marginLeft: 10, }}>
-                Địa chỉ cụ thể: { car.address } 
+                Địa chỉ cụ thể: { car?.infoCar?.address } 
               </Text>
           </View>
 
@@ -338,7 +381,7 @@ const BorrowCar = ({ navigation, route }) => {
               <Text style={ styles.titleInfoStyle }>Chi tiết giá</Text>
               <Text style={{ marginLeft: 10, }}>
                 Đơn giá thuê: <NumberFormat
-                  value={ car.price }
+                  value={ car?.infoCar?.price }
                   displayType="text"
                   thousandSeparator
                   prefix="đ"
@@ -347,7 +390,7 @@ const BorrowCar = ({ navigation, route }) => {
               </Text>
               <Text style={{ marginLeft: 10, }}>
                 Tổng cộng: <NumberFormat
-                  value={ car.price }
+                  value={ car?.infoCar?.price }
                   displayType="text"
                   thousandSeparator
                   prefix="đ"
@@ -419,6 +462,16 @@ const styles = StyleSheet.create({
   infoPriceCar: {
     width: contentWidth,
     height: 150,
+    marginLeft: 21,
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: '#FFFFF0',
+    elevation: 1,
+  },
+
+  styleInputFrame: {
+    width: contentWidth,
+    height: 100,
     marginLeft: 21,
     marginBottom: 20,
     borderWidth: 1,

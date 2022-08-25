@@ -1,5 +1,6 @@
 const BASE_USERS = '/users';
 const BASE_CARS      = '/cars';
+const BASE_BOOKINGS  = '/bookings';
 const BASE_LOCATION  = '/location';
 const BASE_BRANDS    = '/brands';
 const BASE_TOKEN     = '/Token';
@@ -31,7 +32,7 @@ export const ENDPOINT = {
   UPDATE_CAR: `${BASE_CARS}/update`,
   REGISTER_CAR_V2: `${BASE_CARS}`,
   DETAIL_INFO: `${BASE_CHARACTERISTIC}/characteristic-type/list-detail`,
-  BOOKING_CAR: `${BASE_CARS}/booking-car`,
+  BOOKING_CAR: `${BASE_BOOKINGS}`,
   GET_LIST_MY_CAR: `${BASE_CARS}/list/my-cars`,
   GET_LIST_CAR_BOOKING: `${BASE_CARS}/bookings-cars`,
   REMOVE_CAR: `${BASE_CARS}`,
