@@ -55,7 +55,7 @@ export async function getListCarBooking(type, page) {
 
 export async function removeCar(carID) {
 
-    return await requestAPI(`${ENDPOINT.REMOVE_CAR}?carId=${carID}`, method.DELETE);
+    return await requestAPI(`${ENDPOINT.REMOVE_CAR}/${carID}`, method.DELETE);
 }
 
 export async function acceptBookingCar(bodyAcceptBooking) {

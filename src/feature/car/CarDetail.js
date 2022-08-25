@@ -41,10 +41,11 @@ const CarDetail = ({ navigation, route }) => {
   }
 
   const handleCancelRegisterCar = async () => {
-    let carID = car.id;
+    let carID = car.infoCar._id;
     let resultRemoveCar = await removeCar(carID);
-    let { success, data, message } = resultRemoveCar.data;
-    if(success) {
+    let { error, data, message } = resultRemoveCar.data;
+
+    if(!error) {
       showToast({ content: 'Hủy đăng ký xe thành công', type: 'success' });
       setTimeout(() => {
         navigation.navigate('ListCarUserScreen');
