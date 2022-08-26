@@ -53,7 +53,13 @@ const Home = ({ navigation }) => {
           <TouchableOpacity 
             key={index} 
             activeOpacity={0.8} 
-            onPress={() => setSelectedCategorIndex(index)}
+            onPress={() => {
+              if(index == selectedCategorIndex) {
+                setSelectedCategorIndex(undefined);
+              } else {
+                setSelectedCategorIndex(index);
+              }
+            }}
           >
             <View style={{ 
               ...styles.styleCategoryCar, 
@@ -127,19 +133,19 @@ const Home = ({ navigation }) => {
     );
   }
 
-  const fetchDataListCarPrepare = async () => {
+  const fetchDataListCarPrepare = async ({ name, brand }) => {
     // const querys = `pageIndex=${pageIndex}&limit=${limit}`;
-    const querys = ``;
+    const querys = `name=${name}&brand=${brand}`;
 
     let resultListCarPrepare = await getListCarPrepare(querys);
     const { data: listCar, error } = resultListCarPrepare.data;
+
     if(!error) {
       setListCar(listCar);
-      setTotalPage(data.totalPage);
+      // setTotalPage(data.totalPage);
     }
   }
   
-
   const previousPage = () => {
     if(pageIndex == 1) {
       setPageIndex(1);
@@ -156,22 +162,25 @@ const Home = ({ navigation }) => {
     }
   }
 
-  useEffect(() => { 
-    fetchDataListCarPrepare();
-  }, [pageIndex])
+  // useEffect(() => { 
+  //   fetchDataListCarPrepare();
+  // }, [pageIndex])
 
-  useEffect(() => {
-    fetchDataListCarPrepare();
-  }, [checkReload]);
+  // useEffect(() => {
+  //   fetchDataListCarPrepare();
+  // }, [checkReload]);
 
   useEffect(() => {
     // let listCarFilter = listCar.filter(car => car.name.toLowerCase().includes(nameSearch.toLowerCase()) && car.brandID.id == listBrand[selectedCategorIndex].id);
-    let listCarFilter = listCar.filter(car => car.name.toLowerCase().includes(nameSearch.toLowerCase()));
-    setListCar(listCarFilter);
+    // let listCarFilter = listCar.filter(car => car.name.toLowerCase().includes(nameSearch.toLowerCase()));
+    // setListCar(listCarFilter);
 
-    if(!nameSearch) {
-      setCheckReload(!checkReload);
-    }
+    // if(!nameSearch) {
+    //   setCheckReload(!checkReload);
+    // }
+
+    fetchDataListCarPrepare({ name: nameSearch, brand: listBrand[selectedCategorIndex] && listBrand[selectedCategorIndex]._id });
+
   }, [nameSearch, selectedCategorIndex]);
 
   return (
