@@ -15,7 +15,7 @@ import CARS from '../../constant/cars';
 import TextInputCustom from '../../components/TextInputCustom';
 import { TouchableHighlight } from 'react-native-gesture-handler';
 import images from '../../resources/images/index';
-import { getListMyCar, acceptBookingCar } from '../../api/general';
+import { getListMyCar, acceptBookingCar, getListCustomerBookingMyCar } from '../../api/general';
 import ButtonCustom from '../../components/ButtonCustom';
 import { backgroundColor } from 'react-native/Libraries/Components/View/ReactNativeStyleAttributes';
 const { width } = Dimensions.get('screen');
@@ -32,12 +32,13 @@ const ListCarWaitApprove = ({ navigation, route }) => {
   const [page, setPage] = useState(1);  
 
   const fetchListTrip = async ({ page }) => {
-    // let TYPE_GET_LIST_CAR_WAIT_PAYED = 0;
-    let resultListCarRegister = await getListMyCar(TYPE_GET_LIST_CAR_WAIT_PAYED, page);
-    let { success, data: { items: data } } = resultListCarRegister.data;
-    if(success) {
-      let listCarAfterSplitBooking = unwind(data, 'bookings');
-      setListTrip(listCarAfterSplitBooking);
+    let TYPE_GET_LIST_CAR_WAIT_PAYED = 3;
+    let resultListCarRegister = await getListCustomerBookingMyCar(TYPE_GET_LIST_CAR_WAIT_PAYED);
+    let { error, data } = resultListCarRegister.data;
+
+    if(!error) {
+      // let listCarAfterSplitBooking = unwind(data, 'bookings');
+      setListTrip(data);
     }
   }
 
@@ -60,22 +61,27 @@ const ListCarWaitApprove = ({ navigation, route }) => {
     }
   }, [nameSearch]);
 
-  const Card = ({ car }) => {
-    car.PREVIOUS_SCREEN_NAME = 'Thông Tin Của Bạn';
-    car.ROUTE_NAME = 'ListCarWaitApproveScreen';
+  const Card = ({ item }) => {
+    let newItemToDetailCar = {
+      PREVIOUS_SCREEN_NAME: 'Thông Tin Của Bạn',
+      ROUTE_NAME: 'ListCarWaitApproveScreen',
+      infoCar: item?.booking?.car,
+      details: item?.details,
+      booking: item?.booking
+    }
 
     return (
       <>
         <TouchableOpacity 
           activeOpacity={0.9}
-          onPress={() => navigation.navigate('CarDetailScreen', car)}
+          onPress={() => navigation.navigate('CarDetailScreen', newItemToDetailCar)}
         >
           <View style={ styles.card }>
             <View style={{ alignItems: 'center', top: -15 }}>
               {
-                car.avatar ?
+                item?.booking?.car?.avatar ?
                 (
-                  <Image source={{ uri: car.avatar && car.avatar.path }} style={{ height: 120, width: 120, borderRadius: 60, resizeMode: 'contain' }} />
+                  <Image source={{ uri: item?.booking?.car?.avatar && item?.booking?.car?.avatar.path }} style={{ height: 120, width: 120, borderRadius: 60, resizeMode: 'contain' }} />
                 ) : (
                   <Image source={require('../../resources/images/mazda-6-2020-26469.png')} style={{ height: 120, width: 120, borderRadius: 60, resizeMode: 'contain' }} />
                 )
@@ -83,25 +89,25 @@ const ListCarWaitApprove = ({ navigation, route }) => {
               
             </View>
             <View style={{ marginHorizontal: 20, top: -30 }}>
-              <Text style={{ fontSize: 15, fontWeight: 'bold' }}>{ car.name && car.name.length > 16 ? car.name.slice(0, 16) + '...' : car.name }</Text>
+              <Text style={{ fontSize: 15, fontWeight: 'bold' }}>{ item?.booking?.car?.name && item?.booking?.car?.name.length > 16 ? item?.booking?.car?.name.slice(0, 16) + '...' : item?.booking?.car?.name }</Text>
               <Text style={{ fontSize: 15, color: COLORS.DEFAULT_TEXT }}>
                 Hiệu: 
                 <Text style={{ fontWeight: 'bold', color: 'black' }}>
-                  { '  ' + car.brand.name }
+                  { '  ' + item?.booking?.car?.brandID?.name }
                 </Text> 
               </Text>
               <Text style={{ marginTop: 10, fontSize: 15, color: COLORS.DEFAULT_TEXT }}>
                 Ngày BĐ: 
                 <Text style={{ fontWeight: 'bold', color: 'green' }}>
                   { 
-                    '  ' + moment(car.bookings.startBooking).format('L') + ' ' + moment(car.bookings.startBooking).format('LT')  
+                    '  ' + moment(item?.booking?.startTime).format('L') + ' ' + moment(item?.booking?.startTime).format('LT')  
                   }
                 </Text> 
               </Text>
               <Text style={{ fontSize: 15, color: COLORS.DEFAULT_TEXT }}>
                 Ngày KT: 
                 <Text style={{ fontWeight: 'bold', color: '#FFD700' }}>
-                  { '  ' + moment(car.bookings.endBooking).format('L') + ' ' + moment(car.bookings.endBooking).format('LT')  }
+                  { '  ' + moment(item?.booking?.endTime).format('L') + ' ' + moment(item?.booking?.endTime).format('LT')  }
                 </Text> 
               </Text>
             </View>
@@ -114,7 +120,7 @@ const ListCarWaitApprove = ({ navigation, route }) => {
               }}
             >
               <NumberFormat
-                value={ car.price }
+                value={ item?.booking?.car?.price }
                 displayType="text"
                 thousandSeparator
                 prefix="đ"
@@ -161,7 +167,7 @@ const ListCarWaitApprove = ({ navigation, route }) => {
               showsVerticalScrollIndicator={false}
               numColumns={2}
               data={listTrip}
-              renderItem={({ item }) => <Card car={item} />}
+              renderItem={({ item }) => <Card item={item} />}
             />
           ) : 
           (

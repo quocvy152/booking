@@ -29,11 +29,11 @@ const ListTripUser = ({ navigation, route }) => {
 
   const fetchListTrip = async ({ page }) => {
     let TYPE_GET_LIST_TRIP = 1;
-    let resultListCarRegister = await getListCarBooking(TYPE_GET_LIST_TRIP, page);
-    let { success, data: { items: data } } = resultListCarRegister.data;
-    if(success) {
-      let listTripAfterSplitBooking = unwind(data, 'bookings');
-      setListTrip(listTripAfterSplitBooking);
+    let resultListTripBooking = await getListCarBooking(TYPE_GET_LIST_TRIP);
+    let { error, data } = resultListTripBooking.data;
+    if(!error) {
+      // let listTripAfterSplitBooking = unwind(data, 'bookings');
+      setListTrip(data);
     }
   }
 
@@ -56,22 +56,27 @@ const ListTripUser = ({ navigation, route }) => {
     }
   }, [nameSearch]);
 
-  const Card = ({ car }) => {
-    car.PREVIOUS_SCREEN_NAME = 'Thông Tin Của Bạn';
-    car.ROUTE_NAME = 'ListTripUserScreen';
+  const Card = ({ item }) => {
+    let newItemToDetailCar = {
+      PREVIOUS_SCREEN_NAME: 'Thông Tin Của Bạn',
+      ROUTE_NAME: 'ListTripUserScreen',
+      infoCar: item?.booking?.car,
+      details: item?.details,
+      booking: item?.booking
+    }
 
     return (
       <>
         <TouchableOpacity 
           activeOpacity={0.9}
-          onPress={() => navigation.navigate('CarDetailScreen', car)}
+          onPress={() => navigation.navigate('CarDetailScreen', newItemToDetailCar)}
         >
           <View style={ styles.card }>
             <View style={{ alignItems: 'center', top: -15 }}>
               {
-                car.images && car.images.length ?
+                item?.booking?.car?.avatar ?
                 (
-                  <Image source={{ uri: car.images[0] && car.images[0].url }} style={{ height: 120, width: 120, borderRadius: 60, resizeMode: 'contain' }} />
+                  <Image source={{ uri: item?.booking?.car.avatar && item?.booking?.car.avatar.path }} style={{ height: 120, width: 120, borderRadius: 60, resizeMode: 'contain' }} />
                 ) : (
                   <Image source={require('../../resources/images/mazda-6-2020-26469.png')} style={{ height: 120, width: 120, borderRadius: 60, resizeMode: 'contain' }} />
                 )
@@ -79,11 +84,11 @@ const ListTripUser = ({ navigation, route }) => {
               
             </View>
             <View style={{ marginHorizontal: 20, top: -30 }}>
-              <Text style={{ fontSize: 15, fontWeight: 'bold' }}>{ car.name && car.name.length > 16 ? car.name.slice(0, 16) + '...' : car.name }</Text>
+              <Text style={{ fontSize: 15, fontWeight: 'bold' }}>{ item?.booking?.car?.name && item?.booking?.car?.name.length > 16 ? item?.booking?.car.name.slice(0, 16) + '...' : item?.booking?.car.name }</Text>
               <Text style={{ fontSize: 15, color: COLORS.DEFAULT_TEXT }}>
                 Hiệu: 
                 <Text style={{ fontWeight: 'bold', color: 'black' }}>
-                  { '  ' + car.brand.name }
+                  { '  ' + item?.booking?.car?.brandID?.name }
                 </Text> 
               </Text>
             </View>
@@ -96,7 +101,7 @@ const ListTripUser = ({ navigation, route }) => {
               }}
             >
               <NumberFormat
-                value={ car.price }
+                value={ item?.booking?.car?.price }
                 displayType="text"
                 thousandSeparator
                 prefix="đ"
@@ -135,7 +140,6 @@ const ListTripUser = ({ navigation, route }) => {
           <FontAwesome5 name="tripadvisor" size={20} color="#8B4513" style={{ marginRight: 10, }} />
           <Text style={{ color: '#8B4513', fontSize: 20, fontWeight: 'bold' }}>Danh sách xe bạn đã thuê</Text>
         </View>
-        
         {
           listTrip.length ?
           (
@@ -143,7 +147,7 @@ const ListTripUser = ({ navigation, route }) => {
               showsVerticalScrollIndicator={false}
               numColumns={2}
               data={listTrip}
-              renderItem={({ item }) => <Card car={item} />}
+              renderItem={({ item }) => <Card item={item} />}
             />
           ) : 
           (

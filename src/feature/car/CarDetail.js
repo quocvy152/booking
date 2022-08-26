@@ -152,18 +152,20 @@ const CarDetail = ({ navigation, route }) => {
   }
 
   const handlePayedBooking = async () => {
-    let carID = car.id;
+    let bookingID = car?.booking?._id;
 
     const bodyPayedBooking = {
-      car_id: carID,
-      startBooking: car.bookings.startBooking,
-      endBooking: car.bookings.endBooking,
+      bookingID
+      // car_id: carID,
+      // startBooking: car.bookings.startBooking,
+      // endBooking: car.bookings.endBooking,
     }
 
     let resultPayedBooking = await payedBookingCar(bodyPayedBooking);
-    let { success, data, message } = resultPayedBooking.data;
-    if(success) {
-      showToast({ content: data, type: 'success' });
+    let { error, data, message } = resultPayedBooking.data;
+    console.log({ error, data })
+    if(!error) {
+      showToast({ content: 'Yêu cầu trả xe của bạn đã được ghi lại. Hãy đợi chủ xe chấp nhận nhé', type: 'success' });
       setTimeout(() => {
         navigation.navigate('ListTripWaitPayedScreen');
       }, 1500)
@@ -174,19 +176,21 @@ const CarDetail = ({ navigation, route }) => {
   }
 
   const handleAcceptBooking = async () => {
-    let carID = car.id;
+    let bookingID = car?.booking?._id;
 
-    const bodyCancelBooking = {
-      appUserId: car.bookings.bookedByUserId,
-      carID: carID,
-      startBooking: car.bookings.startBooking,
-      endBooking: car.bookings.endBooking,
+    const bodyAcceptBooking = {
+      // appUserId: car.bookings.bookedByUserId,
+      // carID: carID,
+      // startBooking: car.bookings.startBooking,
+      // endBooking: car.bookings.endBooking,
+      bookingID
     }
 
-    let resultAcceptBooking = await acceptBookingCar(bodyCancelBooking);
-    let { success, data, message } = resultAcceptBooking.data;
-    if(success) {
-      showToast({ content: data, type: 'success' });
+    let resultAcceptBooking = await acceptBookingCar(bodyAcceptBooking);
+    let { error, data, message } = resultAcceptBooking.data;
+
+    if(!error) {
+      showToast({ content: 'Duyệt yêu cầu thuê xe thành công. Bạn đã chấp nhận cho thuê xe', type: 'success' });
       setTimeout(() => {
         navigation.navigate('ListCarWaitApproveScreen');
       }, 1500)
@@ -502,7 +506,8 @@ const CarDetail = ({ navigation, route }) => {
                       style={{ 
                         backgroundColor: '#FF8C00', 
                         height: 50, 
-                        width: contentWidth / 2 - 5, 
+                        // width: contentWidth / 2 - 5, 
+                        width: contentWidth, 
                         justifyContent: 'center', 
                         alignItems: 'center',
                         marginRight: 10,  
@@ -514,7 +519,7 @@ const CarDetail = ({ navigation, route }) => {
                         <Text style={styles.titleButton}>Trả xe</Text>
                       </View>
                     </TouchableOpacity>
-                    <TouchableOpacity 
+                    {/* <TouchableOpacity 
                       onPress={alertBooking}
                       style={{ 
                         backgroundColor: '#2F4F4F', 
@@ -529,7 +534,7 @@ const CarDetail = ({ navigation, route }) => {
                         <FontAwesome5 name="unlink" size={20} color="white" />
                         <Text style={styles.titleButton}>Hủy thuê xe</Text>
                       </View>
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                   </View>
                 </>
               ) : (
@@ -547,13 +552,23 @@ const CarDetail = ({ navigation, route }) => {
                         <>
                           <Text style={{ fontSize: 18, color: 'white', fontStyle: 'italic' }}>
                           {
-                            'Ngày bắt đầu: ' + moment(car?.bookings?.startBooking).format('L') + ' ' + moment(car?.bookings?.startBooking).format('LT')
+                            'Ngày bắt đầu: ' + moment(car?.booking?.startTime).format('L') + ' ' + moment(car?.booking?.startTime).format('LT')
                           }
                           </Text>
 
                           <Text style={{ fontSize: 18, color: 'white', fontStyle: 'italic' }}>
                           {
-                            'Ngày kết thúc: ' + moment(car?.bookings?.endBooking).format('L') + ' ' + moment(car?.bookings?.endBooking).format('LT')
+                            'Ngày kết thúc: ' + moment(car?.booking?.endTime).format('L') + ' ' + moment(car?.booking?.endTime).format('LT')
+                          }
+                          </Text>
+                          <Text style={{ fontSize: 18, color: 'white', fontStyle: 'italic' }}>
+                          {
+                            'Địa chỉ nhận xe: ' + car?.booking?.pickUpPlace
+                          }
+                          </Text>
+                          <Text style={{ fontSize: 18, color: 'white', fontStyle: 'italic' }}>
+                          {
+                            'Địa chỉ trả xe: ' + car?.booking?.dropOffPlace
                           }
                           </Text>
                         </>
