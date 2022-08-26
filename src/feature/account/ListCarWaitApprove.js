@@ -61,7 +61,6 @@ const ListCarWaitApprove = ({ navigation, route }) => {
   }, [nameSearch]);
 
   const Card = ({ car }) => {
-    console.log({ car })
     car.PREVIOUS_SCREEN_NAME = 'Thông Tin Của Bạn';
     car.ROUTE_NAME = 'ListCarWaitApproveScreen';
 

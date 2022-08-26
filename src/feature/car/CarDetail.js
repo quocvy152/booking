@@ -387,8 +387,13 @@ const CarDetail = ({ navigation, route }) => {
 
               <View style={{ borderWidth: 1, borderColor: 'white', marginTop: 20, paddingBottom: 20, }}>
                 <Text style={{ color: COLORS.WHITE, textAlign: 'justify', marginHorizontal: 20, marginTop: 18, lineHeight: 22, fontSize: 21, fontWeight: 'bold' }}>Thông tin thuê</Text>
-                <Text style={{ color: COLORS.WHITE, textAlign: 'justify', marginHorizontal: 20, marginTop: 18, lineHeight: 22, fontSize: 16, }}>Đơn giá thuê: { car.infoCar.price }/ngày</Text>
-                <Text style={{ color: COLORS.WHITE, textAlign: 'justify', marginHorizontal: 20, marginTop: 18, lineHeight: 22, fontSize: 16, }}>Địa chỉ: { car.infoCar.address }</Text>
+                <Text style={{ color: COLORS.WHITE, textAlign: 'justify', marginHorizontal: 20, marginTop: 18, lineHeight: 22, fontSize: 16, }}>Đơn giá thuê: { car?.booking?.price }/ngày</Text>
+                <Text style={{ color: COLORS.WHITE, textAlign: 'justify', marginHorizontal: 20, marginTop: 18, lineHeight: 22, fontSize: 16, }}>Tổng số tiền thuê: { car?.booking?.totalPrice }</Text>
+                <Text style={{ color: COLORS.WHITE, textAlign: 'justify', marginHorizontal: 20, marginTop: 18, lineHeight: 22, fontSize: 16, }}>Thời gian thuê: { 
+                  moment(car?.booking?.startTime).format('L') + ' ' + moment(car?.booking?.startTime).format('LT') + ' - ' + moment(car?.booking?.endTime).format('L') + ' ' + moment(car?.booking?.endTime).format('LT')
+                }</Text>
+                <Text style={{ color: COLORS.WHITE, textAlign: 'justify', marginHorizontal: 20, marginTop: 18, lineHeight: 22, fontSize: 16, }}>Địa chỉ nhận xe: { car?.booking?.pickUpPlace }</Text> 
+                <Text style={{ color: COLORS.WHITE, textAlign: 'justify', marginHorizontal: 20, marginTop: 18, lineHeight: 22, fontSize: 16, }}>Địa chỉ trả xe: { car?.booking?.dropOffPlace }</Text>
               </View>
 
               <View style={{ borderWidth: 1, borderColor: 'white', marginTop: 20, paddingBottom: 20, }}>

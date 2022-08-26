@@ -34,7 +34,7 @@ export const ENDPOINT = {
   DETAIL_INFO: `${BASE_CHARACTERISTIC}/characteristic-type/list-detail`,
   BOOKING_CAR: `${BASE_BOOKINGS}`,
   GET_LIST_MY_CAR: `${BASE_CARS}/list/my-cars`,
-  GET_LIST_CAR_BOOKING: `${BASE_CARS}/bookings-cars`,
+  GET_LIST_CAR_BOOKING: `${BASE_BOOKINGS}/list/my-booking`,
   REMOVE_CAR: `${BASE_CARS}`,
   CANCEL_BOOKING_CAR: `${BASE_CARS}/cancel-booking`,
   ACCEPT_BOOKING_CAR: `${BASE_CARS}/accept-booking-car`,

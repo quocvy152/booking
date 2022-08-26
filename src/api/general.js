@@ -48,10 +48,14 @@ export async function getListMyCar() {
     return await requestAPI(`${ENDPOINT.GET_LIST_MY_CAR}`, method.GET);
 }
 
-export async function getListCarBooking(type, page) {
+export async function getListCarBooking(type) {
 
-    return await requestAPI(`${ENDPOINT.GET_LIST_CAR_BOOKING}?status=${type}&pageIndex=${page}&limit=${100}`, method.GET);
+    return await requestAPI(`${ENDPOINT.GET_LIST_CAR_BOOKING}?type=${type}`, method.GET);
 }
+// export async function getListCarBooking(type, page) {
+
+//     return await requestAPI(`${ENDPOINT.GET_LIST_CAR_BOOKING}?status=${type}&pageIndex=${page}&limit=${100}`, method.GET);
+// }
 
 export async function removeCar(carID) {
 
