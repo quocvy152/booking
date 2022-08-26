@@ -2,6 +2,7 @@ import React, { Component, useState } from 'react';
 import { View, Text, StyleSheet, Image, Dimensions, ScrollView, Alert, Button } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import NumberFormat from 'react-number-format';
 import { removeCar, cancelBookingCar, acceptBookingCar, payedBookingCar, acceptPayedBookingCar } from '../../api/general';
 
 const { width } = Dimensions.get('screen');
@@ -13,6 +14,7 @@ import { StatusBar } from 'expo-status-bar';
 import ToastCustom from '../../components/ToastCustom';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import moment from 'moment';
+import { createIconSetFromFontello } from 'react-native-vector-icons';
 
 const CarDetail = ({ navigation, route }) => {
   const car = route.params;
@@ -195,18 +197,20 @@ const CarDetail = ({ navigation, route }) => {
   }
 
   const handleCancelBooking = async () => {
-    let carID = car.id;
+    // let carID = car?._id;
+    let bookingID = car?.booking?._id;
 
     const bodyCancelBooking = {
-      car_id: carID,
-      startBooking: car.bookings.startBooking,
-      endBooking: car.bookings.endBooking,
+      bookingID,
+      // startBooking: car.bookings.startBooking,
+      // endBooking: car.bookings.endBooking,
     }
 
     let resultCancelBooking = await cancelBookingCar(bodyCancelBooking);
-    let { success, data, message } = resultCancelBooking.data;
-    if(success) {
-      showToast({ content: data, type: 'success' });
+    let { error, data, message } = resultCancelBooking.data;
+    
+    if(!error) {
+      showToast({ content: 'Hủy thuê xe thành công', type: 'success' });
       setTimeout(() => {
         navigation.navigate('ListTripUserWaitApproveScreen');
       }, 1500)
@@ -387,8 +391,26 @@ const CarDetail = ({ navigation, route }) => {
 
               <View style={{ borderWidth: 1, borderColor: 'white', marginTop: 20, paddingBottom: 20, }}>
                 <Text style={{ color: COLORS.WHITE, textAlign: 'justify', marginHorizontal: 20, marginTop: 18, lineHeight: 22, fontSize: 21, fontWeight: 'bold' }}>Thông tin thuê</Text>
-                <Text style={{ color: COLORS.WHITE, textAlign: 'justify', marginHorizontal: 20, marginTop: 18, lineHeight: 22, fontSize: 16, }}>Đơn giá thuê: { car?.booking?.price }/ngày</Text>
-                <Text style={{ color: COLORS.WHITE, textAlign: 'justify', marginHorizontal: 20, marginTop: 18, lineHeight: 22, fontSize: 16, }}>Tổng số tiền thuê: { car?.booking?.totalPrice }</Text>
+                <Text style={{ color: COLORS.WHITE, textAlign: 'justify', marginHorizontal: 20, marginTop: 18, lineHeight: 22, fontSize: 16, }}>
+                  Đơn giá thuê:
+                  <NumberFormat
+                    value={ car?.infoCar?.price }
+                    displayType="text"
+                    thousandSeparator
+                    prefix="đ"
+                    renderText={(value) => <Text style={{ fontWeight: 'bold' }}> {value}/ngày</Text>}
+                  />
+                </Text>
+                <Text style={{ color: COLORS.WHITE, textAlign: 'justify', marginHorizontal: 20, marginTop: 18, lineHeight: 22, fontSize: 16, }}>
+                  Tổng số tiền thuê: 
+                  <NumberFormat
+                    value={ car?.booking?.totalPrice }
+                    displayType="text"
+                    thousandSeparator
+                    prefix="đ"
+                    renderText={(value) => <Text style={{ fontWeight: 'bold' }}> {value}</Text>}
+                  />
+                </Text>
                 <Text style={{ color: COLORS.WHITE, textAlign: 'justify', marginHorizontal: 20, marginTop: 18, lineHeight: 22, fontSize: 16, }}>Thời gian thuê: { 
                   moment(car?.booking?.startTime).format('L') + ' ' + moment(car?.booking?.startTime).format('LT') + ' - ' + moment(car?.booking?.endTime).format('L') + ' ' + moment(car?.booking?.endTime).format('LT')
                 }</Text>

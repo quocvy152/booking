@@ -69,7 +69,8 @@ export async function acceptBookingCar(bodyAcceptBooking) {
 
 export async function cancelBookingCar(bodyCancelBooking) {
 
-    return await requestAPI(`${ENDPOINT.CANCEL_BOOKING_CAR}`, method.PUT, bodyCancelBooking);
+    // return await requestAPI(`${ENDPOINT.CANCEL_BOOKING_CAR}`, method.PUT, bodyCancelBooking);
+    return await requestAPI(`${ENDPOINT.CANCEL_BOOKING_CAR}?bookingID=${bodyCancelBooking.bookingID}`, method.PUT);
 }
 
 export async function payedBookingCar(bodyPayedBooking) {

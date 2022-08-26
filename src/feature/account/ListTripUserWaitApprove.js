@@ -100,14 +100,14 @@ const ListTripUserWaitApprove = ({ navigation, route }) => {
                 Ngày BĐ: 
                 <Text style={{ fontWeight: 'bold', color: 'green' }}>
                   { 
-                    '  ' + moment(item.startTime).format('L') + ' ' + moment(item.startTime).format('LT')  
+                    '  ' + moment(item?.booking?.startTime).format('L') + ' ' + moment(item?.booking?.startTime).format('LT')  
                   }
                 </Text> 
               </Text>
               <Text style={{ fontSize: 15, color: COLORS.DEFAULT_TEXT }}>
                 Ngày KT: 
                 <Text style={{ fontWeight: 'bold', color: '#FFD700' }}>
-                  { '  ' + moment(item.endTime).format('L') + ' ' + moment(item.endTime).format('LT')  }
+                  { '  ' + moment(item?.booking?.endTime).format('L') + ' ' + moment(item?.booking?.endTime).format('LT')  }
                 </Text> 
               </Text>
             </View>
