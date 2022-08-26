@@ -7,6 +7,7 @@ import NumberFormat from 'react-number-format';
 import { useSelector } from 'react-redux';
 import FastImage from 'react-native-fast-image';
 const unwind = require('javascript-unwind');
+const moment = require('moment');
 
 import { COLORS } from '../../constant/colors';
 import CATEGORIES_CAR from '../../constant/categories';
@@ -14,7 +15,7 @@ import CARS from '../../constant/cars';
 import TextInputCustom from '../../components/TextInputCustom';
 import { TouchableHighlight } from 'react-native-gesture-handler';
 import images from '../../resources/images/index';
-import { getListMyCar } from '../../api/general';
+import { getListCustomerBookingMyCar } from '../../api/general';
 import ButtonCustom from '../../components/ButtonCustom';
 import { backgroundColor } from 'react-native/Libraries/Components/View/ReactNativeStyleAttributes';
 const { width } = Dimensions.get('screen');
@@ -31,12 +32,13 @@ const ListCarWaitPayed = ({ navigation, route }) => {
   const [page, setPage] = useState(1);  
 
   const fetchListTrip = async ({ page }) => {
-    let TYPE_GET_LIST_CAR_WAIT_APPROVE = 2;
-    let resultListCarRegister = await getListMyCar(TYPE_GET_LIST_CAR_WAIT_APPROVE, page);
-    let { success, data: { items: data } } = resultListCarRegister.data;
-    if(success) {
-      let listCarWaitPayedAfterSplitBooking = unwind(data, 'bookings');
-      setListTrip(listCarWaitPayedAfterSplitBooking);
+    let TYPE_GET_LIST_CAR_WAIT_APPROVE = 4;
+    let resultListCarRegister = await getListCustomerBookingMyCar(TYPE_GET_LIST_CAR_WAIT_APPROVE);
+    let { error, data } = resultListCarRegister.data;
+
+    if(!error) {
+      // let listCarWaitPayedAfterSplitBooking = unwind(data, 'bookings');
+      setListTrip(data);
     }
   }
 
@@ -59,22 +61,27 @@ const ListCarWaitPayed = ({ navigation, route }) => {
     }
   }, [nameSearch]);
 
-  const Card = ({ car }) => {
-    car.PREVIOUS_SCREEN_NAME = 'Thông Tin Của Bạn';
-    car.ROUTE_NAME = 'ListCarWaitPayedScreen';
+  const Card = ({ item }) => {
+    let newItemToDetailCar = {
+      PREVIOUS_SCREEN_NAME: 'Thông Tin Của Bạn',
+      ROUTE_NAME: 'ListCarWaitPayedScreen',
+      infoCar: item?.booking?.car,
+      details: item?.details,
+      booking: item?.booking
+    }
 
     return (
       <>
         <TouchableOpacity 
           activeOpacity={0.9}
-          onPress={() => navigation.navigate('CarDetailScreen', car)}
+          onPress={() => navigation.navigate('CarDetailScreen', newItemToDetailCar)}
         >
           <View style={ styles.card }>
             <View style={{ alignItems: 'center', top: -15 }}>
               {
-                car.images && car.images.length ?
+                item?.booking?.car?.avatar ?
                 (
-                  <Image source={{ uri: car.images[0] && car.images[0].url }} style={{ height: 120, width: 120, borderRadius: 60, resizeMode: 'contain' }} />
+                  <Image source={{ uri: item?.booking?.car?.avatar?.path }} style={{ height: 120, width: 120, borderRadius: 60, resizeMode: 'contain' }} />
                 ) : (
                   <Image source={require('../../resources/images/mazda-6-2020-26469.png')} style={{ height: 120, width: 120, borderRadius: 60, resizeMode: 'contain' }} />
                 )
@@ -82,28 +89,50 @@ const ListCarWaitPayed = ({ navigation, route }) => {
               
             </View>
             <View style={{ marginHorizontal: 20, top: -30 }}>
-              <Text style={{ fontSize: 15, fontWeight: 'bold' }}>{ car.name && car.name.length > 16 ? car.name.slice(0, 16) + '...' : car.name }</Text>
+              <Text style={{ fontSize: 15, fontWeight: 'bold' }}>{ item?.booking?.car?.name && item?.booking?.car?.name.length > 16 ? item?.booking?.car.name.slice(0, 16) + '...' : item?.booking?.car.name }</Text>
               <Text style={{ fontSize: 15, color: COLORS.DEFAULT_TEXT }}>
                 Hiệu: 
                 <Text style={{ fontWeight: 'bold', color: 'black' }}>
-                  { '  ' + car.brand.name }
+                  { '  ' + item?.booking?.car?.brandID?.name }
                 </Text> 
               </Text>
             </View>
+            <Text style={{ top: -15, marginHorizontal: 20, fontSize: 15 }}>
+              Trả xe:
+              <Text style={{ fontWeight: 'bold', color: 'orange' }}>
+                { moment(item?.booking?.timeGiveCarBack).format('L') + ' ' + moment(item?.booking?.timeGiveCarBack).format('LT')  }
+              </Text> 
+            </Text>
             <View
               style={{
-                marginTop: 10,
+                top: -15,
                 marginHorizontal: 20,
                 flexDirection: 'row',
                 justifyContent: 'space-between',
               }}
             >
               <NumberFormat
-                value={ car.price }
+                value={ item?.booking?.car?.price }
                 displayType="text"
                 thousandSeparator
                 prefix="đ"
-                renderText={(value) => <Text style={{ fontWeight: 'bold' }}>{value}/ ngày</Text>}
+                renderText={(value) => <Text style={{ fontWeight: 'bold' }}>Đơn giá: <Text style={{ color: 'blue' }}>{value}/ngày</Text></Text>}
+              />
+            </View>
+            <View
+              style={{
+                top: -15,
+                marginHorizontal: 20,
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+              }}
+            >
+              <NumberFormat
+                value={ item?.booking?.realMoney }
+                displayType="text"
+                thousandSeparator
+                prefix="đ"
+                renderText={(value) => <Text style={{ fontWeight: 'bold' }}>Số tiền cần trả: <Text style={{ color: 'green' }}>{value}</Text> </Text>}
               />
             </View>
           </View> 
@@ -146,7 +175,7 @@ const ListCarWaitPayed = ({ navigation, route }) => {
               showsVerticalScrollIndicator={false}
               numColumns={2}
               data={listTrip}
-              renderItem={({ item }) => <Card car={item} />}
+              renderItem={({ item }) => <Card item={item} />}
             />
           ) : 
           (
@@ -243,7 +272,7 @@ const styles = StyleSheet.create({
   },
 
   card: {
-    height: 220,
+    height: 270,
     width: cardWidth,
     marginHorizontal: 10,
     marginTop: 15, 

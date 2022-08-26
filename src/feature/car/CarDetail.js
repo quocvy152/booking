@@ -129,19 +129,21 @@ const CarDetail = ({ navigation, route }) => {
     );
 
   const handleAcceptPayedBooking = async () => {
-    let carID = car.id;
+    let bookingID = car?.booking?._id;
 
     const bodyAcceptBooking = {
-      appUserId: car.bookings.bookedByUserId,
-      carID: carID,
-      startBooking: car.bookings.startBooking,
-      endBooking: car.bookings.endBooking,
+      bookingID
+      // appUserId: car.bookings.bookedByUserId,
+      // carID: carID,
+      // startBooking: car.bookings.startBooking,
+      // endBooking: car.bookings.endBooking,
     }
 
     let resultAcceptPayedBooking = await acceptPayedBookingCar(bodyAcceptBooking);
-    let { success, data, message } = resultAcceptPayedBooking.data;
-    if(success) {
-      showToast({ content: data, type: 'success' });
+    let { error, data, message } = resultAcceptPayedBooking.data;
+    console.log({ data })
+    if(!error) {
+      showToast({ content: 'Bạn đã chấp nhận yêu cầu trả xe', type: 'success' });
       setTimeout(() => {
         navigation.navigate('ListCarWaitApproveScreen');
       }, 1500)
@@ -415,9 +417,34 @@ const CarDetail = ({ navigation, route }) => {
                     renderText={(value) => <Text style={{ fontWeight: 'bold' }}> {value}</Text>}
                   />
                 </Text>
+                {
+                  ROUTE_NAME == 'ListCarWaitPayedScreen' ?
+                  <>
+                    <Text style={{ color: COLORS.WHITE, textAlign: 'justify', marginHorizontal: 20, marginTop: 18, lineHeight: 22, fontSize: 16, }}>
+                      Số tiền thực trả: 
+                      <NumberFormat
+                        value={ car?.booking?.realMoney }
+                        displayType="text"
+                        thousandSeparator
+                        prefix="đ"
+                        renderText={(value) => <Text style={{ fontWeight: 'bold' }}> {value}</Text>}
+                      />
+                    </Text>
+                  </> : <></>
+                }
                 <Text style={{ color: COLORS.WHITE, textAlign: 'justify', marginHorizontal: 20, marginTop: 18, lineHeight: 22, fontSize: 16, }}>Thời gian thuê: { 
                   moment(car?.booking?.startTime).format('L') + ' ' + moment(car?.booking?.startTime).format('LT') + ' - ' + moment(car?.booking?.endTime).format('L') + ' ' + moment(car?.booking?.endTime).format('LT')
                 }</Text>
+
+                {
+                  ROUTE_NAME == 'ListCarWaitPayedScreen' ?
+                  <>
+                    <Text style={{ color: COLORS.WHITE, textAlign: 'justify', marginHorizontal: 20, marginTop: 18, lineHeight: 22, fontSize: 16, }}>Thời gian trả xe: { 
+                      moment(car?.booking?.timeGiveCarBack).format('L') + ' ' + moment(car?.booking?.timeGiveCarBack).format('LT')
+                    }</Text>
+                  </> : <></>
+                }
+                
                 <Text style={{ color: COLORS.WHITE, textAlign: 'justify', marginHorizontal: 20, marginTop: 18, lineHeight: 22, fontSize: 16, }}>Địa chỉ nhận xe: { car?.booking?.pickUpPlace }</Text> 
                 <Text style={{ color: COLORS.WHITE, textAlign: 'justify', marginHorizontal: 20, marginTop: 18, lineHeight: 22, fontSize: 16, }}>Địa chỉ trả xe: { car?.booking?.dropOffPlace }</Text>
               </View>
