@@ -29,9 +29,9 @@ const ListTripWaitPayed = ({ navigation, route }) => {
   const [checkReload, setCheckReload] = useState(false);
   const [page, setPage] = useState(1);
 
-  const fetchListTrip = async ({ page }) => {
+  const fetchListTrip = async ({ page, name }) => {
     let TYPE_GET_LIST_TRIP_WAIT_PAYED = 4;
-    let resultListCarRegister = await getListCarBooking(TYPE_GET_LIST_TRIP_WAIT_PAYED);
+    let resultListCarRegister = await getListCarBooking(TYPE_GET_LIST_TRIP_WAIT_PAYED, name);
     let { error, data } = resultListCarRegister.data;
     if(!error) {
       setListTrip(data);
@@ -40,21 +40,22 @@ const ListTripWaitPayed = ({ navigation, route }) => {
 
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-      fetchListTrip({ page });
+      fetchListTrip({ page, name });
     });
     return unsubscribe;
   }, [navigation]);
 
   useEffect(() => {
-    fetchListTrip({ page });
+    fetchListTrip({ page, name });
   }, [checkReload]);
 
   useEffect(() => {
-    let listCarFilter = listTrip.filter(car => car.name.toLowerCase().includes(nameSearch.toLowerCase()));
-    setListTrip(listCarFilter);
-    if(!nameSearch) {
-      setCheckReload(!checkReload);
-    }
+    // let listCarFilter = listTrip.filter(car => car.name.toLowerCase().includes(nameSearch.toLowerCase()));
+    // setListTrip(listCarFilter);
+    // if(!nameSearch) {
+    //   setCheckReload(!checkReload);
+    // }
+    fetchListTrip({ page, name: nameSearch });
   }, [nameSearch]);
 
   const Card = ({ item }) => {

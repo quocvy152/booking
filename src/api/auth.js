@@ -33,8 +33,8 @@ export async function updateUser(infoUserUpdate) {
 };
 
 export async function changePassword(bodyChangePass) {
- 
-    return await requestFileAPI(`${ENDPOINT.CHANGE_PASSWORD}`, method.POST, bodyChangePass, 'application/json-patch+json');
+
+    return await requestAPI(`${ENDPOINT.CHANGE_PASSWORD}`, method.POST, bodyChangePass);
 };
 
 export async function resetPassword(Username) {

@@ -30,8 +30,8 @@ const ListCarUser = ({ navigation, route }) => {
   const [checkReload, setCheckReload] = useState(false);
   const [page, setPage] = useState(1);
 
-  const fetchMyListCarRegister = async () => {
-    let resultListCarRegister = await getListMyCar();
+  const fetchMyListCarRegister = async ({ name }) => {
+    let resultListCarRegister = await getListMyCar({ name });
     let { error, data } = resultListCarRegister.data;
 
     if(!error) {
@@ -41,21 +41,23 @@ const ListCarUser = ({ navigation, route }) => {
 
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-      fetchMyListCarRegister();
+      fetchMyListCarRegister({ name: nameSearch });
     });
     return unsubscribe;
   }, [navigation]);
 
-  useEffect(() => {
-    fetchMyListCarRegister();
-  }, [checkReload]);
+  // useEffect(() => {
+  //   fetchMyListCarRegister();
+  // }, [checkReload]);
 
   useEffect(() => {
-    let listCarFilter = listCarRegister.filter(car => car.infoCar.name.toLowerCase().includes(nameSearch.toLowerCase()));
-    setListCarRegister(listCarFilter);
-    if(!nameSearch) {
-      setCheckReload(!checkReload);
-    }
+    // let listCarFilter = listCarRegister.filter(car => car.infoCar.name.toLowerCase().includes(nameSearch.toLowerCase()));
+    // setListCarRegister(listCarFilter);
+    // if(!nameSearch) {
+    //   setCheckReload(!checkReload);
+    // }
+
+    fetchMyListCarRegister({ name: nameSearch });
   }, [nameSearch]);
 
   const Card = ({ car }) => {

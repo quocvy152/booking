@@ -134,17 +134,22 @@ const DetailInfoUser = ({ navigation, route }) => {
       confirmPassword,
     }
 
-    let resultChangePass = await changePassword(bodyChangePass);
-    let { error, message, data } = resultChangePass.data;
+    try {
+      let resultChangePass = await changePassword(bodyChangePass);
+      let { error, message, data } = resultChangePass.data;
 
-    if(error) {
-      showToast({ content: data, type: 'success' });
+      if(!error) {
+        showToast({ content: message, type: 'success' });
+        hideLoadingChangePass();
+        return;
+      } else {
+        showToast({ content: message, type: 'error' });
+        hideLoadingChangePass();
+        return;
+      }
+    } catch (error) {
+      showToast({ content: 'Xảy ra lỗi', type: 'error' });
       hideLoadingChangePass();
-      return;
-    } else {
-      showToast({ content: message, type: 'error' });
-      hideLoadingChangePass();
-      return;
     }
   }
 

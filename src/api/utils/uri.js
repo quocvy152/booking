@@ -19,7 +19,7 @@ export const ENDPOINT = {
   RESET_PASSWORD: `${BASE_USERS}/reset-password`,
   INFO_USER_CURRENT: `${BASE_USERS}/info/current`,
   UPDATE_USER: `${BASE_USERS}`,
-  CHANGE_PASSWORD: `${BASE_USERS}/change-password`,
+  CHANGE_PASSWORD: `${BASE_USERS}/password/change`,
   UPDATE_AVATAR: `${BASE_USERS}/avatar/update`,
 
   // File

@@ -103,8 +103,6 @@ const Login = () => {
     loginAPI(body)
       .then(res => {
         let { data, error, message } = res.data;
-        let { token } = data;
-        console.log({ data, error, message })
         if(error) {
           hideLoading();
 
@@ -121,6 +119,8 @@ const Login = () => {
           //   return;
           // }
         } else {
+          let { token } = data;
+
           hideLoading();
 
           AsyncStorage.setItem(
