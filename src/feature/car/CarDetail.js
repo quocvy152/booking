@@ -449,6 +449,52 @@ const CarDetail = ({ navigation, route }) => {
                 <Text style={{ color: COLORS.WHITE, textAlign: 'justify', marginHorizontal: 20, marginTop: 18, lineHeight: 22, fontSize: 16, }}>Địa chỉ trả xe: { car?.booking?.dropOffPlace }</Text>
               </View>
 
+              {
+                ROUTE_NAME != 'ListCarUserScreen' ?
+                <View style={{ borderWidth: 1, borderColor: 'white', marginTop: 20, paddingBottom: 20, }}>
+                  <Text style={{ color: COLORS.WHITE, textAlign: 'justify', marginHorizontal: 20, marginTop: 18, lineHeight: 22, fontSize: 21, fontWeight: 'bold' }}>Thông tin khách hàng</Text>
+                  <View style={{ alignItems: 'center', marginTop: 15 }}>
+                    {
+                      car?.booking?.user?.avatar ?
+                      (
+                        <Image 
+                          source={{ uri: car?.booking?.user?.avatar.path }}
+                          style={{
+                            width: 60,
+                            height: 60,
+                            borderRadius: 30,
+                            resizeMode: 'cover',
+                            borderWidth: 1, 
+                            borderColor: '#D3D3D3',
+                          }}
+                        />
+                      ) : (
+                        <Image 
+                          source={require('../../resources/images/man-300x300.png')}
+                          style={{
+                            width: 60,
+                            height: 60,
+                            borderRadius: 30,
+                            resizeMode: 'cover',
+                            borderWidth: 1, 
+                            borderColor: '#D3D3D3',
+                          }}
+                        />
+                      )
+                    }
+                  
+                  </View>
+                    <Text style={{ marginLeft: 10, }}>
+                    </Text>
+                    <Text style={{ marginLeft: 10, color: 'white', fontWeight: 'bold' }}>
+                      Tên khách hàng: { car?.booking?.user?.lastName + ' ' + car?.booking?.user?.firstName }
+                    </Text>
+                    <Text style={{ marginLeft: 10, color: 'white', fontWeight: 'bold' }}>
+                      Số điện thoại: { car?.booking?.user?.phone } 
+                    </Text>
+                  </View> : <></>
+              }
+
               <View style={{ borderWidth: 1, borderColor: 'white', marginTop: 20, paddingBottom: 20, }}>
                 <Text style={{ color: COLORS.WHITE, textAlign: 'justify', marginHorizontal: 20, marginTop: 18, lineHeight: 22, fontSize: 21, fontWeight: 'bold' }}>Mô tả</Text>
                 <Text style={{ color: COLORS.WHITE, textAlign: 'justify', marginHorizontal: 20, marginTop: 18, lineHeight: 22, fontSize: 16, }}>{ car.infoCar.description }</Text>
