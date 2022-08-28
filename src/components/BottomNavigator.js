@@ -8,6 +8,7 @@ import { useNavigation } from '@react-navigation/native';
 import { COLORS } from '../constant/colors';
 import Home from '../feature/home/Home';
 import InfoCustomer from '../feature/account/InfoUser';
+import Support from '../feature/support/Support';
 
 const Tab = createBottomTabNavigator();
 
@@ -52,7 +53,7 @@ const BottomNavigator = ({ route }) => {
         />
         <Tab.Screen 
           name='Hỗ trợ'
-          component={Home}
+          component={Support}
           options={{
             tabBarIcon: ({ color }) => (
               <FontAwesome5 name='question-circle' color={color} size={25} />

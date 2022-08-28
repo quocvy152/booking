@@ -8,6 +8,7 @@ import Register from './src/feature/authentication/Register';
 import BottomNavigator from './src/components/BottomNavigator';
 import CarDetail from './src/feature/car/CarDetail';
 import InfoUser from './src/feature/account/InfoUser';
+import Support from './src/feature/support/Support';
 import DetailInfoUser from './src/feature/account/DetailInfoUser';
 import ListCarUser from './src/feature/account/ListCarUser';
 import ListTripUser from './src/feature/account/ListTripUser';
@@ -38,6 +39,7 @@ export default function App() {
           <Stack.Screen name='RegisterScreen' component={Register} />
           <Stack.Screen name='HomeScreen' component={BottomNavigator} />
           <Stack.Screen name='InfoUserScreen' component={InfoUser} />
+          <Stack.Screen name='SupportScreen' component={Support} />
           <Stack.Screen name='DetaulInfoUserScreen' component={DetailInfoUser} /> 
           <Stack.Screen name='ListCarUserScreen' component={ListCarUser} /> 
           <Stack.Screen name='AddCarScreen' component={AddCar} /> 

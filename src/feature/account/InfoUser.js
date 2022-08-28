@@ -40,7 +40,7 @@ const InfoUser = ({ navigation, route }) => {
 
     useEffect(async () => {
       let TYPE_LIST_MY_CAR = '';
-      let resultGetListMyCar = await getListMyCar();
+      let resultGetListMyCar = await getListMyCar({});
       const { error, data, message } = resultGetListMyCar.data;
 
       if(!error) {
