@@ -187,7 +187,7 @@ const Home = ({ navigation }) => {
     <>
       <SafeAreaView style={{ flex: 1, }}>
         <View style={ styles.header }>
-          <View style={{ width: '80%', marginTop: 10, }}>
+          <View style={{ width: '80%', marginTop: 25, }}>
             <View style={{ flexDirection: 'row' }}>
               <Text style={{ fontSize: 18, color: COLORS.WHITE }}>Xin chào,</Text>
               <Text style={{ fontSize: 18, fontWeight: 'bold', marginLeft: 15, color: COLORS.WHITE }}>{ name }</Text>
@@ -204,7 +204,7 @@ const Home = ({ navigation }) => {
         </View>
         <View 
           style={{ 
-            marginTop: 20,
+            marginTop: 10,
             flexDirection: 'row'
           }}>
             <View style={ styles.inputContainer }>
@@ -282,7 +282,7 @@ const styles = StyleSheet.create({
   },
 
   header: {
-    height: 100,
+    height: 110,
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingHorizontal: 18,
@@ -297,12 +297,12 @@ const styles = StyleSheet.create({
 
   sortBtn: {
     width: 50,
-    height: 60,
+    height: 50,
     backgroundColor: 'orange',
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 10
+    marginRight: 5
   },
 
   categoriesListContainer: {
@@ -344,7 +344,7 @@ const styles = StyleSheet.create({
     height: 50, 
     width: 50, 
     borderRadius: 25,
-    marginTop: 10,
+    marginTop: 25,
   },
 });
 

@@ -9,6 +9,7 @@ import { COLORS } from '../constant/colors';
 import Home from '../feature/home/Home';
 import InfoCustomer from '../feature/account/InfoUser';
 import Support from '../feature/support/Support';
+import Favourite from '../feature/favourite/Favourite';
 
 const Tab = createBottomTabNavigator();
 
@@ -44,7 +45,7 @@ const BottomNavigator = ({ route }) => {
         />
         <Tab.Screen 
           name='Yêu thích'
-          component={Home}
+          component={Favourite}
           options={{
             tabBarIcon: ({ color }) => (
               <FontAwesome5 name='heart' color={color} size={25} />

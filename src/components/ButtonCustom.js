@@ -8,6 +8,7 @@ const ButtonCustom = ({
     title,
     color, 
     btnIcon, 
+    iconColor,
     btnAction,
     btnHeight,
     btnWidth,
@@ -33,7 +34,7 @@ const ButtonCustom = ({
           (
             <ActivityIndicator size="large" color="white" style={{ marginRight: 10, }} />
           ) : (
-            <FontAwesome5 name={ btnIcon } size={24} color={ COLORS.DEFAULT_TEXT } />
+            <FontAwesome5 name={ btnIcon } size={24} color={iconColor ? iconColor : COLORS.DEFAULT_TEXT} />
           )
         }
         <Text style={[styles.textStyle, { ...titleStyle }]}>{title}</Text>

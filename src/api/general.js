@@ -39,13 +39,24 @@ export async function bookingCar(infoCar) {
     return await requestAPI(`${ENDPOINT.BOOKING_CAR}`, method.POST, infoCar);
 }
 
-// export async function getListMyCar(type, page) {
-
-//     return await requestAPI(`${ENDPOINT.GET_LIST_MY_CAR}?status=${type}&pageIndex=${page}&limit=${100}`, method.GET);
-// }
 export async function getListMyCar({ name }) {
 
     return await requestAPI(`${ENDPOINT.GET_LIST_MY_CAR}?name=${name}`, method.GET);
+}
+
+export async function unFavouriteCar({ favouriteID }) {
+
+    return await requestAPI(`${ENDPOINT.UN_FAVOURITE_CAR}/${favouriteID}`, method.DELETE);
+}
+
+export async function favouriteCar(body) {
+
+    return await requestAPI(`${ENDPOINT.FAVOURITE_CAR}`, method.POST, body);
+}
+
+export async function getListCarFavourite({ userID, name }) {
+
+    return await requestAPI(`${ENDPOINT.GET_LIST_MY_FAVOURITE_CAR}?user=${userID}&name=${name}`, method.GET);
 }
 
 export async function getListCustomerBookingMyCar(type, name) {
@@ -57,10 +68,6 @@ export async function getListCarBooking(type, name) {
 
     return await requestAPI(`${ENDPOINT.GET_LIST_CAR_BOOKING}?type=${type}&name=${name}`, method.GET);
 }
-// export async function getListCarBooking(type, page) {
-
-//     return await requestAPI(`${ENDPOINT.GET_LIST_CAR_BOOKING}?status=${type}&pageIndex=${page}&limit=${100}`, method.GET);
-// }
 
 export async function removeCar(carID) {
 

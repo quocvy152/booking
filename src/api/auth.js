@@ -37,9 +37,9 @@ export async function changePassword(bodyChangePass) {
     return await requestAPI(`${ENDPOINT.CHANGE_PASSWORD}`, method.POST, bodyChangePass);
 };
 
-export async function resetPassword(Username) {
+export async function resetPassword(body) {
  
-    return await requestAPI(`${ENDPOINT.RESET_PASSWORD}`, method.PUT);
+    return await requestAPI(`${ENDPOINT.RESET_PASSWORD}`, method.PUT, body);
 };
 
 export async function changeAvatar(infoAvatar) {

@@ -53,6 +53,8 @@ const InfoUser = ({ navigation, route }) => {
   return (
     <SafeAreaView>
       <StatusBar style='dark' />
+      <View style={{ backgroundColor: COLORS.DEFAULT_BACKGROUND, height: 90, marginTop: -75 }}>
+      </View>
       <View style={ styles.headerStyle }>
         {
           avatar ? 

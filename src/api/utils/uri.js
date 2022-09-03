@@ -3,6 +3,7 @@ const BASE_CARS      = '/cars';
 const BASE_BOOKINGS  = '/bookings';
 const BASE_LOCATION  = '/location';
 const BASE_BRANDS    = '/brands';
+const BASE_FAVOURITES= '/favourites';
 const BASE_TOKEN     = '/Token';
 const BASE_FILE      = '/File';
 const BASE_CHARACTERISTIC = '/characteristics';
@@ -16,7 +17,7 @@ export const ENDPOINT = {
   // AppUsers
   LOGIN: `${BASE_USERS}/login`,
   REGISTER: `${BASE_USERS}`,
-  RESET_PASSWORD: `${BASE_USERS}/reset-password`,
+  RESET_PASSWORD: `${BASE_USERS}/password/reset`,
   INFO_USER_CURRENT: `${BASE_USERS}/info/current`,
   UPDATE_USER: `${BASE_USERS}`,
   CHANGE_PASSWORD: `${BASE_USERS}/password/change`,
@@ -34,6 +35,9 @@ export const ENDPOINT = {
   DETAIL_INFO: `${BASE_CHARACTERISTIC}/characteristic-type/list-detail`,
   BOOKING_CAR: `${BASE_BOOKINGS}`,
   GET_LIST_MY_CAR: `${BASE_CARS}/list/my-cars`,
+  GET_LIST_MY_FAVOURITE_CAR: `${BASE_FAVOURITES}/list/my-favourite`,
+  FAVOURITE_CAR: `${BASE_FAVOURITES}`,
+  UN_FAVOURITE_CAR: `${BASE_FAVOURITES}`,
   GET_LIST_CUSTOMER_BOOKING_MY_CAR: `${BASE_BOOKINGS}/list/customer-booking-my-car`,
   GET_LIST_CAR_BOOKING: `${BASE_BOOKINGS}/list/my-booking`,
   REMOVE_CAR: `${BASE_CARS}`,

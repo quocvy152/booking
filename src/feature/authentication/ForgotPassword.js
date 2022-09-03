@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, SafeAreaView, Text, View, TouchableOpacity, Keyboard } from 'react-native';
+import { StyleSheet, SafeAreaView, Text, View, TouchableOpacity, Keyboard, ActivityIndicator } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
 
 
@@ -13,11 +13,24 @@ import { resetPassword } from '../../api/auth';
 const ForgotPassword = ({ navigation }) => {
   const [Account, setAccount] = useState();
 
+  const [isLoading, setIsLoading] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(false);
+
   // START TOASTCUSTOM MESSAGE
   const [isShowToast, setIsShowToast] = useState(false);
   const [content, setContent] = useState();
   const [type, setType] = useState();
   // END TOASTCUSTOM MESSAGE
+
+  const showLoading = () => {
+    setIsLoading(true);
+    setIsDisabled(true);
+  }
+
+  const hideLoading = () => {
+    setIsLoading(false);
+    setIsDisabled(false);
+  }
 
   const showToast = ({ type, content }) => {
     setIsShowToast(true);
@@ -30,24 +43,27 @@ const ForgotPassword = ({ navigation }) => {
 
   const handleForgotPassSubmit = async () => {
     Keyboard.dismiss();
+    showLoading();
 
     if(!Account) {
       showToast({ content: 'Vui lòng nhập đầy đủ thông tin' });
       return;
     }
 
-    let dataChange = {
+    let body = {
       account: Account
     }
 
-    let result = await resetPassword(dataChange);
+    let result = await resetPassword(body);
     const { error, message, data } = result.data;
 
     if(error) {
+      hideLoading();
       showToast({ content: message });
       return;
     } else {
-      showToast({ type: 'success', content: data });
+      hideLoading();
+      showToast({ type: 'success', content: 'Mật khẩu mới đã được gửi đến tài khoản email của bạn. Hãy thử đăng nhập vào hệ thống lại nhé' });
       setTimeout(() => {
         navigation.goBack();
       }, 3000)
@@ -114,11 +130,12 @@ const ForgotPassword = ({ navigation }) => {
                 />
             </View> */}
             
-            <View style={{ marginTop: 30, }}>
+            <View style={{ marginTop: 30, flexDirection: 'row' }}>
               <ButtonCustom 
-                  title='Tạo Lại Mật Khẩu'
-                  color={ COLORS.BUTTON_AUTH_COLOR }
-                  btnAction={ handleForgotPassSubmit }
+                title='Tạo Lại Mật Khẩu'
+                color={ COLORS.BUTTON_AUTH_COLOR }
+                btnAction={ handleForgotPassSubmit }
+                btnLoading={isLoading}
               />
             </View>
         </View>

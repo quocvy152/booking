@@ -3,7 +3,16 @@ import { View, Text, StyleSheet, Image, Dimensions, ScrollView, Alert, Button } 
 import { FontAwesome5 } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import NumberFormat from 'react-number-format';
-import { removeCar, cancelBookingCar, acceptBookingCar, payedBookingCar, acceptPayedBookingCar } from '../../api/general';
+import { 
+  removeCar, 
+  cancelBookingCar, 
+  acceptBookingCar, 
+  payedBookingCar, 
+  acceptPayedBookingCar,
+  favouriteCar,
+  unFavouriteCar
+} from '../../api/general';
+import { useSelector } from 'react-redux';
 
 const { width } = Dimensions.get('screen');
 const contentWidth = width - 20;
@@ -17,6 +26,7 @@ import moment from 'moment';
 import { createIconSetFromFontello } from 'react-native-vector-icons';
 
 const CarDetail = ({ navigation, route }) => {
+  const infoUser = useSelector(state => state.auth.infoUser);
   const car = route.params;
   const PREVIOUS_SCREEN_NAME = route.params.PREVIOUS_SCREEN_NAME;
   const ROUTE_NAME = route.params.ROUTE_NAME;
@@ -141,7 +151,7 @@ const CarDetail = ({ navigation, route }) => {
 
     let resultAcceptPayedBooking = await acceptPayedBookingCar(bodyAcceptBooking);
     let { error, data, message } = resultAcceptPayedBooking.data;
-    console.log({ data })
+
     if(!error) {
       showToast({ content: 'Bạn đã chấp nhận yêu cầu trả xe', type: 'success' });
       setTimeout(() => {
@@ -165,7 +175,7 @@ const CarDetail = ({ navigation, route }) => {
 
     let resultPayedBooking = await payedBookingCar(bodyPayedBooking);
     let { error, data, message } = resultPayedBooking.data;
-    console.log({ error, data })
+
     if(!error) {
       showToast({ content: 'Yêu cầu trả xe của bạn đã được ghi lại. Hãy đợi chủ xe chấp nhận nhé', type: 'success' });
       setTimeout(() => {
@@ -226,14 +236,39 @@ const CarDetail = ({ navigation, route }) => {
     }
   }
 
+  const handleUnFavouriteCar = async () => {
+    let resultUnFavouriteCar = await unFavouriteCar({ favouriteID: car?.favouriteID });
+    let { error, data } = resultUnFavouriteCar.data;
+
+    if(!error) {
+      showToast({ content: `Bạn đã loại bỏ ${car?.infoCar?.name} ra khỏi danh sách yêu thích`, type: 'success' });
+      setTimeout(() => {
+        navigation.goBack();
+      }, 1500)
+    }
+  }
+
+  const handleFavouriteCar = async () => {
+    let bodyFavouriteCar = {
+      userID: infoUser?._id,
+      carID: car?.infoCar?._id
+    }
+
+    let resultFavouriteCar = await favouriteCar(bodyFavouriteCar);
+    let { error, data } = resultFavouriteCar.data;
+
+    if(!error)
+      showToast({ content: `Bạn đã thêm ${car?.infoCar?.name} vào danh sách yêu thích`, type: 'success' });
+  }
+
   return (
     <SafeAreaView style={{ backgroundColor: COLORS.WHITE, flex: 1, flexDirection: 'column', }}>
       <StatusBar style='dark' />
       <ToastCustom 
-          isShowToast={isShowToast}
-          contentToast={content}
-          typeToast={type}
-        />
+        isShowToast={isShowToast}
+        contentToast={content}
+        typeToast={type}
+      />
       <View style={ styles.header }>
         <FontAwesome5 name="chevron-left" size={28} color="black" onPress={navigation.goBack} />
         {
@@ -263,11 +298,25 @@ const CarDetail = ({ navigation, route }) => {
             <View style={ styles.headerParagraph }>
               <Text style={{ fontSize: 22, fontWeight: 'bold', marginLeft: 20, color: COLORS.WHITE, width: '75%' }} >{ car.infoCar.name }</Text>
               <View style={{ width: 50, height: 50, marginRight: 20, }}>
-                <ButtonCustom
-                  color={ COLORS.WHITE }
-                  btnIcon='heart'
-                  btnAction={() => console.log('You clicked favourite')}
-                />
+                {
+                  car?.favouriteID ? 
+                  <>
+                    <ButtonCustom
+                      color={ COLORS.WHITE }
+                      btnIcon='heart-broken'
+                      iconColor={'red'}
+                      btnAction={handleUnFavouriteCar}
+                    />
+                  </> : <>
+                    <ButtonCustom
+                      color={ COLORS.WHITE }
+                      btnIcon='heart'
+                      iconColor={'red'}
+                      btnAction={handleFavouriteCar}
+                    />
+                  </>
+                }
+                
               </View>
             </View>
             <View style={ styles.contentParagraph }>
@@ -448,9 +497,8 @@ const CarDetail = ({ navigation, route }) => {
                 <Text style={{ color: COLORS.WHITE, textAlign: 'justify', marginHorizontal: 20, marginTop: 18, lineHeight: 22, fontSize: 16, }}>Địa chỉ nhận xe: { car?.booking?.pickUpPlace }</Text> 
                 <Text style={{ color: COLORS.WHITE, textAlign: 'justify', marginHorizontal: 20, marginTop: 18, lineHeight: 22, fontSize: 16, }}>Địa chỉ trả xe: { car?.booking?.dropOffPlace }</Text>
               </View>
-
               {
-                ROUTE_NAME != 'ListCarUserScreen' ?
+                typeof(ROUTE_NAME) != 'undefined' && ROUTE_NAME != 'ListCarUserScreen' ?
                 <View style={{ borderWidth: 1, borderColor: 'white', marginTop: 20, paddingBottom: 20, }}>
                   <Text style={{ color: COLORS.WHITE, textAlign: 'justify', marginHorizontal: 20, marginTop: 18, lineHeight: 22, fontSize: 21, fontWeight: 'bold' }}>Thông tin khách hàng</Text>
                   <View style={{ alignItems: 'center', marginTop: 15 }}>

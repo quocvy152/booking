@@ -21,7 +21,9 @@ const InfoUser = ({ navigation, route }) => {
   return (
     <SafeAreaView style={ styles.container }>
       <StatusBar style='dark' />
-      <ScrollView>
+      <View style={{ backgroundColor: COLORS.DEFAULT_BACKGROUND, height: 90, marginTop: -75 }}>
+      </View>
+      <ScrollView style={{ width: contentWidth, marginLeft: 15 }}>
         <View style={ styles.contentParapgh }>
           <Text style={ styles.headerStyle }>
             <Ionicons name="car-sport-sharp" style={{ marginRight: 10 }} size={20} color="black" /> Về Chúng Tôi
@@ -103,8 +105,6 @@ const InfoUser = ({ navigation, route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: contentWidth,
-    marginLeft: 15
   },
 
   headerStyle: {
