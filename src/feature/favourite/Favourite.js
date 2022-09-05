@@ -111,11 +111,9 @@ const Favourite = ({ navigation, route }) => {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <StatusBar style='light' />
-      <View style={{ backgroundColor: COLORS.DEFAULT_BACKGROUND, height: 90, marginTop: -75 }}>
-      </View>
-      <View style={{ justifyContent: 'center', alignItems: 'center', margin: 10, flexDirection: 'row' }}>
-        <Icon name="heart" size={20} color="#FF1493" style={{ marginRight: 10, }} />
-        <Text style={{ color: '#FF1493', fontSize: 20, fontWeight: 'bold' }}>Danh sách xe bạn đã yêu thích</Text>
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: COLORS.DEFAULT_BACKGROUND, height: 120, marginTop: -75 }}>
+        <Icon name="heart" size={20} color="white" style={{ marginTop: 55, marginRight: 10, }} />
+        <Text style={ styles.titleScreen }>Xe yêu thích</Text>
       </View>
       <View 
         style={{ 
@@ -216,6 +214,13 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
   },  
+
+  titleScreen: { 
+    color: 'white', 
+    fontSize: 20, 
+    fontWeight: 'bold',
+    marginTop: 55 
+  },
 });
 
 export default Favourite;

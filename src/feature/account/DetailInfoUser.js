@@ -102,7 +102,7 @@ const DetailInfoUser = ({ navigation, route }) => {
 
     let { cancelled, height, type, width, uri } = result;
     if(!cancelled) {
-      setImgUpdate(uri);
+      setImg(uri);
     }
   };
 
@@ -164,10 +164,11 @@ const DetailInfoUser = ({ navigation, route }) => {
       lastName, 
       email,
       phone,
+      address: infoUser?.address,
       file: {
-        uri: ImgUpdate,
+        uri: Img,
         type: 'image/*',
-        name: ImgUpdate,
+        name: Img,
       }
     };
 

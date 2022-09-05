@@ -304,7 +304,7 @@ const CarDetail = ({ navigation, route }) => {
                     <ButtonCustom
                       color={ COLORS.WHITE }
                       btnIcon='heart-broken'
-                      iconColor={'red'}
+                      iconColor={'#FF1493'}
                       btnAction={handleUnFavouriteCar}
                     />
                   </> : <>

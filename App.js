@@ -6,6 +6,7 @@ import Login from './src/feature/authentication/Login';
 import ForgotPassword from './src/feature/authentication/ForgotPassword';
 import Register from './src/feature/authentication/Register';
 import BottomNavigator from './src/components/BottomNavigator';
+import BottomNavigatorAdmin from './src/components/BottomNavigatorAdmin';
 import CarDetail from './src/feature/car/CarDetail';
 import InfoUser from './src/feature/account/InfoUser';
 import Support from './src/feature/support/Support';
@@ -39,6 +40,7 @@ export default function App() {
           <Stack.Screen name='ForgotPasswordScreen' component={ForgotPassword} />
           <Stack.Screen name='RegisterScreen' component={Register} />
           <Stack.Screen name='HomeScreen' component={BottomNavigator} />
+          <Stack.Screen name='AdminScreen' component={BottomNavigatorAdmin} />
           <Stack.Screen name='InfoUserScreen' component={InfoUser} />
           <Stack.Screen name='SupportScreen' component={Support} />
           <Stack.Screen name='FavouriteScreen' component={Favourite} />

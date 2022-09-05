@@ -26,10 +26,20 @@ export async function getInfoUser() {
     return await requestAPI(`${ENDPOINT.INFO_USER_CURRENT}`, method.GET);
 };
 
+export async function getListUser({ name }) {
+ 
+    return await requestAPI(`${ENDPOINT.LIST_USER}?name=${name}`, method.GET);
+};
+
+export async function updateStatuUser({ userID }) {
+ 
+    return await requestAPI(`${ENDPOINT.UPDATE_STATUS_USER}?user=${userID}`, method.POST);
+};
+
 export async function updateUser(infoUserUpdate) {
     const parseBody = convertObjectToFormData(infoUserUpdate);
  
-    return await requestFileAPI(`${ENDPOINT.UPDATE_USER}/${infoUserUpdate.userID}`, method.PUT, parseBody, 'multipart/form-data;');
+    return await requestFileAPI(`${ENDPOINT.UPDATE_USER}/update/${infoUserUpdate.userID}`, method.PUT, parseBody, 'multipart/form-data;');
 };
 
 export async function changePassword(bodyChangePass) {

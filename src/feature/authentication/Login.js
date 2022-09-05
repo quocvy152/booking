@@ -21,6 +21,9 @@ import { AsyncStorageContstants } from "../../constant/AsyncStorageContstants";
 
 const Login = () => {
   const navigate = useNavigation();
+  const ADMIN_ROLE = 0;
+  const USER_ROLE = 1;
+  
   const dispatch = useDispatch();
   const [Username, setUsername] = useState();
   const [Password, setPassword] = useState();
@@ -36,9 +39,18 @@ const Login = () => {
 
   useEffect(async () => {
     const token = await AsyncStorage.getItem(AsyncStorageContstants.AUTH_USER_TOKEN);
+    const role = await AsyncStorage.getItem(AsyncStorageContstants.ROLE);
+    console.log({
+      role
+    })
+
     if(token) {
       await fetchInfoUser();
-      navigate.navigate('HomeScreen');
+
+      if(+role == ADMIN_ROLE)
+        navigate.navigate('AdminScreen');
+      else if(+role == USER_ROLE)
+        navigate.navigate('HomeScreen');
     }
   }, []);
 
@@ -119,7 +131,8 @@ const Login = () => {
           //   return;
           // }
         } else {
-          let { token } = data;
+          let { token, user } = data;
+          let { role } = user;
 
           hideLoading();
 
@@ -128,13 +141,30 @@ const Login = () => {
             token,
           );
 
+          AsyncStorage.setItem(
+            AsyncStorageContstants.ROLE,
+            JSON.stringify(role),
+          );
+
           // save in store Redux
           dispatch(signIn({ token }));
           fetchInfoUser();
 
           showToast({ type: 'success', content: 'Đăng nhập thành công' });
+
           setTimeout(() => {
-            navigate.navigate('HomeScreen');
+            switch (role) {
+              case ADMIN_ROLE: {
+                navigate.navigate('AdminScreen');
+                break;
+              }
+              case USER_ROLE: {
+                navigate.navigate('HomeScreen');
+                break;
+              }
+              default:
+                break;
+            }
           }, 1000);
         }
       })

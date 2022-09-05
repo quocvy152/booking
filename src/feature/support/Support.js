@@ -21,7 +21,8 @@ const InfoUser = ({ navigation, route }) => {
   return (
     <SafeAreaView style={ styles.container }>
       <StatusBar style='dark' />
-      <View style={{ backgroundColor: COLORS.DEFAULT_BACKGROUND, height: 90, marginTop: -75 }}>
+      <View style={{ alignItems: 'center', justifyContent: 'center', backgroundColor: COLORS.DEFAULT_BACKGROUND, height: 120, marginTop: -75 }}>
+        <Text style={ styles.titleScreen }>Hỗ trợ</Text>
       </View>
       <ScrollView style={{ width: contentWidth, marginLeft: 15 }}>
         <View style={ styles.contentParapgh }>
@@ -119,7 +120,14 @@ const styles = StyleSheet.create({
 
   lineStyle: {
     textAlign: 'justify', fontSize: 16
-  }
+  },
+
+  titleScreen: { 
+    color: 'white', 
+    fontSize: 20, 
+    fontWeight: 'bold',
+    marginTop: 55 
+  },
 });
 
 export default InfoUser;
