@@ -65,7 +65,7 @@ const InfoUser = ({ navigation, route }) => {
         <View style={{ marginLeft: 20, justifyContent: 'center' }}>
           <Text style={ styles.userName }>{ infoUser.lastName + ' ' + infoUser.firstName }</Text>
           <Text style={{ fontStyle: 'italic', color: '#e6b800' }}>
-            Số xe đã đăng ký trên nền tảng: <Text style={{ fontSize: 18, fontWeight: 'bold', }}>{ totalMyCar ? totalMyCar : '0' }</Text>
+            ADMIN BOOKING
           </Text>
         </View>
       </View>
@@ -85,64 +85,6 @@ const InfoUser = ({ navigation, route }) => {
               <FontAwesome5 name="place-of-worship" size={24} color="#EB466E" />
                 <Text style={{ marginTop: 16, fontSize: 15 }}>Địa chỉ đã lưu</Text>
               </View> 
-            </TouchableOpacity>
-          </View>
-        </View>
-        {/* Xe cá nhân */}
-        <View style={ styles.accountStyle }>
-          <Text style={{ fontWeight: 'bold', fontSize: 20 }}>Xe cá nhân</Text>
-          <View style={{ flexDirection: 'row', }}>
-            <TouchableOpacity activeOpacity={0.6} onPress={() => { navigation.navigate('ListCarUserScreen') }}>
-              <View style={ styles.tabStyle }>
-                <FontAwesome5 name="car" size={24} color="#37A604" />
-                <Text style={{ marginTop: 16, fontSize: 15 }}>Xe của tôi</Text>
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity activeOpacity={0.6} onPress={() => navigation.navigate('ListCarWaitApproveScreen')}>
-              <View style={ styles.tabStyle }>
-                <FontAwesome5 name="list-ul" size={24} color="#808000" />
-                <Text style={{ marginTop: 16, fontSize: 15 }}>Yêu cầu thuê xe</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-          <View style={{ flexDirection: 'row', }}>
-            <TouchableOpacity activeOpacity={0.6} onPress={() => navigation.navigate('ListCarWaitPayedScreen')}>
-              <View style={ styles.tabStyle }>
-                <FontAwesome5 name="id-badge" size={24} color="#3E89A8" />
-                <Text style={{ marginTop: 16, fontSize: 15 }}>Yêu cầu trả xe</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-        </View>
-        {/* Xe đã đặt */}
-        <View style={ styles.accountStyle }>
-          <Text style={{ fontWeight: 'bold', fontSize: 20 }}>Xe đã đặt</Text>
-          <View style={{ flexDirection: 'row', }}>
-            <TouchableOpacity activeOpacity={0.6} onPress={() => navigation.navigate('ListTripUserScreen')}>
-              <View style={ styles.tabStyle }>
-                <FontAwesome name="tripadvisor" size={24} color="#8B4513" />
-                <Text style={{ marginTop: 16, fontSize: 15 }}>Xe đang thuê</Text>
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity activeOpacity={0.6} onPress={() => navigation.navigate('ListTripUserPayedScreen')}>
-              <View style={ styles.tabStyle }>
-                <FontAwesome5 name="hands-helping" size={24} color="#3E89A8" />
-                <Text style={{ marginTop: 16, fontSize: 15 }}>Xe đã trả</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-          <View style={{ flexDirection: 'row', }}>
-            <TouchableOpacity activeOpacity={0.6} onPress={() => navigation.navigate('ListTripUserWaitApproveScreen')}>
-              <View style={ styles.tabStyle }>
-                <FontAwesome5 name="check-square" size={24} color="#2F4F4F" />
-                <Text style={{ marginTop: 16, fontSize: 15 }}>Xe chờ chấp nhận thuê xe</Text>
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity activeOpacity={0.6} onPress={() => navigation.navigate('ListTripWaitPayedScreen')}>
-              <View style={ styles.tabStyle }>
-                <FontAwesome5 name="chalkboard-teacher" size={24} color="#FF4500" />
-                <Text style={{ marginTop: 16, fontSize: 15 }}>Xe chờ chấp nhận trả xe</Text>
-              </View>
             </TouchableOpacity>
           </View>
         </View>
@@ -194,7 +136,6 @@ const styles = StyleSheet.create({
     width: contentWidth, 
     marginLeft: 15,
     marginTop: 15,
-    marginBottom: 25,
   },
 
   tabStyle: {

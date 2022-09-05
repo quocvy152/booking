@@ -8,7 +8,7 @@ import { useNavigation } from '@react-navigation/native';
 import { COLORS } from '../constant/colors';
 import Home from '../feature/home/Home';
 import Admin from '../feature/home/Admin';
-import InfoCustomer from '../feature/account/InfoUser';
+import InfoAdmin from '../feature/account/InfoAdmin';
 import Support from '../feature/support/Support';
 import Favourite from '../feature/favourite/Favourite';
 
@@ -42,6 +42,27 @@ const BottomNavigatorAdmin = ({ route }) => {
             tabBarIcon: ({ color }) => (
               <FontAwesome5 name='user-cog' color={color} size={25} />
             ),
+          }}
+        />
+        <Tab.Screen 
+          name={name}
+          component={infoUser ? InfoAdmin : Home}
+          options={{
+            tabBarIcon: props => {
+              return (
+                <>
+                  {
+                    infoUser ? (
+                      avatar ? 
+                      (<Image source={{ uri: avatar }} style={ styles.iconUser }/>) : 
+                      (<Image source={require('../resources/images/user-300x300.png')} style={ styles.iconUser } />)
+                    ) : (
+                      <FontAwesome5 name='user-circle' color={props.color} size={25} />
+                    )
+                  }
+                </>
+              )
+            }
           }}
         />
       </Tab.Navigator>
