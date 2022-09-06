@@ -46,6 +46,7 @@ const ForgotPassword = ({ navigation }) => {
     showLoading();
 
     if(!Account) {
+      hideLoading();
       showToast({ content: 'Vui lòng nhập đầy đủ thông tin' });
       return;
     }
