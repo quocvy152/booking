@@ -64,6 +64,11 @@ export async function getListCustomerBookingMyCar(type, name) {
     return await requestAPI(`${ENDPOINT.GET_LIST_CUSTOMER_BOOKING_MY_CAR}?type=${type}&name=${name}`, method.GET);
 }
 
+export async function getListBookingAdmin(status) {
+
+    return await requestAPI(`${ENDPOINT.GET_LIST_BOOKING_ADMIN}?status=${status}`, method.GET);
+}
+
 export async function getListCarBooking(type, name) {
 
     return await requestAPI(`${ENDPOINT.GET_LIST_CAR_BOOKING}?type=${type}&name=${name}`, method.GET);

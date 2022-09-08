@@ -53,7 +53,7 @@ const InfoUser = ({ navigation, route }) => {
   return (
     <SafeAreaView>
       <StatusBar style='dark' />
-      <View style={{ alignItems: 'center', justifyContent: 'center', backgroundColor: COLORS.DEFAULT_BACKGROUND, height: 120, marginTop: -75 }}>
+      <View style={{ alignItems: 'center', justifyContent: 'center', backgroundColor: COLORS.BACKGROUND_ADMIN, height: 120, marginTop: -75 }}>
         <Text style={ styles.titleScreen }>Cá nhân</Text>
       </View>
       <View style={ styles.headerStyle }>

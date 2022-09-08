@@ -254,6 +254,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 18,
     backgroundColor: '#008080',
     paddingVertical: 15,
+    alignItems: 'center',
   },  
 
   inputContainer: {

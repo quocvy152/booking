@@ -2,13 +2,15 @@ import React, { useEffect } from 'react';
 import { StyleSheet, Image } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { FontAwesome5 } from '@expo/vector-icons';
+import { Entypo } from '@expo/vector-icons'; 
 import { useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 
 import { COLORS } from '../constant/colors';
 import Home from '../feature/home/Home';
-import Admin from '../feature/home/Admin';
-import InfoAdmin from '../feature/account/InfoAdmin';
+import Admin from '../feature/admin/Admin';
+import InfoAdmin from '../feature/admin/InfoAdmin';
+import ManageBooking from '../feature/admin/ManageBooking';
 import Support from '../feature/support/Support';
 import Favourite from '../feature/favourite/Favourite';
 
@@ -41,6 +43,15 @@ const BottomNavigatorAdmin = ({ route }) => {
           options={{
             tabBarIcon: ({ color }) => (
               <FontAwesome5 name='user-cog' color={color} size={25} />
+            ),
+          }}
+        />
+        <Tab.Screen 
+          name='Quản lý Chuyến đi'
+          component={ManageBooking}
+          options={{
+            tabBarIcon: ({ color }) => (
+              <Entypo name="tripadvisor" size={25} color={color} />
             ),
           }}
         />
