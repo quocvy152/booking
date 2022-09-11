@@ -42,6 +42,12 @@ export async function updateUser(infoUserUpdate) {
     return await requestFileAPI(`${ENDPOINT.UPDATE_USER}/update/${infoUserUpdate.userID}`, method.PUT, parseBody, 'multipart/form-data;');
 };
 
+export async function updateValidateInfo(infoUserUpdate) {
+    const parseBody = convertObjectToFormData(infoUserUpdate);
+ 
+    return await requestFileAPI(`${ENDPOINT.UPDATE_VALIDATE_INFO}?user=${infoUserUpdate.userID}`, method.PUT, parseBody, 'multipart/form-data;');
+};
+
 export async function changePassword(bodyChangePass) {
 
     return await requestAPI(`${ENDPOINT.CHANGE_PASSWORD}`, method.POST, bodyChangePass);

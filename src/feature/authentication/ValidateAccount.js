@@ -8,20 +8,21 @@ import { COLORS } from '../../constant/colors';
 import ButtonCustom    from '../../components/ButtonCustom';
 import TextInputCustom from '../../components/TextInputCustom';
 import ToastCustom from '../../components/ToastCustom';
-import { resetPassword } from '../../api/auth';
+import { updateValidateInfo } from '../../api/auth';
 // import * as ImagePicker from 'react-native-image-picker';
 import * as ImagePicker from 'expo-image-picker';
 
 const { width } = Dimensions.get('screen');
 const contentWidth = width - 20;
 
-const ValidateAccount = ({ navigation }) => {
+const ValidateAccount = ({ navigation, route }) => {
+  const userID = route.params.userID;
   const [citizenIdentificationNo, setCitizenIdentificationNo] = useState('');
-  const [citizenIdentificationFront, setCitizenIdentificationFront] = useState('');
-  const [citizenIdentificationBack, setCitizenIdentificationBack] = useState('');
+  const [citizenIdentificationFront, setCitizenIdentificationFront] = useState(null);
+  const [citizenIdentificationBack, setCitizenIdentificationBack] = useState(null);
   const [drivingLicenseNo, setDrivingLicenseNo] = useState('');
-  const [drivingLicenseFront, setDrivingLicenseFront] = useState('');
-  const [drivingLicenseBack, setDrivingLicenseBack] = useState('');
+  const [drivingLicenseFront, setDrivingLicenseFront] = useState(null);
+  const [drivingLicenseBack, setDrivingLicenseBack] = useState(null);
 
   const [isLoading, setIsLoading] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
@@ -51,7 +52,7 @@ const ValidateAccount = ({ navigation }) => {
     }, 1500);
   }
 
-  const handleChoosePhoto = async () => {
+  const handleChoosePhoto = async (typeImage) => {
     const options = {
       mediaType: 'photo',
       quality: 1,
@@ -65,10 +66,102 @@ const ValidateAccount = ({ navigation }) => {
     });
 
     let { cancelled, height, type, width, uri } = result;
+
     if(!cancelled) {
-      setImg(uri);
+      let objUploadFile = {
+        uri: uri,
+        type: 'image/*',
+        name: uri,
+      }
+
+      switch(typeImage) {
+        case 'CITYZENIDENTIFICATION_FRONT': {
+          setCitizenIdentificationFront(objUploadFile);
+          break;
+        }
+        case 'CITYZENIDENTIFICATION_BACK': {
+          setCitizenIdentificationBack(objUploadFile);
+          break;
+        }
+        case 'DRIVING_LICENSE_FRONT': {
+          setDrivingLicenseFront(objUploadFile);
+          break;
+        }
+        case 'DRIVING_LICENSE_BACK': {
+          setDrivingLicenseBack(objUploadFile);
+          break;
+        }
+      }
     }
   };
+
+  const checkFormValidateInfo = (data) => {
+    let { 
+      citizenIdentificationNo,
+      citizenIdentificationFront, 
+      citizenIdentificationBack,
+      drivingLicenseNo,
+      drivingLicenseFront,
+      drivingLicenseBack
+    } = data;
+
+    if(!citizenIdentificationNo)
+      return{ error: true, content: 'Vui lòng nhập số Căn cước công dân của bạn' };
+
+    if(!citizenIdentificationFront)
+      return{ error: true, content: 'Vui lòng chọn hình ảnh Căn cước công dân mặt trước của bạn' };
+
+    if(!citizenIdentificationBack)
+      return{ error: true, content: 'Vui lòng chọn hình ảnh Căn cước công dân mặt sau của bạn' };
+
+    if(!drivingLicenseNo)
+      return{ error: true, content: 'Vui lòng nhập số Giấy phép lái xe của bạn' };
+
+    if(!drivingLicenseFront)
+      return{ error: true, content: 'Vui lòng chọn hình ảnh Giấy phép lái xe mặt trước của bạn' };
+
+    if(!drivingLicenseBack)
+      return{ error: true, content: 'Vui lòng chọn hình ảnh Giấy phép lái xe mặt sau của bạn' };
+
+    return { 
+      error: false,
+      content: 'validate_done'
+    }
+  }
+
+  const handleValidateInfo = async () => {
+    showLoading();
+    showToast({  type: 'warning', content: 'Quá trình xác thực đang diễn ra vui lòng đợi đến khi hoàn thành'})
+
+    let data = {
+      userID: userID,
+      citizenIdentificationNo,
+      citizenIdentificationFront, 
+      citizenIdentificationBack,
+      drivingLicenseNo,
+      drivingLicenseFront,
+      drivingLicenseBack
+    };
+
+    let { error, content } = checkFormValidateInfo(data);
+    if(error) {
+      hideLoading();
+      showToast({ type: 'error', content });
+      return;
+    }
+
+    let resultAfterUpdateValidateInfo = await updateValidateInfo(data);
+    let { error: errorAfterUpdate, data: dataAfterUpdate, message } = resultAfterUpdateValidateInfo.data;
+    if(errorAfterUpdate) {
+      showToast({ type: 'error', content: message });
+      hideLoading();
+    } else {
+      showToast({ type: 'success', content: 'Bạn đã xác thực thông tin thành công. Hãy sử dụng các dịch vụ của chúng tôi' });
+      setTimeout(() => {
+        navigation.navigate('LoginScreen');
+      }, 3000)
+    }
+  }
     
   return (
     <>
@@ -101,7 +194,7 @@ const ValidateAccount = ({ navigation }) => {
                 style={ styles.inputStyle }
                 placeholderText='Nhập số căn cước công dân'
                 value={citizenIdentificationNo}
-                onChangeText={val => setCitizenIdentificationNo(val)}
+                textInputAction={val => setCitizenIdentificationNo(val)}
                 editable={false} 
                 selectTextOnFocus={false} 
                 isInputNumber="numeric"
@@ -112,8 +205,8 @@ const ValidateAccount = ({ navigation }) => {
             <View style={{ marginBottom: 15 }}>
               <Text style={{ fontWeight: 'bold', fontSize: 18, }}>Ảnh CCCD mặt trước</Text>
               {
-                citizenIdentificationFront ?
-                (<Image source={{ uri: citizenIdentificationFront }} style={ styles.avatarStyle } />) :
+                citizenIdentificationFront?.uri ?
+                (<Image source={{ uri: citizenIdentificationFront?.uri }} style={ styles.avatarStyle } />) :
                 (<Image source={require('../../resources/images/CCCD_MT.jpg')} style={ styles.avatarStyle } />)
               }
               <View style={{ marginBottom: 15 }}>
@@ -123,7 +216,7 @@ const ValidateAccount = ({ navigation }) => {
                       styles.btnStyleUploadPhoto, 
                       { backgroundColor: COLORS.WHITE, borderWidth: 1, borderColor: '#6495ED' }
                     ]}
-                    onPress={handleChoosePhoto}>
+                    onPress={() => handleChoosePhoto('CITYZENIDENTIFICATION_FRONT')}>
                     <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', }}>
                       <FontAwesome5 name="upload" size={18} color={ '#6495ED' } style={{ marginRight: 5, }} /> 
                       <Text style={{ color: '#6495ED', fontSize: 15, fontWeight: 'bold', }}>
@@ -137,8 +230,8 @@ const ValidateAccount = ({ navigation }) => {
             <View style={{ marginBottom: 15 }}>
               <Text style={{ fontWeight: 'bold', fontSize: 18, }}>Ảnh CCCD mặt sau</Text>
               {
-                citizenIdentificationFront ?
-                (<Image source={{ uri: citizenIdentificationFront }} style={ styles.avatarStyle } />) :
+                citizenIdentificationBack?.uri ?
+                (<Image source={{ uri: citizenIdentificationBack?.uri }} style={ styles.avatarStyle } />) :
                 (<Image source={require('../../resources/images/CCCD_MS.jpg')} style={ styles.avatarStyle } />)
               }
               <View style={{ marginBottom: 15 }}>
@@ -148,7 +241,7 @@ const ValidateAccount = ({ navigation }) => {
                       styles.btnStyleUploadPhoto, 
                       { backgroundColor: COLORS.WHITE, borderWidth: 1, borderColor: '#6495ED' }
                     ]}
-                    onPress={handleChoosePhoto}>
+                    onPress={() => handleChoosePhoto('CITYZENIDENTIFICATION_BACK')}>
                     <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', }}>
                       <FontAwesome5 name="upload" size={18} color={ '#6495ED' } style={{ marginRight: 5, }} /> 
                       <Text style={{ color: '#6495ED', fontSize: 15, fontWeight: 'bold', }}>
@@ -167,7 +260,7 @@ const ValidateAccount = ({ navigation }) => {
                 style={ styles.inputStyle }
                 placeholderText='Nhập số giấy phép lái xe'
                 value={drivingLicenseNo}
-                onChangeText={val => setDrivingLicenseNo(val)}
+                textInputAction={val => setDrivingLicenseNo(val)}
                 editable={false} 
                 selectTextOnFocus={false} 
                 isInputNumber="numeric"
@@ -178,8 +271,8 @@ const ValidateAccount = ({ navigation }) => {
             <View style={{ marginBottom: 15 }}>
               <Text style={{ fontWeight: 'bold', fontSize: 18, }}>Ảnh GPLX mặt trước</Text>
               {
-                citizenIdentificationFront ?
-                (<Image source={{ uri: citizenIdentificationFront }} style={ styles.avatarStyle } />) :
+                drivingLicenseFront?.uri ?
+                (<Image source={{ uri: drivingLicenseFront?.uri }} style={ styles.avatarStyle } />) :
                 (<Image source={require('../../resources/images/GPLX_MT.jpg')} style={ styles.avatarStyle } />)
               }
               <View style={{ marginBottom: 15 }}>
@@ -189,7 +282,7 @@ const ValidateAccount = ({ navigation }) => {
                       styles.btnStyleUploadPhoto, 
                       { backgroundColor: COLORS.WHITE, borderWidth: 1, borderColor: '#DAA520' }
                     ]}
-                    onPress={handleChoosePhoto}>
+                    onPress={() => handleChoosePhoto('DRIVING_LICENSE_FRONT')}>
                     <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', }}>
                       <FontAwesome5 name="upload" size={18} color={ '#DAA520' } style={{ marginRight: 5, }} /> 
                       <Text style={{ color: '#DAA520', fontSize: 15, fontWeight: 'bold', }}>
@@ -203,8 +296,8 @@ const ValidateAccount = ({ navigation }) => {
             <View style={{ marginBottom: 15 }}>
               <Text style={{ fontWeight: 'bold', fontSize: 18, }}>Ảnh GPLX mặt sau</Text>
               {
-                citizenIdentificationFront ?
-                (<Image source={{ uri: citizenIdentificationFront }} style={ styles.avatarStyle } />) :
+                drivingLicenseBack?.uri ?
+                (<Image source={{ uri: drivingLicenseBack?.uri }} style={ styles.avatarStyle } />) :
                 (<Image source={require('../../resources/images/GPLX_MS.jpg')} style={ styles.avatarStyle } />)
               }
               <View style={{ marginBottom: 15 }}>
@@ -214,7 +307,7 @@ const ValidateAccount = ({ navigation }) => {
                       styles.btnStyleUploadPhoto, 
                       { backgroundColor: COLORS.WHITE, borderWidth: 1, borderColor: '#DAA520' }
                     ]}
-                    onPress={handleChoosePhoto}>
+                    onPress={() => handleChoosePhoto('DRIVING_LICENSE_BACK')}>
                     <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', }}>
                       <FontAwesome5 name="upload" size={18} color={ '#DAA520' } style={{ marginRight: 5, }} /> 
                       <Text style={{ color: '#DAA520', fontSize: 15, fontWeight: 'bold', }}>
@@ -226,21 +319,33 @@ const ValidateAccount = ({ navigation }) => {
             </View>
             {/* Ảnh giấy phép lái xe */}
 
-            <View style={{ height: 50,
-              backgroundColor: COLORS.DEFAULT_BACKGROUND,
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginBottom: 20,
-              borderRadius: 5
-            }}>
-              <TouchableOpacity>
+          </View>
+        </ScrollView>
+        <View style={{ 
+            height: 50,
+            backgroundColor: COLORS.DEFAULT_BACKGROUND,
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderRadius: 5,
+            marginVertical: 10,
+            width: contentWidth,
+            marginLeft: 10
+          }}>
+              <TouchableOpacity
+                style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', }}
+                onPress={handleValidateInfo}
+              >
+                {
+                  isLoading ?
+                  (
+                    <ActivityIndicator size="large" color="white" style={{ marginRight: 10, }} />
+                  ) : (
+                    <></>
+                  )
+                }
                 <Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold' }}>Tiến hành xác thực</Text>
               </TouchableOpacity>
             </View>
-
-          </View>
-        </ScrollView>
-        
       </SafeAreaView>
     </>
   );
@@ -263,7 +368,8 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginTop: 35,
-    marginLeft: width / 4
+    justifyContent: 'center',
+    marginLeft: width / 4 - 10
   },
 
   header: {

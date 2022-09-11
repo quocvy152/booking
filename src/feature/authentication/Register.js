@@ -53,25 +53,25 @@ const Register = ({ navigation }) => {
     Keyboard.dismiss();
     showLoading();
 
-    // if(!Username || !Email || !Password || !ConfirmPassword || !PhoneNumber || !firstName || !lastName) {
-    //   showToast({ content: 'Vui lòng điền thông tin đầy đủ' });
-    //   return;
-    // }
+    if(!Username || !Email || !Password || !ConfirmPassword || !PhoneNumber || !firstName || !lastName) {
+      showToast({ content: 'Vui lòng điền thông tin đầy đủ' });
+      return;
+    }
 
-    // if(!checkEmail(Email)) {
-    //   showToast({ content: 'Email chưa đúng định dạng' });
-    //   return;
-    // }
+    if(!checkEmail(Email)) {
+      showToast({ content: 'Email chưa đúng định dạng' });
+      return;
+    }
 
-    // if(!checkPhone(PhoneNumber)) {
-    //   showToast({ content: 'Số điện thoại không hợp lệ' });
-    //   return;
-    // }
+    if(!checkPhone(PhoneNumber)) {
+      showToast({ content: 'Số điện thoại không hợp lệ' });
+      return;
+    }
 
-    // if(Password !== ConfirmPassword) {
-    //   showToast({ content: 'Mật khẩu xác nhận không khớp' });
-    //   return;
-    // }
+    if(Password !== ConfirmPassword) {
+      showToast({ content: 'Mật khẩu xác nhận không khớp' });
+      return;
+    }
 
     const body = {
       username: Username,
@@ -84,28 +84,26 @@ const Register = ({ navigation }) => {
       role: 1 // USER
     };
 
-    // registerUser(body)
-    //   .then(res => {
-    //     const { message, error, data } = res.data;
-    //     if(error) {
-    //       showToast({ content: message });
-    //       return;
-    //     }
-
-    //     showToast({ type: 'success', content: 'Đăng ký tài khoản thành công' });
-    //     setTimeout(() => {
-    //       navigation.navigate('ValidateAccountScreen');
-    //     }, 2000);
-    //   })
-    //   .catch(error => {
-    //     console.log({ error });
-    //     return;
-    //   })
-
-    showToast({ type: 'success', content: 'Đăng ký tài khoản thành công' });
-    setTimeout(() => {
-      navigation.navigate('ValidateAccountScreen');
-    }, 2000);
+    registerUser(body)
+      .then(res => {
+        const { message, error, data } = res.data;
+        console.log({
+          error
+        })
+        if(error) {
+          showToast({ content: message });
+          return;
+        }
+        
+        showToast({ type: 'success', content: 'Đăng ký tài khoản thành công' });
+        setTimeout(() => {
+          navigation.navigate('ValidateAccountScreen', { userID: data._id });
+        }, 2000);
+      })
+      .catch(error => {
+        console.log({ error });
+        return;
+      })
   }
     
   return (
