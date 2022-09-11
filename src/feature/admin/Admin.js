@@ -216,6 +216,19 @@ const Admin = ({ navigation }) => {
             (<Image source={require('../../resources/images/user-300x300.png')} style={ styles.iconUser } />)
           }
         </View>
+        <View style={{
+          width: width - 30,
+          marginLeft: 15,
+          flexDirection: 'row',
+          height: 40,
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: '#ADD8E6',
+          borderRadius: 10
+        }}>
+          <Text style={{ fontStyle: 'italic', fontSize: 18 }}>Tổng số người dùng trên hệ thống: </Text>
+          <Text style={{ fontSize: 20, color: 'green', fontWeight: 'bold' }}>{ listUser.length }</Text>
+        </View>
         <View 
           style={{ 
             marginTop: 10,

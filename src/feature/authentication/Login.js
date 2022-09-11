@@ -3,7 +3,7 @@ import { StatusBar } from 'expo-status-bar';
 import { 
   StyleSheet, SafeAreaView, 
   Text, View, TouchableOpacity, 
-  Image, Keyboard, 
+  Image, Keyboard, Modal, Pressable, Alert
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -19,7 +19,7 @@ import { loginAPI, getInfoUser } from '../../api/auth';
 import { signIn } from '../../store/auth';
 import { AsyncStorageContstants } from "../../constant/AsyncStorageContstants";
 
-const Login = () => {
+const Login = ({ navigation }) => {
   const navigate = useNavigation();
   const ADMIN_ROLE = 0;
   const USER_ROLE = 1;
@@ -34,15 +34,14 @@ const Login = () => {
   const [type, setType] = useState();
   // END TOASTCUSTOM MESSAGE
 
+  const [modalVisible, setModalVisible] = useState(false);
+
   // SHOW LOADING STATE
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(async () => {
     const token = await AsyncStorage.getItem(AsyncStorageContstants.AUTH_USER_TOKEN);
     const role = await AsyncStorage.getItem(AsyncStorageContstants.ROLE);
-    console.log({
-      role
-    })
 
     if(token) {
       await fetchInfoUser();
@@ -132,7 +131,11 @@ const Login = () => {
           // }
         } else {
           let { token, user } = data;
-          let { role } = user;
+          let { 
+            _id, role, citizenIdentificationNo, drivingLicenseNo, 
+            citizenIdentificationFront, citizenIdentificationBack, 
+            drivingLicenseFront, drivingLicenseBack 
+          } = user;
 
           hideLoading();
 
@@ -159,7 +162,14 @@ const Login = () => {
                 break;
               }
               case USER_ROLE: {
-                navigate.navigate('HomeScreen');
+                if(!citizenIdentificationNo || !drivingLicenseNo || !citizenIdentificationFront || !citizenIdentificationBack || !drivingLicenseFront || !drivingLicenseBack) {
+                  // setTimeout(() => {
+                  //   navigation.navigate('ValidateAccountScreen', { userID: _id });
+                  // }, 3000)
+                  navigate.navigate('AlertValidateAccountScreen', { userID: _id });
+                } else {
+                  navigate.navigate('HomeScreen');
+                }
                 break;
               }
               default:
@@ -294,6 +304,48 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between'
   },
+
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2
+  },
+  buttonOpen: {
+    backgroundColor: "#F194FF",
+  },
+  buttonClose: {
+    backgroundColor: "#2196F3",
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center"
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center"
+  }
 });
 
 export default Login;

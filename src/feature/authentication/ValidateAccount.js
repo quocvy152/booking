@@ -3,6 +3,7 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, SafeAreaView, Text, View, TouchableOpacity, Keyboard, ActivityIndicator, Dimensions, Image } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { ScrollView, TextInput } from 'react-native-gesture-handler';
+import { useDispatch } from 'react-redux';
 
 import { COLORS } from '../../constant/colors';
 import ButtonCustom    from '../../components/ButtonCustom';
@@ -11,12 +12,16 @@ import ToastCustom from '../../components/ToastCustom';
 import { updateValidateInfo } from '../../api/auth';
 // import * as ImagePicker from 'react-native-image-picker';
 import * as ImagePicker from 'expo-image-picker';
+import InfoUser from '../account/InfoUser';
 
 const { width } = Dimensions.get('screen');
 const contentWidth = width - 20;
 
+import { updateInfoUser } from '../../store/auth';
+
 const ValidateAccount = ({ navigation, route }) => {
-  const userID = route.params.userID;
+  const userID = route?.params?.userID;
+  const ROUTE_NAME = route.params.ROUTE_NAME;
   const [citizenIdentificationNo, setCitizenIdentificationNo] = useState('');
   const [citizenIdentificationFront, setCitizenIdentificationFront] = useState(null);
   const [citizenIdentificationBack, setCitizenIdentificationBack] = useState(null);
@@ -32,6 +37,8 @@ const ValidateAccount = ({ navigation, route }) => {
   const [content, setContent] = useState();
   const [type, setType] = useState();
   // END TOASTCUSTOM MESSAGE
+
+  const dispatch = useDispatch();
 
   const showLoading = () => {
     setIsLoading(true);
@@ -156,8 +163,18 @@ const ValidateAccount = ({ navigation, route }) => {
       showToast({ type: 'error', content: message });
       hideLoading();
     } else {
-      showToast({ type: 'success', content: 'Bạn đã xác thực thông tin thành công. Hãy sử dụng các dịch vụ của chúng tôi' });
+      hideLoading();
+      dispatch(updateInfoUser({ infoUser: dataAfterUpdate }));
       setTimeout(() => {
+        showToast({ type: 'success', content: 'Bạn đã xác thực thông tin thành công. Hãy sử dụng các dịch vụ của chúng tôi' });
+      }, 2000)
+      
+      setTimeout(() => {
+        // if(ROUTE_NAME == 'ALERT_VALIDATE_ACCOUNT') {
+        //   navigation.navigate('HomeScreen');
+        // } else {
+        //   navigation.navigate('LoginScreen');
+        // }
         navigation.navigate('LoginScreen');
       }, 3000)
     }
@@ -177,7 +194,9 @@ const ValidateAccount = ({ navigation, route }) => {
       <SafeAreaView style={ styles.container }>
         <StatusBar style='light' />
         <View style={{ flexDirection: 'row', alignItems: 'center', width: width, height: 80, backgroundColor: COLORS.DEFAULT_BACKGROUND, }}>
-          <FontAwesome5 name="chevron-left" style={{ marginTop: 35, marginLeft: 5 }} size={25} color="white" onPress={ navigation.goBack } />
+          <FontAwesome5 name="chevron-left" style={{ marginTop: 35, marginLeft: 5 }} size={25} color="white" onPress={() => {
+            navigation.goBack();
+          }} />
           <Text style={ styles.hiText }>
             Xác thực tài khoản
           </Text>

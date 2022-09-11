@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { View, Text, StyleSheet, TextInput } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
 
-const TextInputCustom = ({ icon, placeholderText, textColor, secureTextEntry, isInputNumber, style, textInputAction }) => {
+const TextInputCustom = ({ icon, value, placeholderText, textColor, secureTextEntry, isInputNumber, style, textInputAction }) => {
     return (
         <>
           <FontAwesome5 
@@ -14,6 +14,7 @@ const TextInputCustom = ({ icon, placeholderText, textColor, secureTextEntry, is
           <TextInput 
             style={[ styles.inputStyle, { ...style } ]}
             placeholder={placeholderText}
+            value={value}
             secureTextEntry={secureTextEntry ? secureTextEntry : false}
             placeholderTextColor={textColor}
             keyboardType={isInputNumber}

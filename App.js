@@ -6,6 +6,7 @@ import Login from './src/feature/authentication/Login';
 import ForgotPassword from './src/feature/authentication/ForgotPassword';
 import Register from './src/feature/authentication/Register';
 import ValidateAccount from './src/feature/authentication/ValidateAccount';
+import AlertValidateAccount from './src/feature/authentication/AlertValidateAccount';
 import BottomNavigator from './src/components/BottomNavigator';
 import BottomNavigatorAdmin from './src/components/BottomNavigatorAdmin';
 import CarDetail from './src/feature/car/CarDetail';
@@ -40,6 +41,7 @@ export default function App() {
           <Stack.Screen name='LoginScreen' component={Login} />
           <Stack.Screen name='ForgotPasswordScreen' component={ForgotPassword} />
           <Stack.Screen name='RegisterScreen' component={Register} />
+          <Stack.Screen name='AlertValidateAccountScreen' component={AlertValidateAccount} />
           <Stack.Screen name='ValidateAccountScreen' component={ValidateAccount} />
           <Stack.Screen name='HomeScreen' component={BottomNavigator} />
           <Stack.Screen name='AdminScreen' component={BottomNavigatorAdmin} />
