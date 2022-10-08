@@ -6,6 +6,7 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import NumberFormat from 'react-number-format';
 import { useSelector } from 'react-redux';
 import FastImage from 'react-native-fast-image';
+import { Skeleton } from "@rneui/themed";
 
 import { COLORS } from '../../constant/colors';
 import TextInputCustom from '../../components/TextInputCustom';
@@ -134,11 +135,14 @@ const Home = ({ navigation }) => {
     const querys = `page=${page}&limit=${limit}&name=${name}&brand=${brand}`;
 
     let resultListCarPrepare = await getListCarPrepare(querys);
-    const { data, error } = resultListCarPrepare.data;
+    const { totalPages, data, error } = resultListCarPrepare.data;
 
     if(!error) {
       setListCar([ ...data ]);
+      setTotalPages(totalPages);
     }
+    
+    setIsLoadMore(false);
   }
 
   const fetchDataListCarLoadMore = async ({ name, brand, page, limit }) => {
@@ -176,8 +180,6 @@ const Home = ({ navigation }) => {
     return (
       <View style={{ padding: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', }}>
         <Image source={require('../../resources/images/200.gif')} style={{ height: 40, width: 40, borderRadius: 60, resizeMode: 'contain' }} />
-        {/* <Text style={{ fontSize: 18, fontStyle: 'italic' }}>Đang tải</Text> */}
-        {/* <ActivityIndicator size="large" color="black" style={{ marginRight: 5, alignItems: 'center', textAlign: 'center' }} /> */}
       </View>
     )
   }
@@ -212,16 +214,31 @@ const Home = ({ navigation }) => {
                 textColor={ COLORS.DEFAULT_TEXT }
                 placeholderText='Tìm kiếm xe'
                 style={{ marginLeft: 10, borderRadius: 10, width: '95%' }}
-                textInputAction={val => setNameSearch(val)}
+                textInputAction={val => {
+                  setNameSearch(val);
+                  if(!val || val == 'undefined')
+                    setPage(1);
+                }}
               />
             </View>
             <View style={ styles.sortBtn }>
               <FontAwesome5 name='align-left' size={24} color={ COLORS.WHITE } />
             </View>
         </View>
-        <View>
-          <ListCategories />
-        </View>
+        {
+            listBrand.length ? 
+            (
+              <View>
+                <ListCategories />
+              </View>
+            ) : (
+              <View style={{ flexDirection: 'row', }}>
+                <Skeleton animation="wave" width={125} height={40} style={ styles.cardSkeleton } />
+                <Skeleton animation="wave" width={125} height={40} style={ styles.cardSkeleton } />
+                <Skeleton animation="wave" width={125} height={40} style={ styles.cardSkeleton } />
+              </View>
+            )
+          }
         {
           listCar.length ?
           (
@@ -235,6 +252,7 @@ const Home = ({ navigation }) => {
               ListFooterComponent={() => isLoadMore && <ListFooterComponent />}
             />
           ) : (
+            selectedCategorIndex || nameSearch ?
             <>
               <View style={{ alignItems: 'center', justifyContent: 'center', marginBottom: '100%' }}>
                 <Image 
@@ -242,6 +260,15 @@ const Home = ({ navigation }) => {
                     style={{ width: 300, height: 300, resizeMode: 'contain' }}
                 />
                 <Text style={{ textAlign: 'center', fontSize: 17, fontStyle: 'italic', }}>Không tìm thấy kết quả phù hợp</Text>
+              </View>
+            </> : <>
+              <View style={{ flexDirection: 'row', }}>
+                <Skeleton animation="pulse" width={cardWidth} height={220} style={ styles.cardSkeleton } />
+                <Skeleton animation="pulse" width={cardWidth} height={220} style={ styles.cardSkeleton } />
+              </View>
+              <View style={{ flexDirection: 'row', }}>
+                <Skeleton animation="pulse" width={cardWidth} height={220} style={ styles.cardSkeleton } />
+                <Skeleton animation="pulse" width={cardWidth} height={220} style={ styles.cardSkeleton } />
               </View>
             </>
           )
@@ -311,6 +338,14 @@ const styles = StyleSheet.create({
   card: {
     height: 220,
     width: cardWidth,
+    marginHorizontal: 10,
+    marginTop: 15, 
+    borderRadius: 15, 
+    elevation: 13,
+    backgroundColor: COLORS.WHITE
+  },
+
+  cardSkeleton: {
     marginHorizontal: 10,
     marginTop: 15, 
     borderRadius: 15, 
