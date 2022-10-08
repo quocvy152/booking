@@ -24,7 +24,7 @@ const InfoUser = ({ navigation, route }) => {
       <View style={{ alignItems: 'center', justifyContent: 'center', backgroundColor: COLORS.DEFAULT_BACKGROUND, height: 120, marginTop: -75 }}>
         <Text style={ styles.titleScreen }>Hỗ trợ</Text>
       </View>
-      <ScrollView style={{ width: contentWidth, marginLeft: 15 }}>
+      <ScrollView style={{ marginTop: 10, width: contentWidth, marginLeft: 15 }}>
         <View style={ styles.contentParapgh }>
           <Text style={ styles.headerStyle }>
             <Ionicons name="car-sport-sharp" style={{ marginRight: 10 }} size={20} color="black" /> Về Chúng Tôi

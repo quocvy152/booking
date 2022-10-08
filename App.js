@@ -26,6 +26,7 @@ import UpdateCar from './src/feature/account/UpdateCar';
 import BorrowCar from './src/feature/account/BorrowCar';
 import { Provider } from 'react-redux';
 import store from './src/store/index';
+import SkeletonContent from 'react-native-skeleton-content';
 
 const Stack = createStackNavigator(); 
 

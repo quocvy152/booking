@@ -1,7 +1,7 @@
 // import external
 import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, SafeAreaView, Text, View, TouchableOpacity, Keyboard, } from 'react-native';
+import { StyleSheet, SafeAreaView, Text, View, TouchableOpacity, Keyboard, ScrollView, Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesome5 } from '@expo/vector-icons';
 
@@ -12,6 +12,8 @@ import { registerUser } from '../../api/auth';
 import ButtonCustom from '../../components/ButtonCustom';
 import TextInputCustom from '../../components/TextInputCustom';
 import ToastCustom from '../../components/ToastCustom';
+
+let ScreenHeight = Dimensions.get("window").height;
 
 const Register = ({ navigation }) => {
   const [Username, setUsername] = useState();
@@ -107,19 +109,19 @@ const Register = ({ navigation }) => {
   }
     
   return (
-    <>
+    <View>
       <ToastCustom typeToast={typeToast} contentToast={contentToast} isShowToast={isShowToast} />
       <View style={ styles.header }>
         <FontAwesome5 name="chevron-left" size={28} color="black" onPress={ navigation.goBack } />
         <Text style={{ fontSize: 20, fontWeight: 'bold', marginLeft: 10, }}>Đăng nhập</Text>
       </View>
-      <SafeAreaView style={ styles.container }>
-        <StatusBar style='light' />
-        <View style={ styles.content }>
+      <ScrollView contentContainerStyle={ styles.container }>
+        <StatusBar style='dark' />
+        {/* <View style={ styles.content }>
             <Text style={ styles.hiText }>
             Đăng Ký Booking
             </Text>
-        </View>
+        </View> */}
 
         <View style={ styles.form }>
             <View style={{ marginBottom: 10, }}> 
@@ -211,8 +213,8 @@ const Register = ({ navigation }) => {
               />
             </View>
         </View>
-      </SafeAreaView>
-    </>
+      </ScrollView>
+    </View>
   );
 };
 
@@ -223,10 +225,10 @@ const DEFAULT_TEXT = {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: COLORS.DEFAULT_BACKGROUND,
+    height: ScreenHeight
   },
 
   hiText: {
@@ -237,10 +239,12 @@ const styles = StyleSheet.create({
   },
 
   content: {
+    marginTop: 50,
     paddingHorizontal: 30,
   },
 
   form: {
+    marginTop: -200,
     width: '90%',
   },
 
@@ -263,9 +267,9 @@ const styles = StyleSheet.create({
 
   header: {
     flexDirection: 'row',
-    backgroundColor: COLORS.DEFAULT_BACKGROUND,
     paddingHorizontal: 15,
-    paddingVertical: 30
+    paddingVertical: 30,
+    backgroundColor: COLORS.DEFAULT_BACKGROUND,
   },
 });
 
