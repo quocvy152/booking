@@ -6,6 +6,7 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import NumberFormat from 'react-number-format';
 import { useSelector } from 'react-redux';
 import FastImage from 'react-native-fast-image';
+import { Skeleton } from "@rneui/themed";
 
 import { COLORS } from '../../constant/colors';
 import CATEGORIES_CAR from '../../constant/categories';
@@ -27,8 +28,8 @@ const ListTripUserPayed = ({ navigation, route }) => {
   const avatar = infoUser?.avatar?.path;
   const [listTrip, setListTrip] = useState([]);
   const [nameSearch, setNameSearch] = useState('');
-  const [checkReload, setCheckReload] = useState(false);
   const [page, setPage] = useState(1);
+  const [isDoneFetchData, setIsDoneFetchData] = useState(false);
 
   const fetchListTrip = async ({ page, name }) => {
     let TYPE_GET_LIST_TRIP_PAYED = 5;
@@ -36,6 +37,7 @@ const ListTripUserPayed = ({ navigation, route }) => {
     let { error, data } = resultListCarRegister.data;
     if(!error) {
       setListTrip(data);
+      setIsDoneFetchData(true);
     }
   }
 
@@ -119,14 +121,6 @@ const ListTripUserPayed = ({ navigation, route }) => {
                 justifyContent: 'space-between',
               }}
             >
-              {/* <Text style={{ marginTop: 10, fontSize: 15, color: COLORS.DEFAULT_TEXT }}>
-                Ngày bắt đầu: 
-                <Text style={{ fontWeight: 'bold', color: 'green' }}>
-                  { 
-                    '  ' + moment(item?.booking?.startTime).format('L') + ' ' + moment(item?.booking?.startTime).format('LT')  
-                  }
-                </Text> 
-              </Text> */}
               <Text style={{ fontSize: 15, color: COLORS.DEFAULT_TEXT, fontWeight: 'bold' }}>
                 Ngày trả xe: 
                 <Text style={{ fontWeight: 'bold', color: '#FFD700' }}>
@@ -159,9 +153,14 @@ const ListTripUserPayed = ({ navigation, route }) => {
   return (
     <>
       <SafeAreaView style={{ flex: 1, }}>
+        <StatusBar style='dark' />
         <View style={ styles.header }>
-          <FontAwesome5 name="chevron-left" size={28} color="black" onPress={() => navigation.goBack()} />
-          <Text style={{ fontSize: 20, fontWeight: 'bold', marginLeft: 10 }}>Thông Tin Của Bạn</Text>
+          <View style={{ marginLeft: 10, justifyContent: 'center', alignItems: 'center', marginTop: 10, width: '3%' }}>
+            <FontAwesome5 name="chevron-left" size={20} color="white" onPress={() => navigation.goBack()} />
+          </View>
+          <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 10, width: '97%' }}>
+            <Text style={{ color: 'white', fontSize: 20, fontWeight: 'bold', }}>Danh sách xe bạn đã trả</Text>
+          </View>
         </View>
         <View 
           style={{ 
@@ -177,11 +176,6 @@ const ListTripUserPayed = ({ navigation, route }) => {
               />
             </View>
         </View>
-
-        <View style={{ justifyContent: 'center', alignItems: 'center', margin: 10, flexDirection: 'row' }}>
-          <FontAwesome5 name="hands-helping" size={20} color="#3E89A8" style={{ marginRight: 10, }} />
-          <Text style={{ color: '#3E89A8', fontSize: 20, fontWeight: 'bold' }}>Danh sách xe bạn đã trả</Text>
-        </View>
         
         {
           listTrip.length ?
@@ -194,14 +188,24 @@ const ListTripUserPayed = ({ navigation, route }) => {
             />
           ) : 
           (
+            nameSearch || (!listTrip.length && isDoneFetchData) ?
             <>
-            <View style={{ alignItems: 'center', justifyContent: 'center', marginTop: 30, }}>
-              <Image 
-                  source={require('../../resources/images/trip.png')}
-                  style={{ width: 300, height: 200, resizeMode: 'contain' }}
-              />
-              <Text style={{ textAlign: 'center', fontSize: 17, fontStyle: 'italic', width: contentWidth, marginTop: 30 }}>Bạn chưa có chuyến nào, hãy thuê ngay một chiếc xe để trải nghiệm dịch vụ</Text>
-            </View>
+              <View style={{ alignItems: 'center', justifyContent: 'center', marginBottom: '100%' }}>
+                <Image 
+                    source={require('../../resources/images/bg_emptyPNG.png')}
+                    style={{ width: 300, height: 300, resizeMode: 'contain' }}
+                />
+                <Text style={{ textAlign: 'center', fontSize: 17, fontStyle: 'italic', }}>Không tìm thấy kết quả phù hợp</Text>
+              </View>
+            </> : <>
+              <View style={{ flexDirection: 'row', }}>
+                <Skeleton animation="pulse" width={cardWidth} height={220} style={ styles.cardSkeleton } />
+                <Skeleton animation="pulse" width={cardWidth} height={220} style={ styles.cardSkeleton } />
+              </View>
+              <View style={{ flexDirection: 'row', }}>
+                <Skeleton animation="pulse" width={cardWidth} height={220} style={ styles.cardSkeleton } />
+                <Skeleton animation="pulse" width={cardWidth} height={220} style={ styles.cardSkeleton } />
+              </View>
             </>
           )
         }
@@ -241,9 +245,8 @@ const styles = StyleSheet.create({
   header: {
     paddingVertical: 20,
     flexDirection: 'row',
-    marginLeft: 20, 
-    alignItems: 'center',
-    marginTop: 15,
+    justifyContent: 'space-between',
+    backgroundColor: COLORS.DEFAULT_BACKGROUND,
   }, 
 
   inputContainer: {
@@ -294,6 +297,15 @@ const styles = StyleSheet.create({
     borderRadius: 15, 
     elevation: 13,
     backgroundColor: COLORS.WHITE
+  },
+
+  cardSkeleton: {
+    height: 280,
+    width: cardWidth,
+    marginHorizontal: 10,
+    marginTop: 15, 
+    borderRadius: 15, 
+    elevation: 13,
   },
 
   iconUser: {

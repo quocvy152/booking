@@ -21,6 +21,7 @@ const ListCarUser = ({ navigation, route }) => {
   const [nameSearch, setNameSearch] = useState('');
   const [checkReload, setCheckReload] = useState(false);
   const [page, setPage] = useState(1);
+  const [isDoneFetchData, setIsDoneFetchData] = useState(false);
 
   const fetchMyListCarRegister = async ({ name }) => {
     let resultListCarRegister = await getListMyCar({ name });
@@ -28,6 +29,7 @@ const ListCarUser = ({ navigation, route }) => {
 
     if(!error) {
       setListCarRegister(data);
+      setIsDoneFetchData(true);
     }
   }
 
@@ -123,10 +125,6 @@ const ListCarUser = ({ navigation, route }) => {
             </View>
         </View>
 
-        {/* <View style={{ justifyContent: 'center', alignItems: 'center', margin: 10, flexDirection: 'row' }}>
-          <FontAwesome5 name="car" size={20} color="#37A604" style={{ marginRight: 10, }} />
-          <Text style={{ color: '#37A604', fontSize: 20, fontWeight: 'bold' }}>Danh sách xe bạn đã đăng ký</Text>
-        </View> */}
         {
           listCarRegister.length ?
           (
@@ -140,7 +138,7 @@ const ListCarUser = ({ navigation, route }) => {
             />
           ) : 
           (
-            nameSearch ?
+            nameSearch || (!listCarRegister.length && isDoneFetchData) ?
             <>
               <View style={{ alignItems: 'center', justifyContent: 'center', marginBottom: '100%' }}>
                 <Image 
@@ -161,25 +159,6 @@ const ListCarUser = ({ navigation, route }) => {
             </>
           )
         }
-        
-        <View style={{ width: contentWidth, flexDirection: 'row', marginLeft: 10, marginBottom: 25, }}>
-          <TouchableOpacity activeOpacity={0.8} style={ styles.btnStyle } onPress={() => navigation.navigate("AddCarScreen")}>
-            <View>
-              <Text style={{ color: 'white', fontSize: 15, fontWeight: 'bold', }}>Đăng ký xe</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity 
-            activeOpacity={0.8} 
-            style={[ 
-              styles.btnStyle, 
-              { backgroundColor: COLORS.WHITE, marginLeft: '2%', borderWidth: 1, borderColor: COLORS.DEFAULT_BACKGROUND }
-            ]}
-            onPress={() => navigation.navigate('ListTripUserScreen')}>
-            <View>
-              <Text style={{ color: COLORS.DEFAULT_BACKGROUND, fontSize: 15, fontWeight: 'bold', }}>Chuyến của tôi</Text>
-            </View>
-          </TouchableOpacity>
-        </View>
       </SafeAreaView>
     </>
   );
@@ -196,7 +175,6 @@ const styles = StyleSheet.create({
   header: {
     paddingVertical: 20,
     flexDirection: 'row',
-    // alignItems: 'center',
     justifyContent: 'space-between',
     backgroundColor: COLORS.DEFAULT_BACKGROUND,
   }, 

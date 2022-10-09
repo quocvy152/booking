@@ -16,6 +16,7 @@ import images from '../../resources/images/index';
 import { getListCarBooking } from '../../api/general';
 import ButtonCustom from '../../components/ButtonCustom';
 import { backgroundColor } from 'react-native/Libraries/Components/View/ReactNativeStyleAttributes';
+import { Skeleton } from "@rneui/themed";
 const { width } = Dimensions.get('screen');
 const cardWidth = width / 2 - 20;
 const contentWidth = width - 20;
@@ -28,6 +29,7 @@ const ListTripWaitPayed = ({ navigation, route }) => {
   const [nameSearch, setNameSearch] = useState('');
   const [checkReload, setCheckReload] = useState(false);
   const [page, setPage] = useState(1);
+  const [isDoneFetchData, setIsDoneFetchData] = useState(false);
 
   const fetchListTrip = async ({ page, name }) => {
     let TYPE_GET_LIST_TRIP_WAIT_PAYED = 4;
@@ -35,6 +37,7 @@ const ListTripWaitPayed = ({ navigation, route }) => {
     let { error, data } = resultListCarRegister.data;
     if(!error) {
       setListTrip(data);
+      setIsDoneFetchData(false);
     }
   }
 
@@ -50,11 +53,6 @@ const ListTripWaitPayed = ({ navigation, route }) => {
   }, [checkReload]);
 
   useEffect(() => {
-    // let listCarFilter = listTrip.filter(car => car.name.toLowerCase().includes(nameSearch.toLowerCase()));
-    // setListTrip(listCarFilter);
-    // if(!nameSearch) {
-    //   setCheckReload(!checkReload);
-    // }
     fetchListTrip({ page, name: nameSearch });
   }, [nameSearch]);
 
@@ -119,9 +117,14 @@ const ListTripWaitPayed = ({ navigation, route }) => {
   return (
     <>
       <SafeAreaView style={{ flex: 1, }}>
+        <StatusBar style='dark' />
         <View style={ styles.header }>
-          <FontAwesome5 name="chevron-left" size={28} color="black" onPress={() => navigation.goBack()} />
-          <Text style={{ fontSize: 20, fontWeight: 'bold', marginLeft: 10 }}>Thông Tin Của Bạn</Text>
+          <View style={{ marginLeft: 10, justifyContent: 'center', alignItems: 'center', marginTop: 10, width: '3%' }}>
+            <FontAwesome5 name="chevron-left" size={20} color="white" onPress={() => navigation.goBack()} />
+          </View>
+          <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 10, width: '97%' }}>
+            <Text style={{ color: 'white', fontSize: 20, fontWeight: 'bold', }}>Danh sách đợi chủ xe chấp nhận trả xe</Text>
+          </View>
         </View>
         <View 
           style={{ 
@@ -138,11 +141,6 @@ const ListTripWaitPayed = ({ navigation, route }) => {
             </View>
         </View>
 
-        <View style={{ justifyContent: 'center', alignItems: 'center', margin: 10, flexDirection: 'row' }}>
-          <FontAwesome5 name="chalkboard-teacher" size={20} color="#FF4500" style={{ marginRight: 10, }} />
-          <Text style={{ color: '#FF4500', fontSize: 18, fontWeight: 'bold' }}>Danh sách đợi chủ xe chấp nhận trả xe</Text>
-        </View>
-        
         {
           listTrip.length ?
           (
@@ -154,14 +152,24 @@ const ListTripWaitPayed = ({ navigation, route }) => {
             />
           ) : 
           (
+            nameSearch || (!listTrip.length && isDoneFetchData) ?
             <>
-            <View style={{ alignItems: 'center', justifyContent: 'center', marginTop: 30, }}>
-              <Image 
-                  source={require('../../resources/images/trip.png')}
-                  style={{ width: 300, height: 200, resizeMode: 'contain' }}
-              />
-              <Text style={{ textAlign: 'center', fontSize: 17, fontStyle: 'italic', width: contentWidth, marginTop: 30 }}>Bạn chưa có chuyến xe nào đang trả xe</Text>
-            </View>
+              <View style={{ alignItems: 'center', justifyContent: 'center', marginBottom: '100%' }}>
+                <Image 
+                    source={require('../../resources/images/bg_emptyPNG.png')}
+                    style={{ width: 300, height: 300, resizeMode: 'contain' }}
+                />
+                <Text style={{ textAlign: 'center', fontSize: 17, fontStyle: 'italic', }}>Không tìm thấy kết quả phù hợp</Text>
+              </View>
+            </> : <>
+              <View style={{ flexDirection: 'row', }}>
+                <Skeleton animation="pulse" width={cardWidth} height={220} style={ styles.cardSkeleton } />
+                <Skeleton animation="pulse" width={cardWidth} height={220} style={ styles.cardSkeleton } />
+              </View>
+              <View style={{ flexDirection: 'row', }}>
+                <Skeleton animation="pulse" width={cardWidth} height={220} style={ styles.cardSkeleton } />
+                <Skeleton animation="pulse" width={cardWidth} height={220} style={ styles.cardSkeleton } />
+              </View>
             </>
           )
         }
@@ -201,9 +209,8 @@ const styles = StyleSheet.create({
   header: {
     paddingVertical: 20,
     flexDirection: 'row',
-    marginLeft: 20, 
-    alignItems: 'center',
-    marginTop: 15,
+    justifyContent: 'space-between',
+    backgroundColor: COLORS.DEFAULT_BACKGROUND,
   }, 
 
   inputContainer: {
@@ -247,6 +254,16 @@ const styles = StyleSheet.create({
   },
 
   card: {
+    height: 220,
+    width: cardWidth,
+    marginHorizontal: 10,
+    marginTop: 15, 
+    borderRadius: 15, 
+    elevation: 13,
+    backgroundColor: COLORS.WHITE
+  },
+
+  cardSkeleton: {
     height: 220,
     width: cardWidth,
     marginHorizontal: 10,
