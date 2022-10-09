@@ -12,6 +12,7 @@ const contentWidth = width - 30;
 const contentHeight = height;
 import { Ionicons, MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons'; 
 import { getListCarFavourite } from '../../api/general';
+import { Skeleton } from "@rneui/themed";
 
 import { COLORS } from '../../constant/colors';
 import ButtonCustom from '../../components/ButtonCustom';
@@ -145,13 +146,23 @@ const Favourite = ({ navigation, route }) => {
             renderItem={({ item }) => <Card item={item} />}
           />
         ) : (
+          nameSearch ?
           <>
-            <View style={{ marginTop: 60, alignItems: 'center', justifyContent: 'center', marginBottom: '100%' }}>
+            <View style={{ alignItems: 'center', justifyContent: 'center', marginBottom: '100%' }}>
               <Image 
                   source={require('../../resources/images/bg_emptyPNG.png')}
                   style={{ width: 300, height: 300, resizeMode: 'contain' }}
               />
-              <Text style={{ textAlign: 'center', fontSize: 17, fontStyle: 'italic', }}>Bạn chưa thêm xe nào vào danh sách yêu thích</Text>
+              <Text style={{ textAlign: 'center', fontSize: 17, fontStyle: 'italic', }}>Không tìm thấy kết quả phù hợp</Text>
+            </View>
+          </> : <>
+            <View style={{ flexDirection: 'row', }}>
+              <Skeleton animation="pulse" width={cardWidth} height={220} style={ styles.cardSkeleton } />
+              <Skeleton animation="pulse" width={cardWidth} height={220} style={ styles.cardSkeleton } />
+            </View>
+            <View style={{ flexDirection: 'row', }}>
+              <Skeleton animation="pulse" width={cardWidth} height={220} style={ styles.cardSkeleton } />
+              <Skeleton animation="pulse" width={cardWidth} height={220} style={ styles.cardSkeleton } />
             </View>
           </>
         )
@@ -181,6 +192,15 @@ const styles = StyleSheet.create({
     borderRadius: 15, 
     elevation: 13,
     backgroundColor: COLORS.WHITE
+  },
+
+  cardSkeleton: {
+    height: 220,
+    width: cardWidth,
+    marginHorizontal: 10,
+    marginTop: 15, 
+    borderRadius: 15, 
+    elevation: 13,
   },
 
   contentParapgh: {

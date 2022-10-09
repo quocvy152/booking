@@ -1,22 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, SafeAreaView, Text, View, TouchableOpacity, Image, ScrollView, FlatList, Dimensions } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import { FontAwesome5 } from '@expo/vector-icons';
 import NumberFormat from 'react-number-format';
 import { useSelector } from 'react-redux';
-import FastImage from 'react-native-fast-image';
-import { useIsFocused } from '@react-navigation/native';
+import { Skeleton } from "@rneui/themed";
 
 import { COLORS } from '../../constant/colors';
-import CATEGORIES_CAR from '../../constant/categories';
-import CARS from '../../constant/cars';
 import TextInputCustom from '../../components/TextInputCustom';
-import { TouchableHighlight } from 'react-native-gesture-handler';
-import images from '../../resources/images/index';
 import { getListMyCar } from '../../api/general';
-import ButtonCustom from '../../components/ButtonCustom';
-import { backgroundColor } from 'react-native/Libraries/Components/View/ReactNativeStyleAttributes';
 const { width } = Dimensions.get('screen');
 const cardWidth = width / 2 - 20;
 const contentWidth = width - 20;
@@ -46,17 +38,7 @@ const ListCarUser = ({ navigation, route }) => {
     return unsubscribe;
   }, [navigation]);
 
-  // useEffect(() => {
-  //   fetchMyListCarRegister();
-  // }, [checkReload]);
-
   useEffect(() => {
-    // let listCarFilter = listCarRegister.filter(car => car.infoCar.name.toLowerCase().includes(nameSearch.toLowerCase()));
-    // setListCarRegister(listCarFilter);
-    // if(!nameSearch) {
-    //   setCheckReload(!checkReload);
-    // }
-
     fetchMyListCarRegister({ name: nameSearch });
   }, [nameSearch]);
 
@@ -117,9 +99,14 @@ const ListCarUser = ({ navigation, route }) => {
   return (
     <>
       <SafeAreaView style={{ flex: 1, }}>
+        <StatusBar style='dark' />
         <View style={ styles.header }>
-          <FontAwesome5 name="chevron-left" size={28} color="black" onPress={() => navigation.goBack()} />
-          <Text style={{ fontSize: 20, fontWeight: 'bold', marginLeft: 10 }}>Thông Tin Của Bạn</Text>
+          <View style={{ marginLeft: 10, justifyContent: 'center', alignItems: 'center', marginTop: 10, width: '3%' }}>
+            <FontAwesome5 name="chevron-left" size={20} color="white" onPress={() => navigation.goBack()} />
+          </View>
+          <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 10, width: '97%' }}>
+            <Text style={{ color: 'white', fontSize: 20, fontWeight: 'bold', }}>Danh sách xe bạn đã đăng ký</Text>
+          </View>
         </View>
         <View 
           style={{ 
@@ -136,10 +123,10 @@ const ListCarUser = ({ navigation, route }) => {
             </View>
         </View>
 
-        <View style={{ justifyContent: 'center', alignItems: 'center', margin: 10, flexDirection: 'row' }}>
+        {/* <View style={{ justifyContent: 'center', alignItems: 'center', margin: 10, flexDirection: 'row' }}>
           <FontAwesome5 name="car" size={20} color="#37A604" style={{ marginRight: 10, }} />
           <Text style={{ color: '#37A604', fontSize: 20, fontWeight: 'bold' }}>Danh sách xe bạn đã đăng ký</Text>
-        </View>
+        </View> */}
         {
           listCarRegister.length ?
           (
@@ -153,13 +140,23 @@ const ListCarUser = ({ navigation, route }) => {
             />
           ) : 
           (
+            nameSearch ?
             <>
-              <View style={{ alignItems: 'center', justifyContent: 'center', marginTop: 20, }}>
+              <View style={{ alignItems: 'center', justifyContent: 'center', marginBottom: '100%' }}>
                 <Image 
                     source={require('../../resources/images/bg_emptyPNG.png')}
                     style={{ width: 300, height: 300, resizeMode: 'contain' }}
                 />
-                <Text style={{ textAlign: 'center', fontSize: 17, fontStyle: 'italic', }}>Bạn chưa đăng ký xe nào</Text>
+                <Text style={{ textAlign: 'center', fontSize: 17, fontStyle: 'italic', }}>Không tìm thấy kết quả phù hợp</Text>
+              </View>
+            </> : <>
+              <View style={{ flexDirection: 'row', }}>
+                <Skeleton animation="pulse" width={cardWidth} height={220} style={ styles.cardSkeleton } />
+                <Skeleton animation="pulse" width={cardWidth} height={220} style={ styles.cardSkeleton } />
+              </View>
+              <View style={{ flexDirection: 'row', }}>
+                <Skeleton animation="pulse" width={cardWidth} height={220} style={ styles.cardSkeleton } />
+                <Skeleton animation="pulse" width={cardWidth} height={220} style={ styles.cardSkeleton } />
               </View>
             </>
           )
@@ -199,9 +196,9 @@ const styles = StyleSheet.create({
   header: {
     paddingVertical: 20,
     flexDirection: 'row',
-    marginLeft: 20, 
-    alignItems: 'center',
-    marginTop: 15,
+    // alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: COLORS.DEFAULT_BACKGROUND,
   }, 
 
   inputContainer: {
@@ -245,6 +242,16 @@ const styles = StyleSheet.create({
   },
 
   card: {
+    height: 220,
+    width: cardWidth,
+    marginHorizontal: 10,
+    marginTop: 15, 
+    borderRadius: 15, 
+    elevation: 13,
+    backgroundColor: COLORS.WHITE
+  },
+
+  cardSkeleton: {
     height: 220,
     width: cardWidth,
     marginHorizontal: 10,
