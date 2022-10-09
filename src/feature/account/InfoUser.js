@@ -72,7 +72,7 @@ const InfoUser = ({ navigation, route }) => {
       <ScrollView contentContainerStyle={{ paddingBottom: 120 }}>
         {/* Tài khoản */}
         <View style={ styles.accountStyle }>
-          <Text style={{ fontWeight: 'bold', fontSize: 20 }}>Tài khoản</Text>
+          <Text style={{ fontSize: 18 }}>Tài khoản</Text>
           <View style={{ flexDirection: 'row', }}>
             <TouchableOpacity activeOpacity={0.6} onPress={() => { navigation.navigate('DetaulInfoUserScreen') }}>
               <View style={ styles.tabStyle }>
@@ -90,7 +90,7 @@ const InfoUser = ({ navigation, route }) => {
         </View>
         {/* Xe cá nhân */}
         <View style={ styles.accountStyle }>
-          <Text style={{ fontWeight: 'bold', fontSize: 20 }}>Xe cá nhân</Text>
+          <Text style={{ fontSize: 18 }}>Xe cá nhân</Text>
           <View style={{ flexDirection: 'row', }}>
             <TouchableOpacity activeOpacity={0.6} onPress={() => { navigation.navigate('ListCarUserScreen') }}>
               <View style={ styles.tabStyle }>
@@ -116,7 +116,7 @@ const InfoUser = ({ navigation, route }) => {
         </View>
         {/* Xe đã đặt */}
         <View style={ styles.accountStyle }>
-          <Text style={{ fontWeight: 'bold', fontSize: 20 }}>Xe đã đặt</Text>
+          <Text style={{ fontSize: 18 }}>Xe đã đặt</Text>
           <View style={{ flexDirection: 'row', }}>
             <TouchableOpacity activeOpacity={0.6} onPress={() => navigation.navigate('ListTripUserScreen')}>
               <View style={ styles.tabStyle }>
@@ -148,7 +148,7 @@ const InfoUser = ({ navigation, route }) => {
         </View>
         {/* Khách */}
         <View style={ styles.accountStyle }>
-          <Text style={{ fontWeight: 'bold', fontSize: 20 }}>Khác</Text>
+          <Text style={{ fontSize: 18 }}>Khác</Text>
           <TouchableOpacity activeOpacity={0.6} onPress={alert}>
             <View style={ styles.btnAnotherStyle }>
                 <View style={{ flexDirection: 'row' }}>

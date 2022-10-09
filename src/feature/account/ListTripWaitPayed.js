@@ -37,7 +37,7 @@ const ListTripWaitPayed = ({ navigation, route }) => {
     let { error, data } = resultListCarRegister.data;
     if(!error) {
       setListTrip(data);
-      setIsDoneFetchData(false);
+      setIsDoneFetchData(true);
     }
   }
 
@@ -173,25 +173,6 @@ const ListTripWaitPayed = ({ navigation, route }) => {
             </>
           )
         }
-
-        <View style={{ width: contentWidth, flexDirection: 'row', marginLeft: 10, marginBottom: 25, }}>
-          <TouchableOpacity activeOpacity={0.8} style={ styles.btnStyle } onPress={() => navigation.goBack()}>
-            <View>
-              <Text style={{ color: 'white', fontSize: 15, fontWeight: 'bold', }}>Tìm xe ngay</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity 
-            activeOpacity={0.8} 
-            style={[ 
-              styles.btnStyle, 
-              { backgroundColor: COLORS.WHITE, marginLeft: '2%', borderWidth: 1, borderColor: COLORS.DEFAULT_BACKGROUND }
-            ]}
-            onPress={() => navigation.navigate('ListCarUserScreen')}>
-            <View>
-              <Text style={{ color: COLORS.DEFAULT_BACKGROUND, fontSize: 15, fontWeight: 'bold', }}>Xe của tôi</Text>
-            </View>
-          </TouchableOpacity>
-        </View>
         
       </SafeAreaView>
     </>
