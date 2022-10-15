@@ -39,7 +39,8 @@ export {
   checkValidDataCar,
   returnDetailIDS,
   convertDateTimeToString,
-  returnCharacteristicID
+  returnCharacteristicID,
+  convertDateToStringFormat
 }
 
 function callNumber(phone) {
@@ -509,7 +510,6 @@ const convertDateTimeToString = (dateTime) => {
   let tempDate = new Date(dateTime);
   let fDate = tempDate.getDate() + '/' + (tempDate.getMonth() + 1) + '/' + tempDate.getFullYear();
   let fTime = tempDate.getHours() + ' giờ ' + ' - ' + tempDate.getMinutes() + ' phút';
-
   return fDate + ' ' + fTime;
 }
 
@@ -517,4 +517,9 @@ const returnCharacteristicID = (listCharacteristicID) => {
   let strCharacteristicID = listCharacteristicID.join(',');
 
   return strCharacteristicID;
+}
+
+// convert date to string format: 'YYYY-mm-dd'
+const convertDateToStringFormat = (date) => {
+  return date.getFullYear() + '-' + `${date.getMonth() + 1 < 10 ? '0' + date.getMonth() + 1 : date.getMonth() + 1}` + '-' + date.getDate();
 }

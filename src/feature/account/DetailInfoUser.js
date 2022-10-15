@@ -27,6 +27,7 @@ import { isFulfilled } from '@reduxjs/toolkit';
 
 const DetailInfoUser = ({ navigation, route }) => {
   const infoUser = useSelector(state => state.auth.infoUser);
+  const COLOR_BACKGROUND = infoUser.role ? COLORS.DEFAULT_BACKGROUND : COLORS.BACKGROUND_ADMIN; 
   const [Img, setImg] = useState({
     uri: infoUser?.avatar?.path,
     type: 'image/*',
@@ -82,12 +83,6 @@ const DetailInfoUser = ({ navigation, route }) => {
   const [isDisabledChangePass, setIsDisabledChangePass] = useState(false);
 
   const dispatch = useDispatch();
-
-  // useEffect(() => {
-  //   setInfoImgUpdate({
-      
-  //   })
-  // }, [ImgUpdate])
 
   const showLoading = () => {
     setIsLoading(true);
@@ -291,9 +286,18 @@ const DetailInfoUser = ({ navigation, route }) => {
           contentToast={content}
           typeToast={type}
         />
-      <View style={ styles.navigateStyle }>
-        <Icon name="chevron-left" size={28} color="black" onPress={navigation.goBack} style={{ marginLeft: 15 }} />
-        <Text style={{ fontSize: 20, fontWeight: 'bold', marginLeft: 10 }}>Thông Tin Của Bạn</Text>
+        {
+          console.log({
+            COLOR_BACKGROUND
+          })
+        }
+      <View style={[ styles.header, { backgroundColor: COLOR_BACKGROUND }]}>
+        <View style={{ marginLeft: 10, justifyContent: 'center', alignItems: 'center', marginTop: 10, width: '3%' }}>
+          <FontAwesome5 name="chevron-left" size={20} color="white" onPress={() => navigation.goBack()} />
+        </View>
+        <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 10, width: '97%' }}>
+          <Text style={{ marginLeft: -20, color: 'white', fontSize: 20, fontWeight: 'bold', }}>Thông tin cá nhân</Text>
+        </View>
       </View>
       <ScrollView contentContainerStyle={{ paddingBottom: 85 }}>
         <View style={styles.infoUserStyle}>
@@ -362,7 +366,7 @@ const DetailInfoUser = ({ navigation, route }) => {
 
           {/* Căn cước công dân */}
           <View style={{ marginBottom: 15 }}>
-              <Text style={{ fontWeight: 'bold', fontSize: 18, marginBottom: 5 }}>Số căn cước công dân</Text>
+              <Text style={{ fontSize: 18, marginBottom: 5 }}>Số căn cước công dân</Text>
               <TextInputCustom 
                 style={ styles.inputValidateInfoStyle }
                 placeholderText='Nhập số căn cước công dân'
@@ -376,7 +380,7 @@ const DetailInfoUser = ({ navigation, route }) => {
 
             {/* Ảnh căn cước công dân */}
             <View style={{ marginBottom: 15 }}>
-              <Text style={{ fontWeight: 'bold', fontSize: 18, }}>Ảnh CCCD mặt trước</Text>
+              <Text style={{ fontSize: 18, }}>Ảnh CCCD mặt trước</Text>
               {
                 citizenIdentificationFrontUpdate?.uri ?
                 (
@@ -407,7 +411,7 @@ const DetailInfoUser = ({ navigation, route }) => {
             </View>
 
             <View style={{ marginBottom: 15 }}>
-              <Text style={{ fontWeight: 'bold', fontSize: 18, }}>Ảnh CCCD mặt sau</Text>
+              <Text style={{ fontSize: 18, }}>Ảnh CCCD mặt sau</Text>
               {
                 citizenIdentificationBack?.uri ?
                 (
@@ -454,7 +458,7 @@ const DetailInfoUser = ({ navigation, route }) => {
 
             {/* Ảnh giấy phép lái xe */}
             <View style={{ marginBottom: 15 }}>
-              <Text style={{ fontWeight: 'bold', fontSize: 18, }}>Ảnh GPLX mặt trước</Text>
+              <Text style={{ fontSize: 18, }}>Ảnh GPLX mặt trước</Text>
               {
                 drivingLicenseFrontUpdate?.uri ?
                 (
@@ -485,7 +489,7 @@ const DetailInfoUser = ({ navigation, route }) => {
             </View>
 
             <View style={{ marginBottom: 15 }}>
-              <Text style={{ fontWeight: 'bold', fontSize: 18, }}>Ảnh GPLX mặt sau</Text>
+              <Text style={{ fontSize: 18, }}>Ảnh GPLX mặt sau</Text>
               {
                 drivingLicenseBackUpdate?.uri ?
                 (
@@ -585,6 +589,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+
+  header: {
+    marginTop: -25,
+    paddingVertical: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 15,
+  }, 
 
   navigateStyle: {
     paddingVertical: 20,

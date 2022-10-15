@@ -355,11 +355,6 @@ const AddCar = ({ navigation }) => {
     let { cancelled, height, type, width, uri } = result;
     if(!cancelled) {
       setImg(uri);
-      // setInfoImg({
-      //   uri: Img,
-      //   type,
-      //   name: Img,
-      // });
     }
   };
 
@@ -382,9 +377,17 @@ const AddCar = ({ navigation }) => {
           typeToast={type}
         />
         <View style={ styles.header }>
+          <View style={{ marginLeft: 10, justifyContent: 'center', alignItems: 'center', marginTop: 10, width: '3%' }}>
+            <FontAwesome5 name="chevron-left" size={20} color="white" onPress={() => navigation.goBack()} />
+          </View>
+          <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 10, width: '97%' }}>
+            <Text style={{ color: 'white', fontSize: 20, fontWeight: 'bold', marginLeft: -20 }}>Đăng ký xe của bạn</Text>
+          </View>
+        </View>
+        {/* <View style={ styles.header }>
           <FontAwesome5 name="chevron-left" size={28} color="black" onPress={() => navigation.goBack()} />
           <Text style={{ fontSize: 20, fontWeight: 'bold', marginLeft: 10 }}>Xe Của Bạn</Text>
-        </View>
+        </View> */}
         <ScrollView nestedScrollEnabled={true}>
           <View style={styles.infoUserStyle}>
             {
@@ -684,9 +687,8 @@ const styles = StyleSheet.create({
   header: {
     paddingVertical: 20,
     flexDirection: 'row',
-    marginLeft: 20, 
-    alignItems: 'center',
-    marginTop: 15,
+    justifyContent: 'space-between',
+    backgroundColor: COLORS.DEFAULT_BACKGROUND,
   }, 
 
   infoUserStyle: {

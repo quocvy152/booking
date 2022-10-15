@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { StatusBar } from 'expo-status-bar';
 import { 
   StyleSheet, SafeAreaView, Text, 
   View, TouchableOpacity, Image, 
@@ -7,42 +6,60 @@ import {
   TextInput, Keyboard, Button,
   ActivityIndicator, 
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import { FontAwesome5 } from '@expo/vector-icons';
 import NumberFormat from 'react-number-format';
-import MultiSelect from 'react-native-multiple-select';
 import { useSelector } from 'react-redux';
+import { Calendar, } from 'react-native-calendars';
+import { LocaleConfig } from 'react-native-calendars';
 import DateTimePicker from '@react-native-community/datetimepicker';
-
-//nestedScrollEnabled
-import SelectBox from 'react-native-multi-selectbox';
-import { xorBy } from 'lodash';
-const { width } = Dimensions.get('screen');
-const contentWidth = width - 42;
-// import * as ImagePicker from 'react-native-image-picker';
-import * as ImagePicker from 'expo-image-picker';
-import DatePicker from 'react-native-date-picker';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { AntDesign } from '@expo/vector-icons'; 
+import { MaterialIcons } from '@expo/vector-icons'; 
+import { Entypo } from '@expo/vector-icons';
+import TimeRangePicker from 'react-native-range-timepicker';
 
 import ToastCustom from '../../components/ToastCustom';
 import { COLORS } from '../../constant/colors';
-import { PARAMS_CONSTANT } from '../../constant/param';
 import { bookingCar } from '../../api/general';
-import { checkValidDataCar, returnDetailIDS, convertDateTimeToString } from '../../utils/utils';
+import { convertDateTimeToString, convertDateToStringFormat, } from '../../utils/utils';
+
+const { width } = Dimensions.get('screen');
+const contentWidth = width - 42;
+import moment from 'moment';
+import 'moment/locale/vi';
+
+LocaleConfig.locales['fr'] = {
+  monthNames: [
+    'Tháng 1',
+    'Tháng 2',
+    'Tháng 3',
+    'Tháng 4',
+    'Tháng 5',
+    'Tháng 6',
+    'Tháng 7',
+    'Tháng 8',
+    'Tháng 9',
+    'Tháng 10',
+    'Tháng 11',
+    'Tháng 12'
+  ],
+  monthNamesShort: ['TH. 1', 'TH. 2', 'TH. 3', 'TH. 4', 'TH. 5', 'TH. 6', 'TH. 7.', 'TH. 8', 'TH. 9', 'TH. 10', 'TH. 11', 'TH. 12'],
+  dayNames: ['Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy', 'Chủ Nhật'],
+  dayNamesShort: ['T.2', 'T.3', 'T.4', 'T.5', 'T.6', 'T.7', 'CN'],
+};
+LocaleConfig.defaultLocale = 'fr';
 
 const BorrowCar = ({ navigation, route }) => {
   const car = route.params;
   const infoUser = useSelector(state => state.auth.infoUser);
   const infoOwner = car.infoCar && car.infoCar.userID; 
+  const [isShowCalendar, setIsShowCalendar] = useState(false);
   const [Img, setImg] = useState(car.infoCar.avatar ? car.infoCar.avatar.path : null);
-  const [startDate, setStartDate] = useState(new Date());
-  const [modeStart, setModeStart] = useState('date');
-  const [showTimeStart, setShowTimeStart] = useState(false);
-  const [textTimeStart, setTextTimeStart] = useState(convertDateTimeToString(new Date()));
+  const [startDate, setStartDate] = useState(convertDateToStringFormat(new Date()));
+  const [startTime, setStartTime] = useState(`${new Date().getHours() < 10 ? '0' + new Date().getHours() : new Date().getHours()}:${new Date().getMinutes() < 10 ? '0' + new Date().getMinutes() : new Date().getMinutes()}:00`);
 
-  const [endDate, setEndDate] = useState(new Date(new Date().getTime() + (24 * 60 * 60 * 1000)));
-  const [modeEnd, setModeEnd] = useState('date');
-  const [showTimeEnd, setShowTimeEnd] = useState(false);
-  const [textTimeEnd, setTextTimeEnd] = useState(convertDateTimeToString(new Date(new Date().getTime() + (24 * 60 * 60 * 1000))));
+  const [endDate, setEndDate] = useState(convertDateToStringFormat(new Date(new Date().getTime() + (24 * 60 * 60 * 1000))));
+  const [endTime, setEndTime] = useState(`${new Date().getHours() < 10 ? '0' + new Date().getHours() : new Date().getHours()}:${new Date().getMinutes() < 10 ? '0' + new Date().getMinutes() : new Date().getMinutes()}:00`);
 
   const [infoSeats, setInfoSeats] = useState(car.details.find(detail => detail.characteristicID.characteristicTypeID.code === 'SOGHE'));
   const [infoTranmission, setInfoTranmission] = useState(car.details.find(detail => detail.characteristicID.characteristicTypeID.code === 'TRUYENDONG'));
@@ -61,8 +78,26 @@ const BorrowCar = ({ navigation, route }) => {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  // useEffect(() => {
-  // }, []);
+  const [markedDates, setMarkedDates] = useState({});
+
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    setMarkedDates({
+      [startDate]: { color: COLORS.DEFAULT_BACKGROUND, textColor: 'white', startingDay: true },
+      [endDate]: { color: COLORS.DEFAULT_BACKGROUND, textColor: 'white', endingDay: true }
+    })
+  }, [startDate, endDate]);
+
+  const onSelect = ({ startTime, endTime }) => {
+    setStartTime(startTime);
+    setEndTime(endTime);
+    setVisible(false);
+  };
+
+  const onClose = () => {
+    setVisible(false);
+  };
 
   const showToast = ({ content, type }) => {
     setIsShowToast(true);
@@ -80,34 +115,6 @@ const BorrowCar = ({ navigation, route }) => {
 
   const hideLoading = () => {
     setIsLoading(false);
-  }
-
-  const onChangeTimeStart = (event, selectedDate) => {
-    const currentDate = selectedDate || startDate;
-    setStartDate(currentDate);
-
-    let dateTimeString = convertDateTimeToString(currentDate);
-    setTextTimeStart(dateTimeString);
-    setShowTimeStart(false);
-  }
-
-  const onChangeTimeEnd = (event, selectedDate) => {
-    const currentDate = selectedDate || endDate;
-    setEndDate(currentDate);
-
-    let dateTimeString = convertDateTimeToString(currentDate);
-    setTextTimeEnd(dateTimeString);
-    setShowTimeEnd(false);
-  }
-
-  const showModeStart = (currentMode) => {
-    setShowTimeStart(true),
-    setModeStart(currentMode);
-  }
-
-  const showModeEnd = (currentMode) => {
-    setShowTimeEnd(true),
-    setModeEnd(currentMode);
   }
 
   const validateInfoBorrorwCar = (body) => {
@@ -184,17 +191,74 @@ const BorrowCar = ({ navigation, route }) => {
     
   return (
     <>
-      <SafeAreaView style={{ flex: 1, }}>
-        <ToastCustom 
-          isShowToast={isShowToast}
-          contentToast={content}
-          typeToast={type}
-        />
-        <View style={ styles.header }>
-          <FontAwesome5 name="chevron-left" size={28} color="black" onPress={() => navigation.goBack()} />
-          <Text style={{ fontSize: 20, fontWeight: 'bold', marginLeft: 10 }}>Chi tiết xe</Text>
-        </View>
-        <ScrollView nestedScrollEnabled={true}>
+      {
+        isShowCalendar ?
+        <View style={{ justifyContent: 'center',}}>
+          <View style={ styles.header }>
+            <View style={{ marginLeft: 10, justifyContent: 'center', alignItems: 'center', marginTop: 10, width: '3%' }}>
+              <FontAwesome5 name="chevron-left" size={20} color="white" onPress={() => setIsShowCalendar(false)} />
+            </View>
+            <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 10, width: '97%' }}>
+              <Text style={{ color: 'white', fontSize: 20, fontWeight: 'bold', }}>Chọn ngày thuê xe</Text>
+            </View>
+          </View>
+          <Calendar
+            minDate={new Date()}
+            markingType={'period'}
+            markedDates={markedDates}
+            onDayPress={date => {
+              let { day, month, year } = date;
+
+              if(startDate && !endDate) {
+                
+                // bước kiểm tra để đưa về format startDate thì nhỏ endDate thì lớn
+                if(new Date(startDate).getTime() > new Date(`${year}-${month}-${day}`).getTime()) {
+                  setEndDate(startDate);
+                  setStartDate(`${year}-${month}-${day}`);
+                } else {
+                  setEndDate(`${year}-${month}-${day}`);
+                }
+
+              } else {
+                setStartDate(`${year}-${month}-${day}`);
+                setEndDate(undefined);
+              }
+            }}
+          />
+
+          <View style={ styles.styleShowTime }>
+            <Text style={{ width: '45%', fontWeight: 'bold', fontSize: 16, }}>{ (startDate && startTime) ? moment(new Date(`${startDate}T${startTime}+07:00`)).format('LLLL') : 'Chọn ngày' }</Text>
+            <Entypo name="arrow-right" size={24} style={{ width: '10%', }} color="black" />
+            <Text style={{ width: '45%', fontWeight: 'bold', fontSize: 16, }}>{ (endDate && endTime) ? moment(new Date(`${endDate}T${endTime}+07:00`)).format('LLLL') : 'Chọn ngày' }</Text>
+          </View>
+
+          <TouchableOpacity 
+            style={ styles.btnPickTime }
+            onPress={() => { setVisible(true); 
+          }}>
+            <Text style={{ color: 'white', }}>CHỌN THỜI GIAN CỤ THỂ</Text>
+          </TouchableOpacity>
+          <TimeRangePicker
+            title={'CHỌN THỜI GIAN'} 
+            visible={visible}
+            onClose={onClose}
+            onSelect={onSelect}
+          />
+        </View> : 
+        <SafeAreaView style={{ flex: 1, }}>
+          <ToastCustom 
+            isShowToast={isShowToast}
+            contentToast={content}
+            typeToast={type}
+          />
+          <View style={ styles.header }>
+            <View style={{ marginLeft: 10, justifyContent: 'center', alignItems: 'center', marginTop: 10, width: '3%' }}>
+              <FontAwesome5 name="chevron-left" size={20} color="white" onPress={() => navigation.goBack()} />
+            </View>
+            <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 10, width: '97%' }}>
+              <Text style={{ marginLeft: -30, color: 'white', fontSize: 20, fontWeight: 'bold', }}>Thuê xe</Text>
+            </View>
+          </View>
           <View style={styles.infoUserStyle}>
             {
               Img ?
@@ -203,216 +267,229 @@ const BorrowCar = ({ navigation, route }) => {
             }
 
           </View>
-
-          <View style={styles.infoOwnerCar}>
-              <Text style={ styles.titleInfoStyle }>Thông tin chủ xe</Text>
-              <View style={{ alignItems: 'center', }}>
-                  {
-                    infoOwner.avatar ?
-                    (
-                      <Image 
-                        source={{ uri: infoOwner.avatar.path }}
-                        style={{
-                          width: 60,
-                          height: 60,
-                          borderRadius: 30,
-                          resizeMode: 'cover',
-                          borderWidth: 1, 
-                          borderColor: '#D3D3D3',
-                        }}
-                      />
-                    ) : (
-                      <Image 
-                        source={require('../../resources/images/man-300x300.png')}
-                        style={{
-                          width: 60,
-                          height: 60,
-                          borderRadius: 30,
-                          resizeMode: 'cover',
-                          borderWidth: 1, 
-                          borderColor: '#D3D3D3',
-                        }}
-                      />
-                    )
-                  }
+          <ScrollView nestedScrollEnabled={true}>
+            <View style={{ height: 5, backgroundColor: '#DCDCDC' }}></View>
+            <View style={[ styles.infoOwnerCar, { flexDirection: 'row', justifyContent: 'space-between' }]}>
+              <View>
+                <View>
+                  <Text style={[ styles.titleInfoStyle, { marginBottom: 20, }]}>THÔNG TIN CHỦ XE</Text>
+                </View>
+                <View>
+                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', }}>
+                    <Text style={{ fontWeight: 'bold', fontSize: 12 }}>CHỦ XE:</Text>
+                    <Text style={{ marginLeft: 5, }}>
+                      { infoOwner.lastName + ' ' + infoOwner.firstName }
+                    </Text>
+                  </View>
+                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', }}>
+                    <Text style={{ fontWeight: 'bold', fontSize: 12 }}>SĐT:</Text>
+                    <Text style={{ marginLeft: 5, }}>
+                      { infoOwner.phone } 
+                    </Text>
+                  </View>
+                </View>
+              </View>
+              <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+              {
+                infoOwner.avatar ?
+                (
+                  <Image 
+                    source={{ uri: infoOwner.avatar.path }}
+                    style={{
+                      width: 120,
+                      height: 120,
+                      borderRadius: 60,
+                      resizeMode: 'cover',
+                      borderWidth: 1, 
+                      borderColor: '#D3D3D3',
+                    }}
+                  />
+                ) : (
+                  <Image 
+                    source={require('../../resources/images/man-300x300.png')}
+                    style={{
+                      width: 120,
+                      height: 120,
+                      borderRadius: 60,
+                      resizeMode: 'cover',
+                      borderWidth: 1, 
+                      borderColor: '#D3D3D3',
+                    }}
+                  />
+                )
+              }
+              </View>
+            </View>
+            <View style={{ height: 5, backgroundColor: '#DCDCDC' }}></View>
+            <View style={styles.infoDetailCar}>
+                <Text style={[ styles.titleInfoStyle, { marginTop: 15, marginBottom: 25 }]}>GIẤY TỜ THUÊ XE (BẢN GỐC)</Text>
                 
-              </View>
-              <Text style={{ marginLeft: 10, }}>
-                Chủ xe: { infoOwner.lastName + ' ' + infoOwner.firstName }
-              </Text>
-              <Text style={{ marginLeft: 10, }}>
-                Số điện thoại: { infoOwner.phone } 
-              </Text>
-          </View>
+                <View>
+                  { 
+                    listLicense.map(license => (
+                      <View style={{ flexDirection: 'row', marginBottom: 5, backgroundColor: '#DCDCDC', padding: 10, borderRadius: 4, }}>
+                        <MaterialCommunityIcons name="card-account-details-star-outline" style={{ marginRight: 15, }} size={24} color="black" />
+                        <Text style={{ fontSize: 16, color: 'black', fontStyle: 'italic' }}>
+                          {
+                            license.characteristicID.value
+                          }
+                        </Text>
+                      </View> 
+                    ))
+                  }
+                </View>
+            </View>
 
-          <View style={styles.infoDetailCar}>
-              <Text style={ styles.titleInfoStyle }>Giấy tờ thuê xe (Bắt buộc)</Text>
-              
-              <View style={{ margin: 25, flex: 1, }}>
-                { 
-                  listLicense.map(license => (
-                    <View style={{ marginBottom: 10, borderWidth: 1, borderColor: 'black', padding: 10, borderRadius: 20, }}>
-                      <Text style={{ fontSize: 18, color: 'black', fontStyle: 'italic' }}>
-                        {
-                          license.characteristicID.value
-                        }
-                      </Text>
-                    </View> 
-                  ))
+            <View style={{ width: contentWidth, marginLeft: 21, borderWidth: 0.5, borderColor: '#808080' }}></View>
+
+            <View style={[ styles.infoDetailCar, { marginTop: 15, }]}>
+                <Text style={ styles.titleInfoStyle }>TÀI SẢN THẾ CHẤP</Text>
+                <Text style={{ marginTop: 15, textAlign: 'justify', lineHeight: 20, }}>
+                {
+                  car?.infoCar?.mortage
                 }
-              </View>
-          </View>
+              </Text>
+            </View>
 
-          <View style={styles.infoDetailCar}>
-              <Text style={ styles.titleInfoStyle }>Tài sản thế chấp</Text>
-              <Text>
+            <View style={{ width: contentWidth, marginLeft: 21, borderWidth: 0.5, borderColor: '#808080' }}></View>
+
+            <View style={[ styles.infoDetailCar, { marginTop: 10, }]}>
+              <Text style={ styles.titleInfoStyle }>ĐIỀU KHOẢN</Text>
+              <Text style={{ marginTop: 15, textAlign: 'justify', lineHeight: 20, }}>
+                {
+                  car?.infoCar?.rules
+                }
+              </Text>
+            </View>
+            <View style={{ height: 5, backgroundColor: '#DCDCDC' }}></View>
+
+            <View style={[ styles.infoInputTimeBorrow, { marginTop: 15, }]}>
+              <Text style={ styles.titleInfoStyle }>THỜI GIAN</Text>
+              <Text style={[ styles.titleInfoStyle, { marginTop: 20, }]}>Ngày nhận xe</Text>
               {
-                car?.infoCar?.mortage
+                (
+                  <View style={{ borderRadius: 3, marginTop: 5, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: '#00FF00', padding: 10 }}>
+                    <FontAwesome5 name="clock" size={16} color="black" style={{ marginRight: 10, }} />
+                    <Text style={{ fontWeight: 'bold', fontSize: 16, }}>{ moment(new Date(`${startDate}T${startTime}+07:00`)).format('LLLL') }</Text>
+                  </View>
+                )
               }
-            </Text>
-          </View>
+            </View>
 
-          <View style={styles.infoDetailCar}>
-            <Text style={ styles.titleInfoStyle }>Điều khoản</Text>
-            <Text>
+            <View style={styles.infoInputTimeBorrow}>
+              <Text style={ styles.titleInfoStyle }>Ngày trả xe</Text>
               {
-                car?.infoCar?.rules
+                (
+                  <View style={{ borderRadius: 3, marginTop: 5, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: '#FF4500', padding: 10 }}>
+                    <FontAwesome5 name="clock" size={16} color="black" style={{ marginRight: 10, }} />
+                    <Text style={{ fontWeight: 'bold', fontSize: 16, }}>{ moment(new Date(`${endDate}T${endTime}+07:00`)).format('LLLL') }</Text>
+                  </View>
+                )
               }
-            </Text>
-          </View>
-
-          <View style={styles.infoInputTimeBorrow}>
-            <Text style={ styles.titleInfoStyle }>Ngày bắt đầu thuê xe</Text>
-            <View style={{ flexDirection: 'row', }}>
-              <View  style={{ width: '50%', }}>
-                <Button title="Chọn ngày bắt đầu" onPress={() => showModeStart('date')} />
-              </View>
-              <View  style={{ width: '50%', }} >
-                <Button title="Chọn giờ bắt đầu" onPress={() => showModeStart('time')}/>
+            </View>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+              <View></View>
+              <View>
+                <TouchableOpacity 
+                  style={{ flexDirection: 'row', alignItems: 'center', padding: 15, }}
+                  onPress={() => setIsShowCalendar(true)}
+                >
+                  <Text style={{ fontWeight: 'bold', color: COLORS.DEFAULT_BACKGROUND }}>THAY ĐỔI</Text>
+                  <MaterialIcons name="keyboard-arrow-right" size={24} color={COLORS.DEFAULT_TEXT} />
+                </TouchableOpacity>
               </View>
             </View>
-            {
-              textTimeStart &&
-              (
-                <View style={{ marginTop: 10, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: '#00FF00', padding: 10 }}>
-                  <FontAwesome5 name="clock" size={16} color="black" style={{ marginRight: 10, }} />
-                  <Text style={{ fontWeight: 'bold', fontSize: 16, }}>{ textTimeStart }</Text>
-                </View>
-              )
-            }
-            
-            {
-              showTimeStart && (
-                <DateTimePicker 
-                  testID='dateTimeStartPicker'
-                  value={startDate}
-                  mode={modeStart}
-                  is24Hour={true}
-                  display='default'
-                  onChange={onChangeTimeStart}
+            <View style={{ height: 5, backgroundColor: '#DCDCDC' }}></View>
+            <View style={[ styles.styleInputFrame, { marginTop: 15 }]}>
+                <Text style={ styles.titleInfoStyle }>ĐỊA CHỈ MUỐN NHẬN XE</Text>
+                <TextInput 
+                  style={[ styles.inputStyle, { marginTop: 10 }]}
+                  placeholder='Nhập địa chỉ nhận xe'
+                  onChangeText={(val) => setPickUpPlace(val)}
                 />
-              )
-            }
-          </View>
-
-          <View style={[ styles.infoInputTimeBorrow, { marginTop: 30 }, ]}>
-            <Text style={ styles.titleInfoStyle }>Ngày trả xe</Text>
-            <View style={{ flexDirection: 'row', }}>
-              <View  style={{ width: '50%', }}>
-                <Button title="Chọn ngày trả xe" color={'#FFD700'} onPress={() => showModeEnd('date')} />
-              </View>
-              <View  style={{ width: '50%', }} >
-                <Button title="Chọn giờ trả xe" color={'#FFD700'} onPress={() => showModeEnd('time')}/>
-              </View>
             </View>
-            {
-              textTimeEnd &&
-              (
-                <View style={{ marginTop: 10, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: '#00FF00', padding: 10 }}>
-                  <FontAwesome5 name="clock" size={16} color="black" style={{ marginRight: 10, }} />
-                  <Text style={{ fontWeight: 'bold', fontSize: 16, }}>{ textTimeEnd }</Text>
-                </View>
-              )
-            }
-            
-            {
-              showTimeEnd && (
-                <DateTimePicker 
-                  testID='dateTimeEndPicker'
-                  value={endDate}
-                  mode={modeEnd}
-                  is24Hour={true}
-                  display='default'
-                  onChange={onChangeTimeEnd}
+
+            <View style={{ width: contentWidth, marginLeft: 21, borderWidth: 0.5, borderColor: '#808080', marginBottom: 10, }}></View>
+
+            <View style={styles.styleInputFrame}>
+                <Text style={ styles.titleInfoStyle }>ĐỊA CHỈ TRẢ XE</Text>
+                <TextInput 
+                  style={[ styles.inputStyle, { marginTop: 10 }]}
+                  placeholder='Nhập địa chỉ trả xe'
+                  onChangeText={(val) => setDropOffPlace(val)}
                 />
-              )
-            }
-          </View>
+            </View>
 
-          <View style={styles.styleInputFrame}>
-              <Text style={ styles.titleInfoStyle }>Địa chỉ muốn nhận xe</Text>
-              <TextInput 
-                style={ styles.inputStyle }
-                placeholder='Nhập địa chỉ nhận xe'
-                onChangeText={(val) => setPickUpPlace(val)}
-              />
-          </View>
+            <View style={{ width: contentWidth, marginLeft: 21, borderWidth: 0.5, borderColor: '#808080', marginBottom: 10, }}></View>
 
-          <View style={styles.styleInputFrame}>
-              <Text style={ styles.titleInfoStyle }>Địa chỉ trả xe</Text>
-              <TextInput 
-                style={ styles.inputStyle }
-                placeholder='Nhập địa chỉ trả xe'
-                onChangeText={(val) => setDropOffPlace(val)}
-              />
-          </View>
+            <View style={styles.infoPriceCar}>
+                <Text style={ styles.titleInfoStyle }>ĐỊA ĐIỂM GIAO NHẬN XE</Text>
+                <View style={{ marginTop: 20, }}>
+                  <View style={{ flexDirection: 'row', }}>
+                    <AntDesign name="checkcircleo" size={18} color="green" style={{ marginRight: 10, }} />
+                    <Text style={{ marginBottom: 5, color: 'green' }}>
+                      Địa chỉ: { car?.infoCar?.wardText + ' ' + car?.infoCar?.districtText + ' ' + car?.infoCar?.provinceText } 
+                    </Text>
+                  </View>
+                  <View style={{ flexDirection: 'row', }}>
+                    <AntDesign name="checkcircleo" size={18} color="green" style={{ marginRight: 10, }} />
+                    <Text style={{ color: 'green' }}>
+                    Địa chỉ cụ thể: { car?.infoCar?.address } 
+                  </Text>
+                  </View>
+                </View>
+            </View>
 
-          <View style={styles.infoPriceCar}>
-              <Text style={ styles.titleInfoStyle }>Địa chỉ giao nhận xe</Text>
-              <Text style={{ marginLeft: 10, }}>
-                Địa chỉ: { car?.infoCar?.wardText + ' ' + car?.infoCar?.districtText + ' ' + car?.infoCar?.provinceText } 
-              </Text>
-              <Text style={{ marginLeft: 10, }}>
-                Địa chỉ cụ thể: { car?.infoCar?.address } 
-              </Text>
-          </View>
+            <View style={{ height: 5, backgroundColor: '#DCDCDC' }}></View>
 
-          <View style={styles.infoPriceCar}>
-              <Text style={ styles.titleInfoStyle }>Chi tiết giá</Text>
-              <Text style={{ marginLeft: 10, }}>
-                Đơn giá thuê: <NumberFormat
-                  value={ car?.infoCar?.price }
-                  displayType="text"
-                  thousandSeparator
-                  prefix="đ"
-                  renderText={(value) => <Text style={{ fontWeight: 'bold' }}>{value}/ngày</Text>}
-                /> 
-              </Text>
-              <Text style={{ marginLeft: 10, }}>
-                Tổng cộng: <NumberFormat
-                  value={ car?.infoCar?.price }
-                  displayType="text"
-                  thousandSeparator
-                  prefix="đ"
-                  renderText={(value) => <Text style={{ fontWeight: 'bold' }}>{value}/ngày</Text>}
-                /> 
-              </Text>
+            <View style={[ styles.infoPriceCar, { marginTop: 10, }]}>
+                <Text style={ styles.titleInfoStyle }>CHI TIẾT GIÁ</Text>
+                <View style={{ marginTop: 15, }}>
+                  <View style={{ marginBottom: 5, flexDirection: 'row', justifyContent: 'space-between' }}>
+                    <Text>Đơn giá thuê:</Text>
+                    <Text>
+                      <NumberFormat
+                        value={ car?.infoCar?.price }
+                        displayType="text"
+                        thousandSeparator
+                        prefix="đ"
+                        renderText={(value) => <Text style={{ fontWeight: 'bold' }}>{value}/ngày</Text>}
+                      /> 
+                    </Text>
+                  </View>
+                  <View style={{ width: contentWidth, borderWidth: 0.5, borderColor: '#808080', marginBottom: 15, marginTop: 20, }}></View>
+                  <View style={{ marginBottom: 5, flexDirection: 'row', justifyContent: 'space-between' }}>
+                    <Text>
+                      Tổng cộng:
+                    </Text>
+                    <Text>
+                      <NumberFormat
+                        value={ car?.infoCar?.price }
+                        displayType="text"
+                        thousandSeparator
+                        prefix="đ"
+                        renderText={(value) => <Text style={{ fontWeight: 'bold' }}>{value}/ngày</Text>}
+                      /> 
+                    </Text>
+                  </View>
+                </View>
+            </View>
+          </ScrollView>
+          <View style={styles.infoUserStyle}>
+            <TouchableOpacity activeOpacity={0.8} style={ styles.btnStyle } onPress={handleBorrowCar}>
+              {
+                isLoading ?
+                (
+                  <ActivityIndicator size="large" color="white" style={{ marginRight: 10, }} />
+                ) : (
+                  <></>
+                )
+              }
+              <Text style={{ color: 'white', fontSize: 15, fontWeight: 'bold', }}>Thuê xe</Text>
+            </TouchableOpacity>
           </View>
-        </ScrollView>
-        <View style={styles.infoUserStyle}>
-          <TouchableOpacity activeOpacity={0.8} style={ styles.btnStyle } onPress={handleBorrowCar}>
-            {
-              isLoading ?
-              (
-                <ActivityIndicator size="large" color="white" style={{ marginRight: 10, }} />
-              ) : (
-                <></>
-              )
-            }
-            <Text style={{ color: 'white', fontSize: 15, fontWeight: 'bold', }}>Thuê xe</Text>
-          </TouchableOpacity>
-        </View>
-      </SafeAreaView>
+        </SafeAreaView>
+      }
     </>
   );
 };
@@ -428,10 +505,29 @@ const styles = StyleSheet.create({
   header: {
     paddingVertical: 20,
     flexDirection: 'row',
-    marginLeft: 20, 
-    alignItems: 'center',
-    marginTop: 15,
+    justifyContent: 'space-between',
+    backgroundColor: COLORS.DEFAULT_BACKGROUND,
   }, 
+
+  styleShowTime: { 
+    height: 100,
+    flexDirection: 'row', 
+    justifyContent: 'space-between', 
+    alignItems: 'center', 
+    marginBottom: 30,
+    backgroundColor: '#90EE90',
+    padding: 15,
+  },
+
+  btnPickTime: { 
+    justifyContent: 'center', 
+    alignItems: 'center',
+    backgroundColor: '#2F4F4F',
+    width: contentWidth,
+    marginLeft: 21,
+    padding: 10,
+    borderRadius: 5,
+  },
 
   infoUserStyle: {
     width: contentWidth,
@@ -443,10 +539,6 @@ const styles = StyleSheet.create({
     width: contentWidth,
     height: 160,
     marginLeft: 21,
-    marginBottom: 20,
-    borderWidth: 1,
-    borderColor: '#FFFFF0',
-    elevation: 1,
     paddingVertical: 10,
   },
 
@@ -454,46 +546,31 @@ const styles = StyleSheet.create({
     width: contentWidth,
     marginLeft: 21,
     marginBottom: 20,
-    borderWidth: 1,
-    borderColor: '#FFFFF0',
-    elevation: 1,
   },
 
   infoPriceCar: {
     width: contentWidth,
-    height: 150,
     marginLeft: 21,
     marginBottom: 20,
-    borderWidth: 1,
-    borderColor: '#FFFFF0',
-    elevation: 1,
   },
 
   styleInputFrame: {
     width: contentWidth,
     height: 100,
     marginLeft: 21,
-    marginBottom: 20,
-    borderWidth: 1,
-    borderColor: '#FFFFF0',
-    elevation: 1,
   },
 
   infoInputTimeBorrow: {
     width: contentWidth,
-    height: 150,
     marginLeft: 21,
     marginBottom: 20,
-    borderWidth: 1,
-    borderColor: '#FFFFF0',
-    elevation: 1,
   },
 
   avatarStyle: {
     marginTop: 15,
-    height: 180,
+    height: 150,
     width: contentWidth - 50,
-    marginBottom: 30,
+    marginBottom: 15,
     resizeMode: 'contain',
     borderWidth: 1,
     borderColor: '#FFFFF0',
@@ -518,7 +595,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 6,
-    margin: 30,
+    margin: 15,
   },
 
   btnStyleUploadPhoto: {
@@ -530,9 +607,8 @@ const styles = StyleSheet.create({
   },
 
   titleInfoStyle: {
-    fontSize: 18,
+    fontSize: 14,
     fontWeight: 'bold',
-    margin: 5,
   },
 });
 

@@ -5,6 +5,7 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import NumberFormat from 'react-number-format';
 import { useSelector } from 'react-redux';
 import { Skeleton } from "@rneui/themed";
+import { Rating, AirbnbRating } from 'react-native-ratings';
 
 import { COLORS } from '../../constant/colors';
 import TextInputCustom from '../../components/TextInputCustom';
@@ -56,41 +57,48 @@ const ListCarUser = ({ navigation, route }) => {
           onPress={() => navigation.navigate('CarDetailScreen', car)}
         >
           <View style={ styles.card }>
-            <View style={{ alignItems: 'center', top: -15 }}>
+            <View style={{ alignItems: 'center', }}>
               {
                 car.infoCar.avatar ?
                 (
-                  <Image source={{ uri: (car.infoCar.avatar && car.infoCar.avatar.path) || '../../resources/images/mazda-6-2020-26469.png' }} style={{ height: 120, width: 120, borderRadius: 60, resizeMode: 'contain' }} />
+                  <Image source={{ uri: (car.infoCar.avatar && car.infoCar.avatar.path) || '../../resources/images/mazda-6-2020-26469.png' }} style={{ height: 140, width: 200, resizeMode: 'contain' }} />
                 ) : (
-                  <Image source={require('../../resources/images/mazda-6-2020-26469.png')} style={{ height: 120, width: 120, borderRadius: 60, resizeMode: 'contain' }} />
+                  <Image source={require('../../resources/images/mazda-6-2020-26469.png')} style={{ height: 140, width: 200, resizeMode: 'contain' }} />
                 )
               }
               
             </View>
-            <View style={{ marginHorizontal: 20, top: -30 }}>
-              <Text style={{ fontSize: 15, fontWeight: 'bold' }}>{ car.infoCar.name && car.infoCar.name.length > 16 ? car.infoCar.name.slice(0, 16) + '...' : car.infoCar.name }</Text>
-              <Text style={{ fontSize: 15, color: COLORS.DEFAULT_TEXT }}>
-                Hiệu: 
-                <Text style={{ fontWeight: 'bold', color: 'black' }}>
-                  { '  ' + car.infoCar.brandID.name }
-                </Text> 
-              </Text>
-            </View>
-            <View
-              style={{
-                marginTop: 10,
-                marginHorizontal: 20,
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-              }}
-            >
-              <NumberFormat
-                value={ car.infoCar.price }
-                displayType="text"
-                thousandSeparator
-                prefix="đ"
-                renderText={(value) => <Text style={{ fontWeight: 'bold' }}>{value}/ ngày</Text>}
-              />
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+              <View style={{ margin: 20 }}>
+                <Text style={{ fontSize: 15, }}>{ car.infoCar.name && car.infoCar.name.length > 16 ? car.infoCar.name.slice(0, 20) + '...' : car.infoCar.name }</Text>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 8, }}>
+                  <Rating
+                    type='custom'
+                    ratingColor='#FFD700'
+                    ratingBackgroundColor='#c8c7c8'
+                    ratingCount={5}
+                    imageSize={15}
+                    readonly
+                    style={{ marginRight: 10 }}
+                  />
+                  <Text style={{ fontSize: 13, }}>2 chuyến</Text>
+                </View>
+              </View>
+              <View
+                style={{
+                  marginHorizontal: 20,
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <NumberFormat
+                  value={ car.infoCar.price }
+                  displayType="text"
+                  thousandSeparator
+                  prefix="đ"
+                  renderText={(value) => <Text style={{ fontWeight: 'bold', fontSize: 16, color: '#008000' }}>{value}/ngày</Text>}
+                />
+              </View>
             </View>
           </View> 
         </TouchableOpacity>
@@ -107,7 +115,7 @@ const ListCarUser = ({ navigation, route }) => {
             <FontAwesome5 name="chevron-left" size={20} color="white" onPress={() => navigation.goBack()} />
           </View>
           <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 10, width: '97%' }}>
-            <Text style={{ color: 'white', fontSize: 20, fontWeight: 'bold', }}>Danh sách xe bạn đã đăng ký</Text>
+            <Text style={{ color: 'white', fontSize: 20, fontWeight: 'bold', }}>Danh sách xe cho thuê</Text>
           </View>
         </View>
         <View 
@@ -124,30 +132,12 @@ const ListCarUser = ({ navigation, route }) => {
               />
             </View>
         </View>
-        <View style={{ width: contentWidth, flexDirection: 'row', marginLeft: 10, marginBottom: 15, }}>
-          <TouchableOpacity activeOpacity={0.8} style={ styles.btnStyle } onPress={() => navigation.navigate("AddCarScreen")}>
-            <View>
-              <Text style={{ color: 'white', fontSize: 15, fontWeight: 'bold', }}>Đăng ký xe</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity 
-            activeOpacity={0.8} 
-            style={[ 
-              styles.btnStyle, 
-              { backgroundColor: COLORS.WHITE, marginLeft: '2%', borderWidth: 1, borderColor: COLORS.DEFAULT_BACKGROUND }
-            ]}
-            onPress={() => navigation.navigate('ListTripUserScreen')}>
-            <View>
-              <Text style={{ color: COLORS.DEFAULT_BACKGROUND, fontSize: 15, fontWeight: 'bold', }}>Chuyến của tôi</Text>
-            </View>
-          </TouchableOpacity>
-        </View>
         {
           listCarRegister.length ?
           (
             <FlatList 
               showsVerticalScrollIndicator={false}
-              numColumns={2}
+              // numColumns={1}
               onEndReachedThreshold={0.5}
               onEndReached={() => setPage(page + 1)}
               data={listCarRegister}
@@ -167,10 +157,11 @@ const ListCarUser = ({ navigation, route }) => {
             </> : <>
               <View style={{ flexDirection: 'row', }}>
                 <Skeleton animation="pulse" width={cardWidth} height={220} style={ styles.cardSkeleton } />
-                <Skeleton animation="pulse" width={cardWidth} height={220} style={ styles.cardSkeleton } />
               </View>
               <View style={{ flexDirection: 'row', }}>
                 <Skeleton animation="pulse" width={cardWidth} height={220} style={ styles.cardSkeleton } />
+              </View>
+              <View style={{ flexDirection: 'row', }}>
                 <Skeleton animation="pulse" width={cardWidth} height={220} style={ styles.cardSkeleton } />
               </View>
             </>
@@ -239,17 +230,17 @@ const styles = StyleSheet.create({
 
   card: {
     height: 220,
-    width: cardWidth,
+    width: contentWidth,
     marginHorizontal: 10,
     marginTop: 15, 
     borderRadius: 15, 
     elevation: 13,
-    backgroundColor: COLORS.WHITE
+    backgroundColor: COLORS.WHITE,
   },
 
   cardSkeleton: {
     height: 220,
-    width: cardWidth,
+    width: contentWidth,
     marginHorizontal: 10,
     marginTop: 15, 
     borderRadius: 15, 

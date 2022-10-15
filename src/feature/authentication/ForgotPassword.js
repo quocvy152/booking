@@ -73,9 +73,17 @@ const ForgotPassword = ({ navigation }) => {
     
   return (
     <>
-      <View style={ styles.header }>
+      {/* <View style={ styles.header }>
         <FontAwesome5 name="chevron-left" size={28} color="black" onPress={ navigation.goBack } />
         <Text style={{ fontSize: 20, fontWeight: 'bold', marginLeft: 10, }}>Đăng nhập</Text>
+      </View> */}
+      <View style={ styles.header }>
+        <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 10, width: '3%' }}>
+          <FontAwesome5 name="chevron-left" size={20} color="white" onPress={() => navigation.goBack()} />
+        </View>
+        <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 10, width: '97%' }}>
+          <Text style={{ color: 'white', fontSize: 20, fontWeight: 'bold', }}>Quên mật khẩu</Text>
+        </View>
       </View>
       <ToastCustom 
         isShowToast={isShowToast}
@@ -83,7 +91,7 @@ const ForgotPassword = ({ navigation }) => {
         typeToast={type}
       />
       <SafeAreaView style={ styles.container }>
-        <StatusBar style='light' />
+        <StatusBar style='dark' />
         <View style={ styles.content }>
             <Text style={ styles.hiText }>
             Quên mật khẩu

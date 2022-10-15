@@ -7,6 +7,7 @@ import NumberFormat from 'react-number-format';
 import { useSelector } from 'react-redux';
 import FastImage from 'react-native-fast-image';
 import { Skeleton } from "@rneui/themed";
+import { Rating, AirbnbRating } from 'react-native-ratings';
 
 import { COLORS } from '../../constant/colors';
 import TextInputCustom from '../../components/TextInputCustom';
@@ -109,9 +110,20 @@ const Home = ({ navigation }) => {
                 </Text> 
               </Text>
             </View>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginRight: 10, marginLeft: 10 }}>
+              <Rating
+                type='custom'
+                ratingColor='#FFD700'
+                ratingBackgroundColor='#c8c7c8'
+                ratingCount={5}
+                imageSize={15}
+                readonly
+              />
+              <Text style={{ fontSize: 13, }}>2 chuyến</Text>
+            </View>
             <View
               style={{
-                marginTop: 10,
+                marginTop: 5,
                 marginHorizontal: 20,
                 flexDirection: 'row',
                 justifyContent: 'space-between',
@@ -122,7 +134,7 @@ const Home = ({ navigation }) => {
                 displayType="text"
                 thousandSeparator
                 prefix="đ"
-                renderText={(value) => <Text style={{ fontWeight: 'bold' }}>{value}/ ngày</Text>}
+                renderText={(value) => <Text style={{ fontWeight: 'bold', color: '#008000' }}>{value}/ ngày</Text>}
               />
             </View>
           </View> 
@@ -187,6 +199,7 @@ const Home = ({ navigation }) => {
   return (
     <>
       <SafeAreaView style={{ flex: 1, }}>
+        <StatusBar style='dark' />
         <View style={ styles.header }>
           <View style={{ width: '80%', marginTop: 25, }}>
             <View style={{ flexDirection: 'row' }}>
@@ -263,12 +276,12 @@ const Home = ({ navigation }) => {
               </View>
             </> : <>
               <View style={{ flexDirection: 'row', }}>
-                <Skeleton animation="pulse" width={cardWidth} height={220} style={ styles.cardSkeleton } />
-                <Skeleton animation="pulse" width={cardWidth} height={220} style={ styles.cardSkeleton } />
+                <Skeleton animation="pulse" width={cardWidth} height={230} style={ styles.cardSkeleton } />
+                <Skeleton animation="pulse" width={cardWidth} height={230} style={ styles.cardSkeleton } />
               </View>
               <View style={{ flexDirection: 'row', }}>
-                <Skeleton animation="pulse" width={cardWidth} height={220} style={ styles.cardSkeleton } />
-                <Skeleton animation="pulse" width={cardWidth} height={220} style={ styles.cardSkeleton } />
+                <Skeleton animation="pulse" width={cardWidth} height={230} style={ styles.cardSkeleton } />
+                <Skeleton animation="pulse" width={cardWidth} height={230} style={ styles.cardSkeleton } />
               </View>
             </>
           )
@@ -336,7 +349,7 @@ const styles = StyleSheet.create({
   },
 
   card: {
-    height: 220,
+    height: 230,
     width: cardWidth,
     marginHorizontal: 10,
     marginTop: 15, 

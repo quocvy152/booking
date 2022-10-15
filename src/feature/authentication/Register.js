@@ -111,9 +111,17 @@ const Register = ({ navigation }) => {
   return (
     <View>
       <ToastCustom typeToast={typeToast} contentToast={contentToast} isShowToast={isShowToast} />
-      <View style={ styles.header }>
+      {/* <View style={ styles.header }>
         <FontAwesome5 name="chevron-left" size={28} color="black" onPress={ navigation.goBack } />
         <Text style={{ fontSize: 20, fontWeight: 'bold', marginLeft: 10, }}>Đăng nhập</Text>
+      </View> */}
+      <View style={ styles.header }>
+        <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 10, width: '3%' }}>
+          <FontAwesome5 name="chevron-left" size={20} color="white" onPress={() => navigation.goBack()} />
+        </View>
+        <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 10, width: '97%' }}>
+          <Text style={{ color: 'white', fontSize: 20, fontWeight: 'bold', }}>Đăng ký tài khoản</Text>
+        </View>
       </View>
       <ScrollView contentContainerStyle={ styles.container }>
         <StatusBar style='dark' />

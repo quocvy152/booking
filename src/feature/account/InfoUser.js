@@ -2,6 +2,7 @@ import React, { Component, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, Dimensions, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -98,14 +99,20 @@ const InfoUser = ({ navigation, route }) => {
                 <Text style={{ marginTop: 16, fontSize: 15 }}>Xe của tôi</Text>
               </View>
             </TouchableOpacity>
+            <TouchableOpacity activeOpacity={0.6} onPress={() => navigation.navigate('ListCarLoanScreen')}>
+              <View style={ styles.tabStyle }>
+                <Ionicons name="calendar-outline" size={24} color="black" />
+                <Text style={{ marginTop: 16, fontSize: 15 }}>Xe cho thuê</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+          <View style={{ flexDirection: 'row', }}>
             <TouchableOpacity activeOpacity={0.6} onPress={() => navigation.navigate('ListCarWaitApproveScreen')}>
               <View style={ styles.tabStyle }>
                 <FontAwesome5 name="list-ul" size={24} color="#808000" />
                 <Text style={{ marginTop: 16, fontSize: 15 }}>Yêu cầu thuê xe</Text>
               </View>
             </TouchableOpacity>
-          </View>
-          <View style={{ flexDirection: 'row', }}>
             <TouchableOpacity activeOpacity={0.6} onPress={() => navigation.navigate('ListCarWaitPayedScreen')}>
               <View style={ styles.tabStyle }>
                 <FontAwesome5 name="id-badge" size={24} color="#3E89A8" />
