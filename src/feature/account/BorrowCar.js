@@ -269,7 +269,7 @@ const BorrowCar = ({ navigation, route }) => {
           </View>
           <ScrollView nestedScrollEnabled={true}>
             <View style={{ height: 5, backgroundColor: '#DCDCDC' }}></View>
-            <View style={[ styles.infoOwnerCar, { flexDirection: 'row', justifyContent: 'space-between' }]}>
+            <View style={[ styles.infoOwnerCar, { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }]}>
               <View>
                 <View>
                   <Text style={[ styles.titleInfoStyle, { marginBottom: 20, }]}>THÔNG TIN CHỦ XE</Text>
@@ -289,7 +289,7 @@ const BorrowCar = ({ navigation, route }) => {
                   </View>
                 </View>
               </View>
-              <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+              <View>
               {
                 infoOwner.avatar ?
                 (

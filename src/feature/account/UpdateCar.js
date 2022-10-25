@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, SafeAreaView, Text, View, TouchableOpacity, Image, ScrollView, FlatList, Dimensions, TextInput, Keyboard, Button, Alert, ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { FontAwesome5 } from '@expo/vector-icons';
+import { FontAwesome5, FontAwesome } from '@expo/vector-icons';
 import NumberFormat from 'react-number-format';
 import MultiSelect from 'react-native-multiple-select';
 import { useSelector } from 'react-redux';
@@ -12,13 +12,22 @@ import { xorBy } from 'lodash';
 const { width } = Dimensions.get('screen');
 const contentWidth = width - 42;
 // import * as ImagePicker from 'react-native-image-picker';
-import * as ImagePicker from 'expo-image-picker';
+import * as ImagePickerSingle from 'expo-image-picker';
+import { Ionicons } from '@expo/vector-icons';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { AssetsSelector } from 'expo-images-picker'
+import { MediaType } from 'expo-media-library';
 
 import ToastCustom from '../../components/ToastCustom';
 import { COLORS } from '../../constant/colors';
 import { PARAMS_CONSTANT } from '../../constant/param';
-import { getInfoAboutCar, getListBrand, getListProvince, getListDistrict, getListWard, createCar, updateCar } from '../../api/general';
+import { getInfoAboutCar, getListBrand, getListProvince, getListDistrict, getListWard, createCar, updateCar, uploadImgBB } from '../../api/general';
 import { checkValidDataCar, returnCharacteristicID } from '../../utils/utils';
+
+const ForceInset = {
+  top: 'never',
+  bottom: 'never',
+};
 
 const UpdateCar = ({ navigation, route }) => {
   const car = route.params;
@@ -28,8 +37,11 @@ const UpdateCar = ({ navigation, route }) => {
   const infoFuelConsumption = car.details.find(detail => detail.characteristicID.characteristicTypeID.code === 'MUCTIEUTHUNHIENLIEU');
   // let listFeatureSelected = car.details.filter(detail => detail.characteristicID.characteristicTypeID.code === 'TINHNANG').map(detail => ({ id: detail.characteristicID._id, item: detail.characteristicID.value }));
   // let listLicenseSelected = car.details.filter(detail => detail.characteristicID.characteristicTypeID.code === 'GIAYTOTHUEXE').map(detail => ({ id: detail.characteristicID._id, item: detail.characteristicID.value }));
-  const [Img, setImg] = useState(car.infoCar.avatar && car.infoCar.avatar.path);
-  const [InfoImg, setInfoImg] = useState({});
+  const [listGallery, setListGallery] = useState(car?.infoCar?.gallery);
+  // To render images right away
+  const [listGalleryClient, setListGalleryClient] = useState(car?.infoCar?.gallery.map(image => image.path));
+  const [Img, setImg] = useState({ ...car?.infoCar?.avatar, uri: car?.infoCar?.avatar?.path });
+  const [ImgUpdate, setImgUpdate] = useState(null);
   const [Name, setName] = useState(car.infoCar.name);
   const [brand, setBrand] = useState({ id: car.infoCar.brandID._id, item: car.infoCar.brandID.name });
   const [listBrand, setListBrand] = useState([]);
@@ -56,6 +68,8 @@ const UpdateCar = ({ navigation, route }) => {
   const [listFeature, setListFeature] = useState([]);
   const [selectedLicense, setSelectedLicense] = useState([]);
   const [listLicense, setListLicense] = useState([]);
+  const [isShowUploadMultiple, setIsShowUploadMultiple] = useState(false);
+  const [loadComponent, setLoadComponent] = useState(false);
 
   // START TOASTCUSTOM MESSAGE
   const [isShowToast, setIsShowToast] = useState(false);
@@ -281,6 +295,37 @@ const UpdateCar = ({ navigation, route }) => {
       ]
     );
 
+  const handleUploadMultipleImg = async (listGallery) => {
+    setIsShowUploadMultiple(false);
+    let listGalleryFilter = listGallery.map(image => ({
+      name: image.uri,
+      uri: image.uri,
+      type: 'image/*',
+    }));
+    
+    let listGalleryPromise = listGalleryFilter.map(image => (
+      uploadImgBB({ file: image })
+    ));
+    
+    let listGalleryResultPromiseAll = await Promise.all(listGalleryPromise);
+
+    let listGalleryImageResult = listGalleryResultPromiseAll.map(resultUploadImage => ({ result: resultUploadImage.data }));
+    let listGalleryRes = listGalleryImageResult.map(image => {
+      let { error, data } = image.result;
+      return ({
+        uri: data.name,
+        name: data.name,
+        path: data.name,
+        size: data.size,
+      })
+    });
+
+    setListGallery(listGalleryRes);
+
+    let listGalleryClientRes = listGallery.map(image => image.uri);
+    setListGalleryClient(listGalleryClientRes);
+  }
+
   const handleUpdateCar = async () => {
     Keyboard.dismiss();
     showLoading();
@@ -291,17 +336,11 @@ const UpdateCar = ({ navigation, route }) => {
       wardID: ward.id, districtID: district.id, provinceID: province.id, 
       Seats: seats.id, Fuel: fuel.id, FuelConsumption: fuelConsumption.id, 
       Tranmission: tranmission.id, SelectedFeature: selectedFeature, 
-      SelectedLicense: selectedLicense, file: {
-        uri: Img,
-        type: 'image/jpeg',
-        name: Img,
-      }
+      SelectedLicense: selectedLicense, avatar: Img, listGallery
     };
 
     let { error, message } = checkValidDataCar(bodyData);
-    console.log({
-      error, message
-    })
+
     if(error) {
       hideLoading();
       showToast({ content: message, type: 'warning' });
@@ -323,11 +362,7 @@ const UpdateCar = ({ navigation, route }) => {
         address: Address_booking, wardID: ward.id, wardText: ward.item, districtID: district.id,
         districtText: district.item, provinceID: province.id, provinceText: province.item, 
         listCharacteristicID: returnCharacteristicID(listCharacteristicID),
-        file: {
-          uri: Img,
-          type: 'image/*',
-          name: Img,
-        },
+        avatar: Img, listGallery
       };
 
       // nối các đặc điểm tính năng thành chuỗi server cần
@@ -356,8 +391,8 @@ const UpdateCar = ({ navigation, route }) => {
       quality: 1,
     };
 
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
+    let result = await ImagePickerSingle.launchImageLibraryAsync({
+      mediaTypes: ImagePickerSingle.MediaTypeOptions.All,
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
@@ -365,11 +400,22 @@ const UpdateCar = ({ navigation, route }) => {
 
     let { cancelled, height, type, width, uri } = result;
     if(!cancelled) {
-      setImg(uri);
-      setInfoImg({
-        uri: Img,
-        type,
-        name: Img,
+      // setImg(uri);
+      let resultUploadAvatar = await uploadImgBB({
+        file: {
+          uri: uri,
+          type: 'image/*',
+          name: uri,
+        }
+      })
+      let { error, data } = resultUploadAvatar.data;
+      setImg({
+        ...data,
+        uri: uri
+      });
+      setImgUpdate({
+        ...data,
+        uri: uri
       });
     }
   };
@@ -384,6 +430,128 @@ const UpdateCar = ({ navigation, route }) => {
     setIsDisabled(false);
   }
 
+  const widgetErrors = useMemo(
+    () => ({
+      errorTextColor: 'black',
+      errorMessages: {
+        hasErrorWithPermissions: 'Please Allow media gallery permissions.',
+        hasErrorWithLoading: 'There was an error while loading images.',
+        hasErrorWithResizing: 'There was an error while loading images.',
+        hasNoAssets: 'No images found.',
+      },
+    }),
+    []
+  );
+
+  const widgetSettings = useMemo(
+    () => ({
+      getImageMetaData: false, // true might perform slower results but gives meta data and absolute path for ios users
+      initialLoad: 100,
+      assetsType: [MediaType.photo, MediaType.video],
+      minSelection: 1,
+      maxSelection: 4,
+      portraitCols: 4,
+      landscapeCols: 4,
+    }),
+    []
+  );
+
+  const _textStyle = {
+    color: 'white',
+  };
+
+  const _buttonStyle = {
+    backgroundColor: 'black',
+    borderRadius: 5,
+  };
+
+  const widgetNavigator = useMemo(
+    () => ({
+      Texts: {
+        finish: 'Kết thúc',
+        back: 'Quay lại',
+        selected: 'Đã chọn',
+      },
+      midTextColor: 'green',
+      minSelection: 1,
+      buttonTextStyle: _textStyle,
+      buttonStyle: _buttonStyle,
+      onBack: () => { setIsShowUploadMultiple(false) },
+      onSuccess: async (listGallery) => { 
+        // console.log({
+        //   listGallery
+        // })
+        handleUploadMultipleImg(listGallery);
+      },
+    }),
+    []
+  );
+
+  const widgetStyles = useMemo(
+    () => ({
+      margin: 2,
+      bgColor: 'white',
+      spinnerColor: 'blue',
+      widgetWidth: 99,
+      videoIcon: {
+        Component: Ionicons,
+        iconName: 'ios-videocam',
+        color: 'tomato',
+        size: 20,
+      },
+      selectedIcon: {
+        Component: Ionicons,
+        iconName: 'ios-checkmark-circle-outline',
+        color: 'white',
+        bg: '#0eb14970',
+        size: 26,
+      },
+    }),
+    []
+  );
+
+  const ListGalleryUpload = ({ listGalleryData }) => {
+    return (
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+      >
+        {
+          listGalleryData.map((image, index) => (
+            <View style={ styles.imageStyleUploadPhoto }>
+              <TouchableOpacity
+                style={{ marginLeft: 75, marginBottom: -20, zIndex: 9999, backgroundColor: 'white', height: 20, width: 20, borderRadius: 10, alignItems: 'center', justifyContent: 'center' }}
+                onPress={() => {
+                  listGallery.splice(index, 1);
+                  listGalleryClient.splice(index, 1);
+                  setListGallery(listGallery);
+                  setListGalleryClient(listGalleryClient);
+                  setLoadComponent(!loadComponent);
+                }}
+              >
+                <FontAwesome name="remove" size={20} color="red" />
+              </TouchableOpacity>
+              <Image key={index} source={{ uri: image }} style={{ width: 90, height: 90, }} />
+            </View>
+          ))
+        }
+        {
+          // số hình ảnh tối đa
+          listGallery.length == 4 ?
+          <></> :
+          <>
+            <TouchableOpacity
+              style={ styles.btnUploadMultipleImage }
+              onPress={() => { setIsShowUploadMultiple(true) }}
+            >
+              <FontAwesome5 name="plus-circle" size={35} color="grey"/>
+            </TouchableOpacity>
+          </>
+        }
+      </ScrollView>
+    )
+  }
+
   return (
     <>
       <SafeAreaView style={{ flex: 1, }}>
@@ -393,303 +561,346 @@ const UpdateCar = ({ navigation, route }) => {
           typeToast={type}
         />
         <View style={ styles.header }>
-          <FontAwesome5 name="chevron-left" size={28} color="black" onPress={() => navigation.goBack()} />
-          <Text style={{ fontSize: 20, fontWeight: 'bold', marginLeft: 10 }}>Xe Của Bạn</Text>
+          <View style={{ marginLeft: 10, justifyContent: 'center', alignItems: 'center', marginTop: 10, width: '3%' }}>
+            <FontAwesome5 name="chevron-left" size={20} color="white" onPress={() => navigation.goBack()} />
+          </View>
+          <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 10, width: '97%' }}>
+            <Text style={{ color: 'white', fontSize: 20, fontWeight: 'bold', marginLeft: -20 }}>Cập nhật thông tin xe</Text>
+          </View>
         </View>
-        <ScrollView nestedScrollEnabled={true}>
-          <View style={styles.infoUserStyle}>
-            {
-              Img ?
-              (<Image source={{ uri: Img }} style={ styles.avatarStyle } />) :
-              (<Image source={require('../../resources/images/mazda-6-2020-26469.png')} style={ styles.avatarStyle } />)
-            }
+        {
+          isShowUploadMultiple ? 
+          <SafeAreaProvider>
+            <SafeAreaView forceInset={ForceInset} style={styles.container}>
+              {/* <StatusBarPlaceHolder /> */}
+              <View style={styles.container}>
+                <AssetsSelector
+                  Settings={widgetSettings}
+                  Errors={widgetErrors}
+                  Styles={widgetStyles}
+                  Navigator={widgetNavigator}
+                  // Resize={widgetResize} know how to use first , perform slower results.
+                />
+              </View>
+            </SafeAreaView>
+          </SafeAreaProvider> : 
+          <>
+            <ScrollView nestedScrollEnabled={true}>
+              <View style={styles.infoUserStyle}>
+                {
+                  Img ?
+                  (<Image source={{ uri: Img.uri }} style={ styles.avatarStyle } />) :
+                  (<Image source={require('../../resources/images/mazda-6-2020-26469.png')} style={ styles.avatarStyle } />)
+                }
 
-            <View style={{ width: '100%', marginBottom: 30 }}>
-                <TouchableOpacity 
-                  activeOpacity={0.8} 
-                  style={[ 
-                    styles.btnStyleUploadPhoto, 
-                    { backgroundColor: COLORS.WHITE, borderWidth: 1, borderColor: COLORS.DEFAULT_BACKGROUND }
-                  ]}
-                  onPress={handleChoosePhoto}>
-                  <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', }}>
-                    <FontAwesome5 name="upload" size={18} color={ COLORS.DEFAULT_BACKGROUND } style={{ marginRight: 5, }} /> 
-                    <Text style={{ color: COLORS.DEFAULT_BACKGROUND, fontSize: 15, fontWeight: 'bold', }}>
-                      Tải ảnh xe của bạn
-                    </Text>
+                <View style={{ width: '100%', marginBottom: 30 }}>
+                    <TouchableOpacity 
+                      activeOpacity={0.8} 
+                      style={[ 
+                        styles.btnStyleUploadPhoto, 
+                        { backgroundColor: COLORS.WHITE, borderWidth: 1, borderColor: COLORS.DEFAULT_BACKGROUND }
+                      ]}
+                      onPress={handleChoosePhoto}>
+                      <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', }}>
+                        <FontAwesome5 name="upload" size={18} color={ COLORS.DEFAULT_BACKGROUND } style={{ marginRight: 5, }} /> 
+                        <Text style={{ color: COLORS.DEFAULT_BACKGROUND, fontSize: 15, fontWeight: 'bold', }}>
+                          Tải ảnh xe của bạn
+                        </Text>
+                      </View>
+                  </TouchableOpacity>
+                </View>
+
+                {/* Upload Gallery Image Car */}
+                <View style={{ width: '100%', marginBottom: 20, }}>
+                  <Text style={{ fontSize: 18, marginBottom: 10, }}>Chọn bộ sưu tập hình ảnh</Text>
+                  {
+                    listGalleryClient.length ?
+                    <>
+                      <ListGalleryUpload listGalleryData={listGalleryClient} />
+                    </> :
+                    <>
+                      <TouchableOpacity
+                        style={ styles.btnUploadMultipleImage }
+                        onPress={() => { setIsShowUploadMultiple(true) }}
+                      >
+                        <FontAwesome5 name="plus-circle" size={35} color="grey"/>
+                      </TouchableOpacity>
+                    </>
+                  }
+                </View>
+
+                <View style={{ width: '100%', }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', }}>
+                    <FontAwesome5 name="car" size={18} color="black" />
+                    <Text style={{ fontSize: 18, marginLeft: 10, }}>Tên xe</Text>
                   </View>
+                  <TextInput 
+                    style={ styles.inputStyle }
+                    placeholder='Nhập tên xe'
+                    onChangeText={(val) => setName(val)}
+                    value={Name}
+                  />
+                </View>
+
+                <View style={{ width: '100%', margin: 25, }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', }}>
+                    <FontAwesome5 name="battle-net" size={18} color="black" />
+                    <Text style={{ fontSize: 18, marginLeft: 10, }}>Thương hiệu</Text>
+                  </View>
+                  <SelectBox
+                    label="Chọn thương hiệu"
+                    options={LIST_BRAND}
+                    value={brand}
+                    onChange={onChangeBrand()}
+                    hideInputFilter={false}
+                  />
+                </View>
+
+                <View style={{ width: '100%', margin: 25, }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', }}>
+                    <FontAwesome5 name="chair" size={18} color="black" />
+                    <Text style={{ fontSize: 18, marginLeft: 10, }}>Số ghế</Text>
+                  </View>
+                  <SelectBox
+                    label="Chọn số ghế"
+                    options={LIST_SEAT}
+                    value={seats}
+                    onChange={onChangeSeats()}
+                    hideInputFilter={false}
+                  />
+                </View>
+
+                <View style={{ width: '100%', margin: 25, }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', }}>
+                    <FontAwesome5 name="cogs" size={18} color="black" />
+                    <Text style={{ fontSize: 18, marginLeft: 10, }}>Truyền động</Text>
+                  </View>
+                  <SelectBox
+                    label="Chọn truyền động"
+                    options={LIST_TRANMISSION}
+                    value={tranmission}
+                    onChange={onChangeTransmission()}
+                    hideInputFilter={false}
+                  />
+                </View>
+
+                <View style={{ width: '100%', margin: 25, }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', }}>
+                    <FontAwesome5 name="charging-station" size={24} color="black" />
+                    <Text style={{ fontSize: 18, marginLeft: 10, }}>Nhiên liệu</Text>
+                  </View>
+                  <SelectBox
+                    label="Chọn nhiên liệu"
+                    options={LIST_FUEL}
+                    value={fuel}
+                    onChange={onChangeFuel()}
+                    hideInputFilter={false}
+                  />
+                </View>
+
+                <View style={{ width: '100%', margin: 25, }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', }}>
+                    <FontAwesome5 name="battery-half" size={18} color="black" />
+                    <Text style={{ fontSize: 18, marginLeft: 10, }}>Mức tiêu thụ nhiên liệu</Text>
+                  </View>
+                  <SelectBox
+                    label="Chọn mức tiêu thụ nhiên liệu"
+                    options={LIST_FUEL_CONSUMPTION}
+                    value={fuelConsumption}
+                    onChange={onChangeFuelConsumption()}
+                    hideInputFilter={false}
+                  />
+                </View>
+
+                <View style={{ width: '100%', }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', }}>
+                    <FontAwesome5 name="list-alt" size={18} color="black" />
+                    <Text style={{ fontSize: 18, marginLeft: 10, }}>Mô tả</Text>
+                  </View>
+                  <TextInput
+                    style={ styles.inputStyle }
+                    multiline={true}
+                    numberOfLines={10}
+                    placeholder='Nhập mô tả'
+                    onChangeText={(val) => setDescription(val)}
+                    value={Description}
+                  />
+                </View>
+
+                <View style={{ width: '100%', margin: 25, }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', }}>
+                    <FontAwesome5 name="squarespace" size={18} color="black" />
+                    <Text style={{ fontSize: 18, marginLeft: 10, }}>Tính năng</Text>
+                  </View>
+                  <SelectBox
+                    label="Chọn những tính năng xe của bạn"
+                    options={LIST_FEATURE}
+                    selectedValues={selectedFeature}
+                    onMultiSelect={onMultiChangeFeature()}
+                    onTapClose={onMultiChangeFeature()}
+                    isMulti
+                  />
+                </View>
+
+                <View style={{ width: '100%', margin: 25, }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', }}>
+                    <FontAwesome5 name="address-card" size={24} color="black" />
+                    <Text style={{ fontSize: 18, marginLeft: 10, }}>Giấy tờ thuê xe</Text>
+                  </View>
+                  <SelectBox
+                    label="Chọn giấy tờ để thuê xe của bạn"
+                    options={LIST_LICENSE}
+                    selectedValues={selectedLicense}
+                    onMultiSelect={onMultiChangeLicens()}
+                    onTapClose={onMultiChangeLicens()}
+                    isMulti
+                  />
+                </View>
+
+                <View style={{ width: '100%', margin: 15, }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', }}>
+                    <FontAwesome5 name="money-bill-alt" size={18} color="black" />
+                    <Text style={{ fontSize: 18, marginLeft: 10, }}>Giá cho thuê (Tính theo ngày)</Text>
+                  </View>
+                  <TextInput
+                    style={ styles.inputStyle }
+                    multiline={true}
+                    numberOfLines={10}
+                    placeholder='Nhập giá cho thuê xe'
+                    onChangeText={(val) => setPrice(val)}
+                    value={JSON.stringify(Price)}
+                  />
+                </View>
+
+                {
+                  province || listProvince.length ?
+                  (
+                    <View style={{ width: '100%', margin: 25, }}>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', }}>
+                        <FontAwesome5 name="hotel" size={18} color="black" />
+                        <Text style={{ fontSize: 18, marginLeft: 10, }}>Chọn tỉnh</Text>
+                      </View>
+                      <SelectBox
+                        label="Chọn tỉnh"
+                        options={listProvince}
+                        value={province}
+                        onChange={onChangeProvince()}
+                        hideInputFilter={false}
+                      />
+                    </View>
+                  ) : (
+                    <></>
+                  )
+                }
+                
+                {
+                  district || listDistrict.length ? 
+                  (
+                    <View style={{ width: '100%', margin: 25, }}>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', }}>
+                        <FontAwesome5 name="warehouse" size={18} color="black" />
+                        <Text style={{ fontSize: 18, marginLeft: 10, }}>Chọn quận/huyện</Text>
+                      </View>
+                      <SelectBox
+                        label="Chọn quận/huyện"
+                        options={listDistrict}
+                        value={district}
+                        onChange={onChangeDistrict()}
+                        hideInputFilter={false}
+                      />
+                    </View>
+                  ) : 
+                  (
+                    <></>
+                  )
+                }
+                
+                {
+                  ward || listWard.length ?
+                  (
+                    <View style={{ width: '100%', margin: 25, }}>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', }}>
+                        <FontAwesome5 name="house-user" size={18} color="black" />
+                        <Text style={{ fontSize: 18, marginLeft: 10, }}>Chọn xã/phường</Text>
+                      </View>
+                      <SelectBox
+                        label="Chọn xã/phường"
+                        options={listWard}
+                        value={ward}
+                        onChange={onChangeWard()}
+                        hideInputFilter={false}
+                      />
+                    </View>
+                  ) : 
+                  (
+                    <></>
+                  )
+                }
+
+                <View style={{ width: '100%', margin: 15, }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', }}>
+                    <FontAwesome5 name="map-marked-alt" size={18} color="black" />
+                    <Text style={{ fontSize: 18, marginLeft: 10, }}>Địa chỉ lấy xe</Text>
+                  </View>
+                  <TextInput
+                    style={ styles.inputStyle }
+                    multiline={true}
+                    numberOfLines={10}
+                    placeholder='Nhập địa chỉ lấy xe'
+                    onChangeText={(val) => setAddress_booking(val)}
+                    value={Address_booking}  
+                  />
+                </View>
+
+                <View style={{ width: '100%', margin: 15, }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', }}>
+                    <FontAwesome5 name="money-check-alt" size={18} color="black" />
+                    <Text style={{ fontSize: 18, marginLeft: 10, }}>Tài sản thế chấp</Text>
+                  </View>
+                  <TextInput
+                    style={ styles.inputStyle }
+                    multiline={true}
+                    numberOfLines={10}
+                    placeholder='Nhập tài sản thế chấp'
+                    onChangeText={(val) => setMortgage(val)}
+                    value={mortgage}  
+                  />
+                </View>
+
+                <View style={{ width: '100%', margin: 15, }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', }}>
+                    <FontAwesome5 name="digital-tachograph" size={18} color="black" />
+                    <Text style={{ fontSize: 18, marginLeft: 10, }}>Điều khoản</Text>
+                  </View>
+                  <TextInput
+                    style={ styles.inputStyle }
+                    multiline={true}
+                    numberOfLines={10}
+                    placeholder='Nhập điều khoản'
+                    onChangeText={(val) => setRules(val)}
+                    value={rules}
+                  />
+                </View>
+              </View>
+            </ScrollView>
+            <View style={styles.infoUserStyle}>
+              <TouchableOpacity disabled={isDisabled} activeOpacity={0.8} style={ styles.btnStyle } onPress={alert}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', }}>
+                  {
+                    isLoading ?
+                    (
+                      <ActivityIndicator size="large" color="white" style={{ marginRight: 10, }} />
+                    ) : (
+                      <></>
+                    )
+                  }
+                  <Text style={{ color: 'white', fontSize: 15, fontWeight: 'bold', }}>Cập nhật thông tin xe</Text>
+                </View>
               </TouchableOpacity>
             </View>
-
-            <View style={{ width: '100%', }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', }}>
-                <FontAwesome5 name="car" size={18} color="black" />
-                <Text style={{ fontSize: 18, marginLeft: 10, }}>Tên xe</Text>
-              </View>
-              <TextInput 
-                style={ styles.inputStyle }
-                placeholder='Nhập tên xe'
-                onChangeText={(val) => setName(val)}
-                value={Name}
-              />
-            </View>
-
-            <View style={{ width: '100%', margin: 25, }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', }}>
-                <FontAwesome5 name="battle-net" size={18} color="black" />
-                <Text style={{ fontSize: 18, marginLeft: 10, }}>Thương hiệu</Text>
-              </View>
-              <SelectBox
-                label="Chọn thương hiệu"
-                options={LIST_BRAND}
-                value={brand}
-                onChange={onChangeBrand()}
-                hideInputFilter={false}
-              />
-            </View>
-
-            <View style={{ width: '100%', margin: 25, }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', }}>
-                <FontAwesome5 name="chair" size={18} color="black" />
-                <Text style={{ fontSize: 18, marginLeft: 10, }}>Số ghế</Text>
-              </View>
-              <SelectBox
-                label="Chọn số ghế"
-                options={LIST_SEAT}
-                value={seats}
-                onChange={onChangeSeats()}
-                hideInputFilter={false}
-              />
-            </View>
-
-            <View style={{ width: '100%', margin: 25, }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', }}>
-                <FontAwesome5 name="cogs" size={18} color="black" />
-                <Text style={{ fontSize: 18, marginLeft: 10, }}>Truyền động</Text>
-              </View>
-              <SelectBox
-                label="Chọn truyền động"
-                options={LIST_TRANMISSION}
-                value={tranmission}
-                onChange={onChangeTransmission()}
-                hideInputFilter={false}
-              />
-            </View>
-
-            <View style={{ width: '100%', margin: 25, }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', }}>
-                <FontAwesome5 name="charging-station" size={24} color="black" />
-                <Text style={{ fontSize: 18, marginLeft: 10, }}>Nhiên liệu</Text>
-              </View>
-              <SelectBox
-                label="Chọn nhiên liệu"
-                options={LIST_FUEL}
-                value={fuel}
-                onChange={onChangeFuel()}
-                hideInputFilter={false}
-              />
-            </View>
-
-            <View style={{ width: '100%', margin: 25, }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', }}>
-                <FontAwesome5 name="battery-half" size={18} color="black" />
-                <Text style={{ fontSize: 18, marginLeft: 10, }}>Mức tiêu thụ nhiên liệu</Text>
-              </View>
-              <SelectBox
-                label="Chọn mức tiêu thụ nhiên liệu"
-                options={LIST_FUEL_CONSUMPTION}
-                value={fuelConsumption}
-                onChange={onChangeFuelConsumption()}
-                hideInputFilter={false}
-              />
-            </View>
-
-            <View style={{ width: '100%', }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', }}>
-                <FontAwesome5 name="list-alt" size={18} color="black" />
-                <Text style={{ fontSize: 18, marginLeft: 10, }}>Mô tả</Text>
-              </View>
-              <TextInput
-                style={ styles.inputStyle }
-                multiline={true}
-                numberOfLines={10}
-                placeholder='Nhập mô tả'
-                onChangeText={(val) => setDescription(val)}
-                value={Description}
-              />
-            </View>
-
-            <View style={{ width: '100%', margin: 25, }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', }}>
-                <FontAwesome5 name="squarespace" size={18} color="black" />
-                <Text style={{ fontSize: 18, marginLeft: 10, }}>Tính năng</Text>
-              </View>
-              <SelectBox
-                label="Chọn những tính năng xe của bạn"
-                options={LIST_FEATURE}
-                selectedValues={selectedFeature}
-                onMultiSelect={onMultiChangeFeature()}
-                onTapClose={onMultiChangeFeature()}
-                isMulti
-              />
-            </View>
-
-            <View style={{ width: '100%', margin: 25, }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', }}>
-                <FontAwesome5 name="address-card" size={24} color="black" />
-                <Text style={{ fontSize: 18, marginLeft: 10, }}>Giấy tờ thuê xe</Text>
-              </View>
-              <SelectBox
-                label="Chọn giấy tờ để thuê xe của bạn"
-                options={LIST_LICENSE}
-                selectedValues={selectedLicense}
-                onMultiSelect={onMultiChangeLicens()}
-                onTapClose={onMultiChangeLicens()}
-                isMulti
-              />
-            </View>
-
-            <View style={{ width: '100%', margin: 15, }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', }}>
-                <FontAwesome5 name="money-bill-alt" size={18} color="black" />
-                <Text style={{ fontSize: 18, marginLeft: 10, }}>Giá cho thuê (Tính theo ngày)</Text>
-              </View>
-              <TextInput
-                style={ styles.inputStyle }
-                multiline={true}
-                numberOfLines={10}
-                placeholder='Nhập giá cho thuê xe'
-                onChangeText={(val) => setPrice(val)}
-                value={JSON.stringify(Price)}
-              />
-            </View>
-
-            {
-              province || listProvince.length ?
-              (
-                <View style={{ width: '100%', margin: 25, }}>
-                  <View style={{ flexDirection: 'row', alignItems: 'center', }}>
-                    <FontAwesome5 name="hotel" size={18} color="black" />
-                    <Text style={{ fontSize: 18, marginLeft: 10, }}>Chọn tỉnh</Text>
-                  </View>
-                  <SelectBox
-                    label="Chọn tỉnh"
-                    options={listProvince}
-                    value={province}
-                    onChange={onChangeProvince()}
-                    hideInputFilter={false}
-                  />
-                </View>
-              ) : (
-                <></>
-              )
-            }
-            
-            {
-              district || listDistrict.length ? 
-              (
-                <View style={{ width: '100%', margin: 25, }}>
-                  <View style={{ flexDirection: 'row', alignItems: 'center', }}>
-                    <FontAwesome5 name="warehouse" size={18} color="black" />
-                    <Text style={{ fontSize: 18, marginLeft: 10, }}>Chọn quận/huyện</Text>
-                  </View>
-                  <SelectBox
-                    label="Chọn quận/huyện"
-                    options={listDistrict}
-                    value={district}
-                    onChange={onChangeDistrict()}
-                    hideInputFilter={false}
-                  />
-                </View>
-              ) : 
-              (
-                <></>
-              )
-            }
-            
-            {
-              ward || listWard.length ?
-              (
-                <View style={{ width: '100%', margin: 25, }}>
-                  <View style={{ flexDirection: 'row', alignItems: 'center', }}>
-                    <FontAwesome5 name="house-user" size={18} color="black" />
-                    <Text style={{ fontSize: 18, marginLeft: 10, }}>Chọn xã/phường</Text>
-                  </View>
-                  <SelectBox
-                    label="Chọn xã/phường"
-                    options={listWard}
-                    value={ward}
-                    onChange={onChangeWard()}
-                    hideInputFilter={false}
-                  />
-                </View>
-              ) : 
-              (
-                <></>
-              )
-            }
-
-            <View style={{ width: '100%', margin: 15, }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', }}>
-                <FontAwesome5 name="map-marked-alt" size={18} color="black" />
-                <Text style={{ fontSize: 18, marginLeft: 10, }}>Địa chỉ lấy xe</Text>
-              </View>
-              <TextInput
-                style={ styles.inputStyle }
-                multiline={true}
-                numberOfLines={10}
-                placeholder='Nhập địa chỉ lấy xe'
-                onChangeText={(val) => setAddress_booking(val)}
-                value={Address_booking}  
-              />
-            </View>
-
-            <View style={{ width: '100%', margin: 15, }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', }}>
-                <FontAwesome5 name="money-check-alt" size={18} color="black" />
-                <Text style={{ fontSize: 18, marginLeft: 10, }}>Tài sản thế chấp</Text>
-              </View>
-              <TextInput
-                style={ styles.inputStyle }
-                multiline={true}
-                numberOfLines={10}
-                placeholder='Nhập tài sản thế chấp'
-                onChangeText={(val) => setMortgage(val)}
-                value={mortgage}  
-              />
-            </View>
-
-            <View style={{ width: '100%', margin: 15, }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', }}>
-                <FontAwesome5 name="digital-tachograph" size={18} color="black" />
-                <Text style={{ fontSize: 18, marginLeft: 10, }}>Điều khoản</Text>
-              </View>
-              <TextInput
-                style={ styles.inputStyle }
-                multiline={true}
-                numberOfLines={10}
-                placeholder='Nhập điều khoản'
-                onChangeText={(val) => setRules(val)}
-                value={rules}
-              />
-            </View>
-          </View>
-        </ScrollView>
-        <View style={styles.infoUserStyle}>
-          <TouchableOpacity disabled={isDisabled} activeOpacity={0.8} style={ styles.btnStyle } onPress={alert}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', }}>
-              {
-                isLoading ?
-                (
-                  <ActivityIndicator size="large" color="white" style={{ marginRight: 10, }} />
-                ) : (
-                  <></>
-                )
-              }
-              <Text style={{ color: 'white', fontSize: 15, fontWeight: 'bold', }}>Cập nhật thông tin xe</Text>
-            </View>
-          </TouchableOpacity>
-        </View>
+          </>
+        }
+        
       </SafeAreaView>
     </>
   );
@@ -698,17 +909,16 @@ const UpdateCar = ({ navigation, route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: COLORS.DEFAULT_BACKGROUND,
+    // justifyContent: 'center',
+    // alignItems: 'center',
+    // backgroundColor: COLORS.DEFAULT_BACKGROUND,
   },
 
   header: {
     paddingVertical: 20,
     flexDirection: 'row',
-    marginLeft: 20, 
-    alignItems: 'center',
-    marginTop: 15,
+    justifyContent: 'space-between',
+    backgroundColor: COLORS.DEFAULT_BACKGROUND,
   }, 
 
   infoUserStyle: {
@@ -754,6 +964,27 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 6,
+  },
+
+  imageStyleUploadPhoto: {
+    width: 100, 
+    height: 100,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'grey',
+    marginRight: 10,
+    borderRadius: 10,
+  },
+
+  btnUploadMultipleImage: {
+    width: 100, 
+    height: 100,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'grey'
   },
 });
 

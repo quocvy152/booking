@@ -23,15 +23,15 @@ export async function getListCarPrepare(querys) {
 }
 
 export async function createCar(body) {
-    const parseBody = convertObjectToFormData(body);
+    // const parseBody = convertObjectToFormData(body);
 
-    return await requestFileAPI(`${ENDPOINT.REGISTER_CAR_v2}`, method.POST, parseBody, 'multipart/form-data;');
+    return await requestFileAPI(`${ENDPOINT.REGISTER_CAR_v2}`, method.POST, body);
 };
 
 export async function updateCar(infoCar) {
-    const parseInfoCarBody = convertObjectToFormData(infoCar);
+    // const parseInfoCarBody = convertObjectToFormData(infoCar);
 
-    return await requestFileAPI(`${ENDPOINT.UPDATE_CAR}/${infoCar.id}`, method.PUT, parseInfoCarBody, 'multipart/form-data;');
+    return await requestFileAPI(`${ENDPOINT.UPDATE_CAR}/${infoCar.id}`, method.PUT, infoCar);
 }
 
 export async function bookingCar(infoCar) {
@@ -118,4 +118,10 @@ export async function getListDistrict(provinceID) {
 export async function getListWard(districtID) {
 
     return await requestAPI(`${ENDPOINT.LIST_WARD_OF_DISTRICT}?district_id=${districtID}`, method.GET);
+}
+
+export async function uploadImgBB({ file }) {
+    const parseBody = convertObjectToFormData({ file });
+
+    return await requestAPI(`${ENDPOINT.UPLOAD_IMGBB}`, method.POST, parseBody, 'multipart/form-data;');
 }

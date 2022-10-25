@@ -6,6 +6,7 @@ const BASE_BRANDS    = '/brands';
 const BASE_FAVOURITES= '/favourites';
 const BASE_TOKEN     = '/Token';
 const BASE_FILE      = '/File';
+const BASE_UPLOAD    = '/upload';
 const BASE_CHARACTERISTIC = '/characteristics';
 
 const VERSION_1      = '/v1';
@@ -59,6 +60,9 @@ export const ENDPOINT = {
   LIST_DISTRICT_OF_PROVINCE: `${BASE_LOCATION}/district-by-province`,
   LIST_WARD_OF_DISTRICT: `${BASE_LOCATION}/ward-list-district`,
   LIST_WARD_OF_PROVINCE: `${BASE_LOCATION}/ward-by-province`,
+
+  //File
+  UPLOAD_IMGBB: `${BASE_UPLOAD}/imgbb`,
 
   // Token
   CREATE_TOKEN: `${BASE_TOKEN}`,

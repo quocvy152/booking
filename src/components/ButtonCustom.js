@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
   btnStyle: {
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 25,
+    borderRadius: 10,
   },
 
   textStyle: {

@@ -187,6 +187,19 @@ const Login = ({ navigation }) => {
     
   return (
     <>
+      {/* <View style={ styles.content }>
+        <Text style={ styles.hiText }>
+          Đăng Nhập Booking
+        </Text>
+        <Image 
+          style={{ 
+            width: 80, 
+            height: 80,
+            borderRadius: 40,
+          }} 
+          source={require('./../../../assets/adaptive-icon.png')} 
+        />
+      </View> */}
       <SafeAreaView style={ styles.container }>
         <StatusBar style='light' />
         <ToastCustom 
@@ -194,11 +207,10 @@ const Login = ({ navigation }) => {
           contentToast={content}
           typeToast={type}
         />
-        <View style={ styles.content }>
-            <Text style={ styles.hiText }>
-              Đăng Nhập Booking
-            </Text>
+        <View style={{ justifyContent: 'space-between', alignItems: 'center', }}>
+
         </View>
+        
 
         <View>
           <Image 
@@ -281,7 +293,10 @@ const styles = StyleSheet.create({
   },
 
   content: {
-    paddingHorizontal: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    // paddingHorizontal: 30,
+    backgroundColor: COLORS.DEFAULT_BACKGROUND,
   },
 
   form: {

@@ -22,16 +22,17 @@ import { TextInput } from 'react-native-gesture-handler';
 import ToastCustom from '../../components/ToastCustom';
 import TextInputCustom from '../../components/TextInputCustom';
 import { updateUser, changePassword, changeAvatar, } from '../../api/auth';
+import { uploadImgBB } from '../../api/general';
 import { updateInfoUser } from '../../store/auth';
-import { isFulfilled } from '@reduxjs/toolkit';
 
 const DetailInfoUser = ({ navigation, route }) => {
   const infoUser = useSelector(state => state.auth.infoUser);
   const COLOR_BACKGROUND = infoUser.role ? COLORS.DEFAULT_BACKGROUND : COLORS.BACKGROUND_ADMIN; 
   const [Img, setImg] = useState({
     uri: infoUser?.avatar?.path,
-    type: 'image/*',
-    name: infoUser?.avatar?.path
+    path: infoUser?.avatar?.path,
+    name: infoUser?.avatar?.name,
+    size: infoUser?.avatar?.size
   });
   const [ImgUpdate, setImgUpdate] = useState(null);
   const [InfoImgUpdate, setInfoImgUpdate] = useState({});
@@ -46,27 +47,31 @@ const DetailInfoUser = ({ navigation, route }) => {
   const [citizenIdentificationNo, setCitizenIdentificationNo] = useState(infoUser?.citizenIdentificationNo);
   const [citizenIdentificationFront, setCitizenIdentificationFront] = useState({
     uri: infoUser?.citizenIdentificationFront?.path,
-    type: 'image/*',
-    name: infoUser?.citizenIdentificationFront?.path,
+    path: infoUser?.citizenIdentificationFront?.path,
+    size: infoUser?.citizenIdentificationFront?.size, 
+    name: infoUser?.citizenIdentificationFront?.name,
   });
   const [citizenIdentificationFrontUpdate, setCitizenIdentificationFrontUpdate] = useState(null);
   const [citizenIdentificationBack, setCitizenIdentificationBack] = useState({
     uri: infoUser?.citizenIdentificationBack?.path,
-    type: 'image/*',
-    name: infoUser?.citizenIdentificationBack?.path,
+    path: infoUser?.citizenIdentificationBack?.path,
+    size: infoUser?.citizenIdentificationBack?.size, 
+    name: infoUser?.citizenIdentificationBack?.name,
   });
   const [citizenIdentificationBackUpdate, setCitizenIdentificationBackUpdate] = useState(null);
   const [drivingLicenseNo, setDrivingLicenseNo] = useState(infoUser?.drivingLicenseNo);
   const [drivingLicenseFront, setDrivingLicenseFront] = useState({
     uri: infoUser?.drivingLicenseFront?.path,
-    type: 'image/*',
-    name: infoUser?.drivingLicenseFront?.path,
+    path: infoUser?.drivingLicenseFront?.path,
+    size: infoUser?.drivingLicenseFront?.size, 
+    name: infoUser?.drivingLicenseFront?.name,
   });
   const [drivingLicenseFrontUpdate, setDrivingLicenseFrontUpdate] = useState(null);
   const [drivingLicenseBack, setDrivingLicenseBack] = useState({
     uri: infoUser?.drivingLicenseBack?.path,
-    type: 'image/*',
-    name: infoUser?.drivingLicenseBack?.path,
+    path: infoUser?.drivingLicenseBack?.path,
+    size: infoUser?.drivingLicenseBack?.size, 
+    name: infoUser?.drivingLicenseBack?.name,
   });
   const [drivingLicenseBackUpdate, setDrivingLicenseBackUpdate] = useState(null);
 
@@ -134,25 +139,35 @@ const DetailInfoUser = ({ navigation, route }) => {
         name: uri,
       }
 
+      let resultUploadImage = await uploadImgBB({
+        file: objUploadFile
+      });
+
+      let { error, data } = resultUploadImage.data;
+      let dataUpdate = {
+        ...data,
+        uri: uri
+      }
+
       switch(typeImage) {
         case 'file': {
-          setImgUpdate(objUploadFile);
+          setImgUpdate(dataUpdate);
           break;
         }
         case 'CITYZENIDENTIFICATION_FRONT': {
-          setCitizenIdentificationFrontUpdate(objUploadFile);
+          setCitizenIdentificationFrontUpdate(dataUpdate);
           break;
         }
         case 'CITYZENIDENTIFICATION_BACK': {
-          setCitizenIdentificationBackUpdate(objUploadFile);
+          setCitizenIdentificationBackUpdate(dataUpdate);
           break;
         }
         case 'DRIVING_LICENSE_FRONT': {
-          setDrivingLicenseFrontUpdate(objUploadFile);
+          setDrivingLicenseFrontUpdate(dataUpdate);
           break;
         }
         case 'DRIVING_LICENSE_BACK': {
-          setDrivingLicenseBackUpdate(objUploadFile);
+          setDrivingLicenseBackUpdate(dataUpdate);
           break;
         }
       }
@@ -221,7 +236,7 @@ const DetailInfoUser = ({ navigation, route }) => {
       email,
       phone,
       address: infoUser?.address,
-      file: ImgUpdate ? ImgUpdate : Img,
+      avatar: ImgUpdate ? ImgUpdate : Img,
       citizenIdentificationNo,
       drivingLicenseNo,
       citizenIdentificationFront: citizenIdentificationFrontUpdate ? citizenIdentificationFrontUpdate : citizenIdentificationFront,
@@ -286,11 +301,6 @@ const DetailInfoUser = ({ navigation, route }) => {
           contentToast={content}
           typeToast={type}
         />
-        {
-          console.log({
-            COLOR_BACKGROUND
-          })
-        }
       <View style={[ styles.header, { backgroundColor: COLOR_BACKGROUND }]}>
         <View style={{ marginLeft: 10, justifyContent: 'center', alignItems: 'center', marginTop: 10, width: '3%' }}>
           <FontAwesome5 name="chevron-left" size={20} color="white" onPress={() => navigation.goBack()} />
@@ -320,9 +330,6 @@ const DetailInfoUser = ({ navigation, route }) => {
             onPress={() => handleChoosePhoto('file')}>
             <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', padding: 5 }}>
               <FontAwesome5 name="camera" size={18} color={ COLORS.BUTTON_AUTH_COLOR } /> 
-              {/* <Text style={{ color: COLORS.DEFAULT_BACKGROUND, fontSize: 15, fontWeight: 'bold', }}>
-                Tải ảnh đại diện của bạn
-              </Text> */}
             </View>
           </TouchableOpacity>
 
@@ -413,14 +420,14 @@ const DetailInfoUser = ({ navigation, route }) => {
             <View style={{ marginBottom: 15 }}>
               <Text style={{ fontSize: 18, }}>Ảnh CCCD mặt sau</Text>
               {
-                citizenIdentificationBack?.uri ?
+                citizenIdentificationBackUpdate?.uri ?
                 (
-                  <Image source={{ uri: citizenIdentificationBack?.uri }} style={ styles.avatarValidateInfoStyle }/>
+                  <Image source={{ uri: citizenIdentificationBackUpdate?.uri }} style={ styles.avatarValidateInfoStyle }/>
                 ) : 
                 (
                   citizenIdentificationBack?.uri ?
                   (<Image source={{ uri: citizenIdentificationBack?.uri }} style={ styles.avatarValidateInfoStyle } />) :
-                  (<Image source={require('../../resources/images/CCCD_MS.jpg')} style={ styles.avatarValidateInfoStyle } />)
+                  (<Image source={require('../../resources/images/CCCD_MT.jpg')} style={ styles.avatarValidateInfoStyle } />)
                 )
               }
               <View style={{ marginBottom: 10 }}>
