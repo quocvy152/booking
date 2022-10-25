@@ -397,13 +397,19 @@ const checkValidDataCar = (infoDataCar) => {
     wardID, districtID, provinceID, 
     Seats, Fuel, FuelConsumption, 
     Tranmission, SelectedFeature, 
-    SelectedLicense, file
+    SelectedLicense, avatar, listGallery
   } = infoDataCar;
 
-  if(!file) 
+  if(!avatar) 
     return {
       error: true,
       message: 'Vui lòng đăng tải hình ảnh xe của bạn'
+    }
+
+  if(!listGallery.length)
+    return {
+      error: true,
+      message: 'Vui lòng chọn thêm hình ảnh về xe của bạn'
     }
 
   if(!name) 

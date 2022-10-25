@@ -37,15 +37,14 @@ export async function updateStatuUser({ userID }) {
 };
 
 export async function updateUser(infoUserUpdate) {
-    const parseBody = convertObjectToFormData(infoUserUpdate);
- 
-    return await requestFileAPI(`${ENDPOINT.UPDATE_USER}/update/${infoUserUpdate.userID}`, method.PUT, parseBody, 'multipart/form-data;');
+    // const parseBody = convertObjectToFormData(infoUserUpdate);
+    return await requestFileAPI(`${ENDPOINT.UPDATE_USER}/update/${infoUserUpdate.userID}`, method.PUT, infoUserUpdate);
 };
 
 export async function updateValidateInfo(infoUserUpdate) {
-    const parseBody = convertObjectToFormData(infoUserUpdate);
+    // const parseBody = convertObjectToFormData(infoUserUpdate);
  
-    return await requestFileAPI(`${ENDPOINT.UPDATE_VALIDATE_INFO}?user=${infoUserUpdate.userID}`, method.PUT, parseBody, 'multipart/form-data;');
+    return await requestFileAPI(`${ENDPOINT.UPDATE_VALIDATE_INFO}?user=${infoUserUpdate.userID}`, method.PUT, infoUserUpdate);
 };
 
 export async function changePassword(bodyChangePass) {

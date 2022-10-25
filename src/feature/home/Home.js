@@ -55,6 +55,7 @@ const Home = ({ navigation }) => {
             onPress={() => {
               if(index == selectedCategorIndex) {
                 setSelectedCategorIndex(undefined);
+                setPage(0);
               } else {
                 setSelectedCategorIndex(index);
               }
@@ -256,6 +257,7 @@ const Home = ({ navigation }) => {
           listCar.length ?
           (
             <FlatList 
+              // horizontal
               showsVerticalScrollIndicator={false}
               numColumns={2}
               onEndReachedThreshold={0.5}

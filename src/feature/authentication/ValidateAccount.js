@@ -13,6 +13,7 @@ import { updateValidateInfo } from '../../api/auth';
 // import * as ImagePicker from 'react-native-image-picker';
 import * as ImagePicker from 'expo-image-picker';
 import InfoUser from '../account/InfoUser';
+import { uploadImgBB } from '../../api/general';
 
 const { width } = Dimensions.get('screen');
 const contentWidth = width - 20;
@@ -81,21 +82,31 @@ const ValidateAccount = ({ navigation, route }) => {
         name: uri,
       }
 
+      let resultUploadImage = await uploadImgBB({
+        file: objUploadFile
+      });
+
+      let { error, data } = resultUploadImage.data;
+      let dataUpdate = {
+        ...data,
+        uri: uri
+      }
+
       switch(typeImage) {
         case 'CITYZENIDENTIFICATION_FRONT': {
-          setCitizenIdentificationFront(objUploadFile);
+          setCitizenIdentificationFront(dataUpdate);
           break;
         }
         case 'CITYZENIDENTIFICATION_BACK': {
-          setCitizenIdentificationBack(objUploadFile);
+          setCitizenIdentificationBack(dataUpdate);
           break;
         }
         case 'DRIVING_LICENSE_FRONT': {
-          setDrivingLicenseFront(objUploadFile);
+          setDrivingLicenseFront(dataUpdate);
           break;
         }
         case 'DRIVING_LICENSE_BACK': {
-          setDrivingLicenseBack(objUploadFile);
+          setDrivingLicenseBack(dataUpdate);
           break;
         }
       }
@@ -170,11 +181,6 @@ const ValidateAccount = ({ navigation, route }) => {
       }, 2000)
       
       setTimeout(() => {
-        // if(ROUTE_NAME == 'ALERT_VALIDATE_ACCOUNT') {
-        //   navigation.navigate('HomeScreen');
-        // } else {
-        //   navigation.navigate('LoginScreen');
-        // }
         navigation.navigate('LoginScreen');
       }, 3000)
     }

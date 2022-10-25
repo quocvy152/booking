@@ -15,7 +15,7 @@ import {
 import { useSelector } from 'react-redux';
 
 const { width } = Dimensions.get('screen');
-const contentWidth = width - 20;
+const contentWidth = width - 42;
 
 import { COLORS } from '../../constant/colors';
 import ButtonCustom from '../../components/ButtonCustom';
@@ -23,11 +23,13 @@ import { StatusBar } from 'expo-status-bar';
 import ToastCustom from '../../components/ToastCustom';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import moment from 'moment';
-import { createIconSetFromFontello } from 'react-native-vector-icons';
+import 'moment/locale/vi';
+import { SliderBox } from "react-native-image-slider-box";
 
 const CarDetail = ({ navigation, route }) => {
   const infoUser = useSelector(state => state.auth.infoUser);
   const car = route.params;
+  const infoOwner = car.infoCar && car.infoCar.userID; 
   const PREVIOUS_SCREEN_NAME = route.params.PREVIOUS_SCREEN_NAME;
   const ROUTE_NAME = route.params.ROUTE_NAME;
   const [infoSeats, setInfoSeats] = useState(car.details.find(detail => detail.characteristicID.characteristicTypeID.code === 'SOGHE'));
@@ -143,10 +145,6 @@ const CarDetail = ({ navigation, route }) => {
 
     const bodyAcceptBooking = {
       bookingID
-      // appUserId: car.bookings.bookedByUserId,
-      // carID: carID,
-      // startBooking: car.bookings.startBooking,
-      // endBooking: car.bookings.endBooking,
     }
 
     let resultAcceptPayedBooking = await acceptPayedBookingCar(bodyAcceptBooking);
@@ -168,9 +166,6 @@ const CarDetail = ({ navigation, route }) => {
 
     const bodyPayedBooking = {
       bookingID
-      // car_id: carID,
-      // startBooking: car.bookings.startBooking,
-      // endBooking: car.bookings.endBooking,
     }
 
     let resultPayedBooking = await payedBookingCar(bodyPayedBooking);
@@ -191,10 +186,6 @@ const CarDetail = ({ navigation, route }) => {
     let bookingID = car?.booking?._id;
 
     const bodyAcceptBooking = {
-      // appUserId: car.bookings.bookedByUserId,
-      // carID: carID,
-      // startBooking: car.bookings.startBooking,
-      // endBooking: car.bookings.endBooking,
       bookingID
     }
 
@@ -218,8 +209,6 @@ const CarDetail = ({ navigation, route }) => {
 
     const bodyCancelBooking = {
       bookingID,
-      // startBooking: car.bookings.startBooking,
-      // endBooking: car.bookings.endBooking,
     }
 
     let resultCancelBooking = await cancelBookingCar(bodyCancelBooking);
@@ -277,32 +266,22 @@ const CarDetail = ({ navigation, route }) => {
           <Text style={{ color: 'white', fontSize: 20, fontWeight: 'bold', }}>Thông tin chi tiết xe</Text>
         </View>
       </View>
-      {/* <View style={ styles.header }>
-        <FontAwesome5 name="chevron-left" size={28} color="black" onPress={navigation.goBack} />
-        {
-          PREVIOUS_SCREEN_NAME ?  
-          (
-            <Text style={{ fontSize: 20, fontWeight: 'bold', marginLeft: 10 }}>{ PREVIOUS_SCREEN_NAME }</Text>
-          ) : (
-            <Text style={{ fontSize: 20, fontWeight: 'bold', marginLeft: 10 }}>Trang chủ</Text>
-          )
-        }
-      </View> */}
 
       <View style={{ height: 220, justifyContent: 'center', alignItems: 'center' }} >
-        {
+        {/* {
           car.infoCar.avatar ?
           (
             <Image style={{ width: 220, height: 220, resizeMode: 'contain' }} source={{ uri: car.infoCar.avatar.path }} />
           ) : (
             <Image style={{ width: 220, height: 220, resizeMode: 'contain' }} source={require('../../resources/images/mazda-6-2020-26469.png')} />
           )
-        }
+        } */}
+        <SliderBox ImageComponentStyle={{ height: 250, marginBottom: 100, }} images={[ car?.infoCar?.avatar?.path, ...car?.infoCar?.gallery.map(image => image.path)  ]} />
       </View>
 
       <ScrollView>
         <View style={ styles.styleParagraph }>
-          <View style={ styles.headerParagraph }>
+          <View style={[ styles.headerParagraph, { marginBottom: 30, }]}>
             <Text style={{ fontSize: 22, fontWeight: 'bold', marginLeft: 20, color: COLORS.WHITE, width: '75%' }} >{ car.infoCar.name }</Text>
             <View style={{ width: 50, height: 50, marginRight: 20, }}>
               {
@@ -326,14 +305,68 @@ const CarDetail = ({ navigation, route }) => {
               
             </View>
           </View>
-          <View style={ styles.contentParagraph }>
-            <View style={{ borderWidth: 1, borderColor: 'white', marginTop: 20, paddingBottom: 20, }}>
-              <Text style={{ color: COLORS.WHITE, textAlign: 'justify', marginHorizontal: 20, marginTop: 18, lineHeight: 22, fontSize: 21, fontWeight: 'bold' }}>Đặc điểm</Text>
-              <View style={{ flexDirection: 'row', marginHorizontal: 30, marginTop: 18, }}>
-                {
-                  infoSeats && (
-                    <>
-                      <FontAwesome5 name="chair" size={18} color='white' style={{ marginRight: 5, }}/>
+          <View style={{ height: 5, backgroundColor: '#DCDCDC' }}></View>
+          <View style={[ styles.infoOwnerCar, { marginBottom: 20, marginTop: 20, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }]}>
+            <View>
+              <View>
+                <Text style={[ styles.titleInfoStyle, { marginBottom: 20, }]}>THÔNG TIN CHỦ XE</Text>
+              </View>
+              <View>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', }}>
+                  <Text style={{ fontWeight: 'bold', fontSize: 12, color: 'white', }}>CHỦ XE:</Text>
+                  <Text style={{ marginLeft: 5, color: 'white', }}>
+                    { infoOwner.lastName + ' ' + infoOwner.firstName }
+                  </Text>
+                </View>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', }}>
+                  <Text style={{ fontWeight: 'bold', fontSize: 12, color: 'white', }}>SĐT:</Text>
+                  <Text style={{ marginLeft: 5, color: 'white', }}>
+                    { infoOwner.phone } 
+                  </Text>
+                </View>
+              </View>
+            </View>
+            <View>
+            {
+              infoOwner.avatar ?
+              (
+                <Image 
+                  source={{ uri: infoOwner.avatar.path }}
+                  style={{
+                    width: 120,
+                    height: 120,
+                    borderRadius: 60,
+                    resizeMode: 'cover',
+                    borderWidth: 1, 
+                    borderColor: '#D3D3D3',
+                  }}
+                />
+              ) : (
+                <Image 
+                  source={require('../../resources/images/man-300x300.png')}
+                  style={{
+                    width: 120,
+                    height: 120,
+                    borderRadius: 60,
+                    resizeMode: 'cover',
+                    borderWidth: 1, 
+                    borderColor: '#D3D3D3',
+                  }}
+                />
+              )
+            }
+            </View>
+          </View>
+          <View style={{ height: 5, backgroundColor: '#DCDCDC' }}></View>
+          <View>
+          <View style={[ styles.infoOwnerCar, { marginBottom: 20, }]}>
+            <Text style={[ styles.titleInfoStyle, { marginBottom: 15, }]}>ĐẶC ĐIỂM</Text>
+            <View style={{ flexDirection: 'row', marginTop: 18, }}>
+              {
+                infoSeats && (
+                  <>
+                    <FontAwesome5 name="chair" size={18} color='white' style={{ marginRight: 5, }}/>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                       <Text 
                         style={{ 
                           color: COLORS.WHITE, 
@@ -346,35 +379,16 @@ const CarDetail = ({ navigation, route }) => {
                           { infoSeats.characteristicID.characteristicTypeID.name }:
                       </Text>
                       <Text style={{ color: COLORS.WHITE, textAlign: 'justify', lineHeight: 22, fontSize: 16, }}>{ infoSeats.characteristicID.value }</Text>
-                    </>
-                  )
-                }
-              </View>
-              <View style={{ flexDirection: 'row', marginHorizontal: 30, marginTop: 18, }}>
-                {
-                    infoTranmission && (
-                      <>
-                        <FontAwesome5 name="cogs" size={18} color="white" style={{ marginRight: 5, }} />
-                        <Text 
-                          style={{ 
-                            color: COLORS.WHITE, 
-                            textAlign: 'justify', 
-                            lineHeight: 22, 
-                            marginRight: 15,
-                            fontSize: 18, 
-                            fontWeight: 'bold',
-                          }}>{ infoTranmission.characteristicID.characteristicTypeID.name }:
-                        </Text>
-                        <Text style={{ color: COLORS.WHITE, textAlign: 'justify',lineHeight: 22, fontSize: 16, }}>{ infoTranmission.characteristicID.value }</Text>
-                      </>
-                    )
-                  }
-              </View>
-              <View style={{ flexDirection: 'row', marginHorizontal: 30, marginTop: 18, }}>
-                {
-                  infoFuel && (
+                    </View>
+                  </>
+                )
+              }
+            </View>
+            <View style={{ flexDirection: 'row', marginTop: 18, }}>
+              {
+                  infoTranmission && (
                     <>
-                      <FontAwesome5 name="charging-station" size={18} color="white" style={{ marginRight: 5, }} />
+                      <FontAwesome5 name="cogs" size={18} color="white" style={{ marginRight: 5, }} />
                       <Text 
                         style={{ 
                           color: COLORS.WHITE, 
@@ -383,127 +397,163 @@ const CarDetail = ({ navigation, route }) => {
                           marginRight: 15,
                           fontSize: 18, 
                           fontWeight: 'bold',
-                        }}>{ infoFuel.characteristicID.characteristicTypeID.name }:
+                        }}>{ infoTranmission.characteristicID.characteristicTypeID.name }:
                       </Text>
-                      <Text style={{ color: COLORS.WHITE, textAlign: 'justify', lineHeight: 22, fontSize: 16, }}>{ infoFuel.characteristicID.value }</Text>
+                      <Text style={{ color: COLORS.WHITE, textAlign: 'justify',lineHeight: 22, fontSize: 16, }}>{ infoTranmission.characteristicID.value }</Text>
                     </>
                   )
                 }
-              </View>
-              <View style={{ flexDirection: 'row', marginHorizontal: 30, marginTop: 18, }}>
-                {
-                  infoFuelConsumption && (
-                    <>
-                      <FontAwesome5 name="battery-half" size={18} color="white" style={{ marginRight: 5, }} />
-                      <Text 
-                        style={{ 
-                          color: COLORS.WHITE, 
-                          textAlign: 'justify', 
-                          marginRight: 15, 
-                          lineHeight: 22, 
-                          fontSize: 18, 
-                          fontWeight: 'bold',
-                        }}>Mức tiêu thụ nhiên liệu:
-                      </Text>
-                      <Text style={{ color: COLORS.WHITE, textAlign: 'justify', lineHeight: 22, fontSize: 16, }}>{ infoFuelConsumption.characteristicID.value }</Text>
-                    </>
-                  )
-                }
-              </View>
             </View>
-
-            <View style={{ borderWidth: 1, borderColor: 'white', marginTop: 20, paddingBottom: 20, }}>
-              <Text style={{ color: COLORS.WHITE, textAlign: 'justify', marginHorizontal: 20, marginTop: 18, lineHeight: 22, fontSize: 21, fontWeight: 'bold' }}>Tính năng</Text>
-              <View style={{ margin: 25, flex: 1, }}>
-                { 
-                  listFeature.map(feature => (
-                    <View style={{ borderWidth: 1, borderColor: 'white', padding: 10, borderRadius: 20, marginBottom: 10, }}>
-                      <Text style={{ fontSize: 18, color: 'white', fontStyle: 'italic' }}>
-                        {
-                          feature.characteristicID.value
-                        }
-                      </Text>
-                    </View> 
-                  ))
-                }
-              </View>
-            </View>
-
-            <View style={{ borderWidth: 1, borderColor: 'white', marginTop: 20, paddingBottom: 20, }}>
-              <Text style={{ color: COLORS.WHITE, textAlign: 'justify', marginHorizontal: 20, marginTop: 18, lineHeight: 22, fontSize: 21, fontWeight: 'bold' }}>Giấy tờ thuê xe</Text>
-              <View style={{ margin: 25, flex: 1, }}>
-                { 
-                  listLicense.map(license => (
-                    <View style={{ marginBottom: 10, borderWidth: 1, borderColor: 'white', padding: 10, borderRadius: 20, }}>
-                      <Text style={{ fontSize: 18, color: 'white', fontStyle: 'italic' }}>
-                        {
-                          license.characteristicID.value
-                        }
-                      </Text>
-                    </View> 
-                  ))
-                }
-              </View>
-            </View>
-
-            <View style={{ borderWidth: 1, borderColor: 'white', marginTop: 20, paddingBottom: 20, }}>
-              <Text style={{ color: COLORS.WHITE, textAlign: 'justify', marginHorizontal: 20, marginTop: 18, lineHeight: 22, fontSize: 21, fontWeight: 'bold' }}>Điều khoản</Text>
-              <Text style={{ color: COLORS.WHITE, textAlign: 'justify', marginHorizontal: 20, marginTop: 18, lineHeight: 22, fontSize: 16, }}>{ car.infoCar.rules }</Text>
-            </View>
-
-            <View style={{ borderWidth: 1, borderColor: 'white', marginTop: 20, paddingBottom: 20, }}>
-              <Text style={{ color: COLORS.WHITE, textAlign: 'justify', marginHorizontal: 20, marginTop: 18, lineHeight: 22, fontSize: 21, fontWeight: 'bold' }}>Thông tin thuê</Text>
-              <Text style={{ color: COLORS.WHITE, textAlign: 'justify', marginHorizontal: 20, marginTop: 18, lineHeight: 22, fontSize: 16, }}>
-                Đơn giá thuê:
-                <NumberFormat
-                  value={ car?.infoCar?.price }
-                  displayType="text"
-                  thousandSeparator
-                  prefix="đ"
-                  renderText={(value) => <Text style={{ fontWeight: 'bold' }}> {value}/ngày</Text>}
-                />
-              </Text>
-              <Text style={{ color: COLORS.WHITE, textAlign: 'justify', marginHorizontal: 20, marginTop: 18, lineHeight: 22, fontSize: 16, }}>
-                Tổng số tiền thuê: 
-                <NumberFormat
-                  value={ car?.booking?.totalPrice }
-                  displayType="text"
-                  thousandSeparator
-                  prefix="đ"
-                  renderText={(value) => <Text style={{ fontWeight: 'bold' }}> {value}</Text>}
-                />
-              </Text>
+            <View style={{ flexDirection: 'row', marginTop: 18, }}>
               {
-                ROUTE_NAME == 'ListCarWaitPayedScreen' ?
-                <>
-                  <Text style={{ color: COLORS.WHITE, textAlign: 'justify', marginHorizontal: 20, marginTop: 18, lineHeight: 22, fontSize: 16, }}>
-                    Số tiền thực trả: 
-                    <NumberFormat
-                      value={ car?.booking?.realMoney }
-                      displayType="text"
-                      thousandSeparator
-                      prefix="đ"
-                      renderText={(value) => <Text style={{ fontWeight: 'bold' }}> {value}</Text>}
-                    />
-                  </Text>
-                </> : <></>
+                infoFuel && (
+                  <>
+                    <FontAwesome5 name="charging-station" size={18} color="white" style={{ marginRight: 5, }} />
+                    <Text 
+                      style={{ 
+                        color: COLORS.WHITE, 
+                        textAlign: 'justify', 
+                        lineHeight: 22, 
+                        marginRight: 15,
+                        fontSize: 18, 
+                        fontWeight: 'bold',
+                      }}>{ infoFuel.characteristicID.characteristicTypeID.name }:
+                    </Text>
+                    <Text style={{ color: COLORS.WHITE, textAlign: 'justify', lineHeight: 22, fontSize: 16, }}>{ infoFuel.characteristicID.value }</Text>
+                  </>
+                )
               }
-              <Text style={{ color: COLORS.WHITE, textAlign: 'justify', marginHorizontal: 20, marginTop: 18, lineHeight: 22, fontSize: 16, }}>Thời gian thuê: { 
+            </View>
+            <View style={{ flexDirection: 'row', marginTop: 18, }}>
+              {
+                infoFuelConsumption && (
+                  <>
+                    <FontAwesome5 name="battery-half" size={18} color="white" style={{ marginRight: 5, }} />
+                    <Text 
+                      style={{ 
+                        color: COLORS.WHITE, 
+                        textAlign: 'justify', 
+                        marginRight: 15, 
+                        lineHeight: 22, 
+                        fontSize: 18, 
+                        fontWeight: 'bold',
+                      }}>Mức tiêu thụ nhiên liệu:
+                    </Text>
+                    <Text style={{ color: COLORS.WHITE, textAlign: 'justify', lineHeight: 22, fontSize: 16, }}>{ infoFuelConsumption.characteristicID.value }</Text>
+                  </>
+                )
+              }
+            </View>
+          </View>
+          <View style={{ height: 5, backgroundColor: '#DCDCDC' }}></View>
+
+          <View style={[ styles.infoOwnerCar, { marginBottom: 20 }]}>
+            <Text style={[ styles.titleInfoStyle, { marginBottom: 15, }]}>TÍNH NĂNG</Text>
+            <View style={{ flex: 1, }}>
+              { 
+                listFeature.map(feature => (
+                  <View style={ styles.itemCharacteristic }>
+                    <FontAwesome5 name={feature.characteristicID.icon} size={22} color="black" style={{ marginRight: 10, }} />
+                    <Text style={ styles.textInItemCharacteristic }>
+                      {
+                        feature.characteristicID.value
+                      }
+                    </Text>
+                  </View> 
+                ))
+              }
+            </View>
+          </View>
+          <View style={{ height: 5, backgroundColor: '#DCDCDC' }}></View>
+          <View style={[ styles.infoOwnerCar, { marginBottom: 20 }]}>
+            <Text style={[ styles.titleInfoStyle, { marginBottom: 15, }]}>GIẤY TỜ THUÊ XE (BẮT BUỘC)</Text>
+            <View style={{ flex: 1, }}>
+              { 
+                listLicense.map(license => (
+                  <View style={ styles.itemCharacteristic }>
+                    <FontAwesome5 name={license.characteristicID.icon} size={22} color="black" style={{ marginRight: 10, }} />
+                    <Text style={ styles.textInItemCharacteristic }>
+                      {
+                        license.characteristicID.value
+                      }
+                    </Text>
+                  </View> 
+                ))
+              }
+            </View>
+          </View>
+
+          <View style={{ height: 5, backgroundColor: '#DCDCDC' }}></View>
+          <View style={[ styles.infoOwnerCar, { marginBottom: 20 }]}>
+            <Text style={[ styles.titleInfoStyle, { marginBottom: 15, }]}>ĐIỀU KHOẢN</Text>
+            <Text style={{ color: COLORS.WHITE, textAlign: 'justify', lineHeight: 22, fontSize: 16, }}>{ car.infoCar.rules }</Text>
+          </View>
+          <View style={{ height: 5, backgroundColor: '#DCDCDC' }}></View>
+
+          <View style={[ styles.infoOwnerCar, { marginBottom: 20 }]}>
+          <Text style={[ styles.titleInfoStyle, { marginBottom: 15, }]}>THÔNG TIN THUÊ</Text>
+            {
+              ROUTE_NAME == 'ListCarWaitPayedScreen' ?
+              <>
+                <Text style={{ color: COLORS.WHITE, textAlign: 'justify', marginTop: 18, lineHeight: 22, fontSize: 16, }}>
+                  Số tiền thực trả: 
+                  <NumberFormat
+                    value={ car?.booking?.realMoney }
+                    displayType="text"
+                    thousandSeparator
+                    prefix="đ"
+                    renderText={(value) => <Text style={{ fontWeight: 'bold' }}> {value}</Text>}
+                  />
+                </Text>
+              </> : <></>
+            }
+            {
+              ROUTE_NAME && ROUTE_NAME != 'ListCarUserScreen' ?
+              <Text style={{ color: COLORS.WHITE, textAlign: 'justify', marginTop: 18, lineHeight: 22, fontSize: 16, }}>Thời gian thuê: { 
                 moment(car?.booking?.startTime).format('L') + ' ' + moment(car?.booking?.startTime).format('LT') + ' - ' + moment(car?.booking?.endTime).format('L') + ' ' + moment(car?.booking?.endTime).format('LT')
-              }</Text>
+              }</Text> : <></>
+            }
 
-              {
-                ROUTE_NAME == 'ListCarWaitPayedScreen' ?
-                <>
-                  <Text style={{ color: COLORS.WHITE, textAlign: 'justify', marginHorizontal: 20, marginTop: 18, lineHeight: 22, fontSize: 16, }}>Thời gian trả xe: { 
-                    moment(car?.booking?.timeGiveCarBack).format('L') + ' ' + moment(car?.booking?.timeGiveCarBack).format('LT')
-                  }</Text>
-                </> : <></>
-              }
-              
-              <Text style={{ color: COLORS.WHITE, textAlign: 'justify', marginHorizontal: 20, marginTop: 18, lineHeight: 22, fontSize: 16, }}>Địa chỉ nhận xe: { car?.booking?.pickUpPlace }</Text> 
-              <Text style={{ color: COLORS.WHITE, textAlign: 'justify', marginHorizontal: 20, marginTop: 18, lineHeight: 22, fontSize: 16, }}>Địa chỉ trả xe: { car?.booking?.dropOffPlace }</Text>
+            {
+              ROUTE_NAME == 'ListCarWaitPayedScreen' ?
+              <>
+                <Text style={{ color: COLORS.WHITE, textAlign: 'justify', marginTop: 18, lineHeight: 22, fontSize: 16, }}>Thời gian trả xe: { 
+                  moment(car?.booking?.timeGiveCarBack).format('L') + ' ' + moment(car?.booking?.timeGiveCarBack).format('LT')
+                }</Text>
+              </> : <></>
+            }
+            <View style={ styles.itemAddress }>
+              {/* <FontAwesome5 name="map-marker-alt" size={20} color="black" /> */}
+              <Text style={{ color: 'black', textAlign: 'justify', lineHeight: 22, fontSize: 16, }}>Địa chỉ nhận xe: { ROUTE_NAME && ROUTE_NAME != 'ListCarUserScreen' ? car?.booking?.pickUpPlace : car?.infoCar?.address + ', ' + car?.infoCar?.wardText + ', ' + car?.infoCar?.districtText + ', ' + car?.infoCar?.provinceText }</Text> 
             </View>
+            <View style={ styles.itemAddress }>
+              {/* <FontAwesome5 name="map-signs" size={20} color="black" /> */}
+              <Text style={{ color: 'black', textAlign: 'justify', lineHeight: 22, fontSize: 16, }}>Địa chỉ trả xe: { ROUTE_NAME && ROUTE_NAME != 'ListCarUserScreen' ? car?.booking?.dropOffPlace : car?.infoCar?.address + ', ' + car?.infoCar?.wardText + ', ' + car?.infoCar?.districtText + ', ' + car?.infoCar?.provinceText }</Text>
+            </View>
+            <Text style={{ color: COLORS.WHITE, textAlign: 'justify', marginTop: 10, lineHeight: 22, fontSize: 16, }}>
+              Đơn giá thuê:
+              <NumberFormat
+                value={ car?.infoCar?.price }
+                displayType="text"
+                thousandSeparator
+                prefix="đ"
+                renderText={(value) => <Text style={{ fontWeight: 'bold' }}> {value}/ngày</Text>}
+              />
+            </Text>
+            <View style={{ width: contentWidth, borderWidth: 0.5, borderColor: '#DCDCDC', marginBottom: 15, marginTop: 20, }}></View>
+            <Text style={{ color: COLORS.WHITE, textAlign: 'justify', marginTop: 10, lineHeight: 22, fontSize: 16, }}>
+              Tổng số tiền thuê: 
+              <NumberFormat
+                value={ ROUTE_NAME && ROUTE_NAME != 'ListCarUserScreen' ? car?.booking?.totalPrice : car?.infoCar?.price }
+                displayType="text"
+                thousandSeparator
+                prefix="đ"
+                renderText={(value) => <Text style={{ fontWeight: 'bold' }}> {value}</Text>}
+              />
+            </Text>
+          </View>
+          <View style={{ height: 5, backgroundColor: '#DCDCDC' }}></View>
+
             {
               typeof(ROUTE_NAME) != 'undefined' && ROUTE_NAME != 'ListCarUserScreen' ?
               <View style={{ borderWidth: 1, borderColor: 'white', marginTop: 20, paddingBottom: 20, }}>
@@ -547,14 +597,14 @@ const CarDetail = ({ navigation, route }) => {
                   <Text style={{ marginLeft: 10, color: 'white', fontWeight: 'bold' }}>
                     Số điện thoại: { car?.booking?.user?.phone } 
                   </Text>
-                </View> : <></>
+              </View> : <></>
             }
 
-            <View style={{ borderWidth: 1, borderColor: 'white', marginTop: 20, paddingBottom: 20, }}>
-              <Text style={{ color: COLORS.WHITE, textAlign: 'justify', marginHorizontal: 20, marginTop: 18, lineHeight: 22, fontSize: 21, fontWeight: 'bold' }}>Mô tả</Text>
-              <Text style={{ color: COLORS.WHITE, textAlign: 'justify', marginHorizontal: 20, marginTop: 18, lineHeight: 22, fontSize: 16, }}>{ car.infoCar.description }</Text>
+            <View style={[ styles.infoOwnerCar, { marginBottom: 20 }]}>
+              <Text style={[ styles.titleInfoStyle, { marginBottom: 15, }]}>MÔ TẢ</Text>
+              <Text style={{ color: COLORS.WHITE, textAlign: 'justify', lineHeight: 22, fontSize: 16, }}>{ car.infoCar.description }</Text>
             </View>
-
+          <View style={{ height: 5, backgroundColor: '#DCDCDC' }}></View>
           </View>
           {
             !ROUTE_NAME ?
@@ -634,7 +684,6 @@ const CarDetail = ({ navigation, route }) => {
                     style={{ 
                       backgroundColor: '#FF8C00', 
                       height: 50, 
-                      // width: contentWidth / 2 - 5, 
                       width: contentWidth, 
                       justifyContent: 'center', 
                       alignItems: 'center',
@@ -847,9 +896,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 50,
   },  
-  
-  contentParagraph: {
-  },  
 
   frameImage: {
   },  
@@ -889,6 +935,48 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 18,
     marginLeft: 10,
+  },
+
+  titleInfoStyle: { 
+    color: COLORS.WHITE, 
+    textAlign: 'justify', 
+    // marginHorizontal: 20, 
+    marginTop: 18, 
+    lineHeight: 22, 
+    fontSize: 16, 
+    fontWeight: 'bold' 
+  },
+
+  infoOwnerCar: {
+    width: contentWidth,
+    marginLeft: 21,
+  },
+
+  itemCharacteristic: { 
+    backgroundColor: '#E0FFFF', 
+    flexDirection: 'row', 
+    borderWidth: 1, 
+    borderColor: 'white', 
+    padding: 10, 
+    borderRadius: 5, 
+    marginBottom: 10, 
+  },
+
+  itemAddress: { 
+    backgroundColor: '#90EE90', 
+    flexDirection: 'row', 
+    borderWidth: 1, 
+    borderColor: 'white', 
+    padding: 10, 
+    borderRadius: 5, 
+    marginBottom: 10, 
+    justifyContent: 'space-between'
+  },
+
+  textInItemCharacteristic: { 
+    fontSize: 18, 
+    color: 'black', 
+    fontStyle: 'italic' 
   },
 });
 
