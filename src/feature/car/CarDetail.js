@@ -268,14 +268,6 @@ const CarDetail = ({ navigation, route }) => {
       </View>
 
       <View style={{ height: 220, justifyContent: 'center', alignItems: 'center' }} >
-        {/* {
-          car.infoCar.avatar ?
-          (
-            <Image style={{ width: 220, height: 220, resizeMode: 'contain' }} source={{ uri: car.infoCar.avatar.path }} />
-          ) : (
-            <Image style={{ width: 220, height: 220, resizeMode: 'contain' }} source={require('../../resources/images/mazda-6-2020-26469.png')} />
-          )
-        } */}
         <SliderBox ImageComponentStyle={{ height: 250, marginBottom: 100, }} images={[ car?.infoCar?.avatar?.path, ...car?.infoCar?.gallery.map(image => image.path)  ]} />
       </View>
 

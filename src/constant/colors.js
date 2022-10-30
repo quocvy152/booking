@@ -4,6 +4,7 @@ const COLORS = {
     WHITE: '#fff',
     BUTTON_AUTH_COLOR: '#2F4F4F',
     CHOOSED_COLOR: '#FF7700',
+    DANGEROUS: '#FF450',
 
     /**ADMIN */
     BACKGROUND_ADMIN: '#008080'

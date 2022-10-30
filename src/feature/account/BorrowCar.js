@@ -9,19 +9,19 @@ import {
 import { FontAwesome5 } from '@expo/vector-icons';
 import NumberFormat from 'react-number-format';
 import { useSelector } from 'react-redux';
-import { Calendar, } from 'react-native-calendars';
-import { LocaleConfig } from 'react-native-calendars';
+import { Calendar, LocaleConfig } from 'react-native-calendars';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons'; 
 import { MaterialIcons } from '@expo/vector-icons'; 
 import { Entypo } from '@expo/vector-icons';
 import TimeRangePicker from 'react-native-range-timepicker';
+import { SliderBox } from "react-native-image-slider-box";
 
 import ToastCustom from '../../components/ToastCustom';
 import { COLORS } from '../../constant/colors';
-import { bookingCar } from '../../api/general';
-import { convertDateTimeToString, convertDateToStringFormat, } from '../../utils/utils';
+import { bookingCar, getListBookingOfCar } from '../../api/general';
+import { convertDateTimeToString, convertDateToStringFormat, validateInfoBorrorwCar } from '../../utils/utils';
 
 const { width } = Dimensions.get('screen');
 const contentWidth = width - 42;
@@ -69,6 +69,7 @@ const BorrowCar = ({ navigation, route }) => {
   const [listLicense, setListLicense] = useState(car.details.filter(detail => detail.characteristicID.characteristicTypeID.code == 'GIAYTOTHUEXE'))
   const [pickUpPlace, setPickUpPlace] = useState();
   const [dropOffPlace, setDropOffPlace] = useState();
+  const [listBookingOfCar, setListBookingOfCar] = useState([]);
 
   // START TOASTCUSTOM MESSAGE
   const [isShowToast, setIsShowToast] = useState(false);
@@ -82,10 +83,43 @@ const BorrowCar = ({ navigation, route }) => {
 
   const [visible, setVisible] = useState(false);
 
-  useEffect(() => {
+  useEffect(async () => {
+    let resultGetListBookingOfCar = await getListBookingOfCar({ carID: car?.infoCar?._id });
+    let { error, data: listBookedCar } = resultGetListBookingOfCar.data;
+
+    // danh sách các chuyến xe đang được đặt
+    let objListBookedCar = {};
+
+    listBookedCar.forEach(bookinng => {
+      let { startTime: start, endTime: end } = bookinng;
+      
+      objListBookedCar = {
+        ...objListBookedCar,
+        [convertDateToStringFormat(new Date(start))]: { 
+          color: new Date(end).getTime() < new Date().getTime() ? '#607d8b' : '#fcb900', 
+          marked: true,
+          dotColor: new Date(end).getTime() < new Date().getTime() ? '#fcb900' : '#da0606', 
+          textColor: 'white', 
+          startingDay: true,
+          disabled: true,
+          disableTouchEvent: true
+        },
+        [convertDateToStringFormat(new Date(end))]  : { 
+          color: new Date(end).getTime() < new Date().getTime() ? '#607d8b' : '#fcb900', 
+          marked: true,
+          dotColor: new Date(end).getTime() < new Date().getTime() ? '#fcb900' : '#da0606', 
+          textColor: 'white', 
+          endingDay: true, 
+          disabled: true,
+          disableTouchEvent: true
+        }
+      }
+    })
+
     setMarkedDates({
+      ...objListBookedCar,
       [startDate]: { color: COLORS.DEFAULT_BACKGROUND, textColor: 'white', startingDay: true },
-      [endDate]: { color: COLORS.DEFAULT_BACKGROUND, textColor: 'white', endingDay: true }
+      [endDate]: { color: COLORS.DEFAULT_BACKGROUND, textColor: 'white', endingDay: true, }
     })
   }, [startDate, endDate]);
 
@@ -117,55 +151,15 @@ const BorrowCar = ({ navigation, route }) => {
     setIsLoading(false);
   }
 
-  const validateInfoBorrorwCar = (body) => {
-    let { userID, carID, dropOffPlace, pickUpPlace, startTime, endTime } = body;
-
-    if(!carID) 
-      return {
-        error: true,
-        message: 'Không thể lấy thông tin xe',
-      }
-
-    if(!pickUpPlace) 
-      return {
-        error: true,
-        message: 'Vui lòng nhập địa chỉ nhận xe',
-      }
-
-    if(!dropOffPlace) 
-      return {
-        error: true,
-        message: 'Vui lòng nhập địa chỉ trả xe',
-      }
-
-    if(!startTime)
-      return {
-        error: true,
-        message: 'Vui lòng chọn ngày bắt đầu thuê xe',
-      }
-
-    if(!endTime) 
-      return {
-        error: true,
-        message: 'Vui lòng chọn ngày trả xe',
-      }
-
-    return {
-      error: false,
-      message: 'validate_done',
-    }
-  }
-
   const handleBorrowCar = async () => {
     showLoading();
-
     let body = {
       carID: car?.infoCar?._id,
       userID: infoUser._id,
       pickUpPlace, 
       dropOffPlace,
-      startTime: startDate,
-      endTime: endDate,
+      startTime: new Date(`${startDate}T${startTime}+07:00`),
+      endTime: new Date(`${endDate}T${endTime}+07:00`),
       price: car?.infoCar?.price
     }
 
@@ -203,24 +197,27 @@ const BorrowCar = ({ navigation, route }) => {
             </View>
           </View>
           <Calendar
-            minDate={new Date()}
+            minDate={convertDateToStringFormat(new Date())}
             markingType={'period'}
             markedDates={markedDates}
             onDayPress={date => {
               let { day, month, year } = date;
 
+              const monthFormat = month < 10 ? '0' + month : month;
+              const dayFormat = day < 10 ? '0' + day : day;
+
               if(startDate && !endDate) {
                 
                 // bước kiểm tra để đưa về format startDate thì nhỏ endDate thì lớn
-                if(new Date(startDate).getTime() > new Date(`${year}-${month}-${day}`).getTime()) {
+                if(new Date(startDate).getTime() > new Date(`${year}-${monthFormat}-${dayFormat}`).getTime()) {
                   setEndDate(startDate);
-                  setStartDate(`${year}-${month}-${day}`);
+                  setStartDate(`${year}-${monthFormat}-${dayFormat}`);
                 } else {
-                  setEndDate(`${year}-${month}-${day}`);
+                  setEndDate(`${year}-${monthFormat}-${dayFormat}`);
                 }
 
               } else {
-                setStartDate(`${year}-${month}-${day}`);
+                setStartDate(`${year}-${monthFormat}-${dayFormat}`);
                 setEndDate(undefined);
               }
             }}
@@ -230,6 +227,18 @@ const BorrowCar = ({ navigation, route }) => {
             <Text style={{ width: '45%', fontWeight: 'bold', fontSize: 16, }}>{ (startDate && startTime) ? moment(new Date(`${startDate}T${startTime}+07:00`)).format('LLLL') : 'Chọn ngày' }</Text>
             <Entypo name="arrow-right" size={24} style={{ width: '10%', }} color="black" />
             <Text style={{ width: '45%', fontWeight: 'bold', fontSize: 16, }}>{ (endDate && endTime) ? moment(new Date(`${endDate}T${endTime}+07:00`)).format('LLLL') : 'Chọn ngày' }</Text>
+          </View>
+
+          <View style={{ flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', marginBottom: 15, }}>
+              <View style={{ backgroundColor: '#fcb900', height: 50, width: 50, justifyContent: 'center', alignItems: 'center', borderRadius: 25, }}>
+                <Text style={{ color: '#fcb900', }}>OK</Text>
+                <Text style={{ color: 'red', fontSize: 30 }}>.</Text>
+              </View>
+              <Text>Ngày đã có chuyến</Text>
+              <View style={{ backgroundColor: COLORS.DEFAULT_BACKGROUND, height: 50, width: 50, justifyContent: 'center', alignItems: 'center', borderRadius: 25, }}>
+                <Text style={{ color: COLORS.DEFAULT_BACKGROUND, }}>OK</Text>
+              </View>
+              <Text>Ngày bạn đang chọn</Text>
           </View>
 
           <TouchableOpacity 
@@ -259,13 +268,8 @@ const BorrowCar = ({ navigation, route }) => {
               <Text style={{ marginLeft: -30, color: 'white', fontSize: 20, fontWeight: 'bold', }}>Thuê xe</Text>
             </View>
           </View>
-          <View style={styles.infoUserStyle}>
-            {
-              Img ?
-              (<Image source={{ uri: Img }} style={ styles.avatarStyle } />) :
-              (<Image source={require('../../resources/images/mazda-6-2020-26469.png')} style={ styles.avatarStyle } />)
-            }
-
+          <View style={{ height: 220, justifyContent: 'center', alignItems: 'center' }} >
+            <SliderBox ImageComponentStyle={{ height: 250, marginBottom: 100, }} images={[ car?.infoCar?.avatar?.path, ...car?.infoCar?.gallery.map(image => image.path)  ]} />
           </View>
           <ScrollView nestedScrollEnabled={true}>
             <View style={{ height: 5, backgroundColor: '#DCDCDC' }}></View>
@@ -388,7 +392,8 @@ const BorrowCar = ({ navigation, route }) => {
               }
             </View>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-              <View></View>
+              <View style={{ justifyContent: 'center', alignItems: 'center', }}>
+              </View>
               <View>
                 <TouchableOpacity 
                   style={{ flexDirection: 'row', alignItems: 'center', padding: 15, }}

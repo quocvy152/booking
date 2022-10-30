@@ -1,3 +1,4 @@
+
 import _ from 'lodash';
 import { Alert, ToastAndroid, Platform, Linking } from 'react-native';
 // import atob from 'atob';
@@ -40,7 +41,8 @@ export {
   returnDetailIDS,
   convertDateTimeToString,
   returnCharacteristicID,
-  convertDateToStringFormat
+  convertDateToStringFormat,
+  validateInfoBorrorwCar
 }
 
 function callNumber(phone) {
@@ -527,5 +529,44 @@ const returnCharacteristicID = (listCharacteristicID) => {
 
 // convert date to string format: 'YYYY-mm-dd'
 const convertDateToStringFormat = (date) => {
-  return date.getFullYear() + '-' + `${date.getMonth() + 1 < 10 ? '0' + date.getMonth() + 1 : date.getMonth() + 1}` + '-' + date.getDate();
+  return date.getFullYear() + '-' + `${date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1}` + '-' + `${date.getDate() < 10 ? '0' + date.getDate() : date.getDate()}`;
+}
+
+const validateInfoBorrorwCar = (body) => {
+  let { userID, carID, dropOffPlace, pickUpPlace, startTime, endTime } = body;
+
+  if(!carID) 
+    return {
+      error: true,
+      message: 'Không thể lấy thông tin xe',
+    }
+
+  if(!pickUpPlace) 
+    return {
+      error: true,
+      message: 'Vui lòng nhập địa chỉ nhận xe',
+    }
+
+  if(!dropOffPlace) 
+    return {
+      error: true,
+      message: 'Vui lòng nhập địa chỉ trả xe',
+    }
+
+  if(!startTime)
+    return {
+      error: true,
+      message: 'Vui lòng chọn ngày bắt đầu thuê xe',
+    }
+
+  if(!endTime) 
+    return {
+      error: true,
+      message: 'Vui lòng chọn ngày trả xe',
+    }
+
+  return {
+    error: false,
+    message: 'validate_done',
+  }
 }
