@@ -16,6 +16,7 @@ import Favourite from './src/feature/favourite/Favourite';
 import DetailInfoUser from './src/feature/account/DetailInfoUser';
 import ListCarUser from './src/feature/account/ListCarUser';
 import ListCarLoan from './src/feature/account/ListCarLoan';
+import InfoBookingOfCar from './src/feature/account/InfoBookingOfCar';
 import ListTripUser from './src/feature/account/ListTripUser';
 import ListTripUserWaitApprove from './src/feature/account/ListTripUserWaitApprove';
 import ListCarWaitApprove from './src/feature/account/ListCarWaitApprove';
@@ -53,6 +54,7 @@ export default function App() {
           <Stack.Screen name='DetaulInfoUserScreen' component={DetailInfoUser} /> 
           <Stack.Screen name='ListCarUserScreen' component={ListCarUser} /> 
           <Stack.Screen name='ListCarLoanScreen' component={ListCarLoan} /> 
+          <Stack.Screen name='InfoBookingOfCarScreen' component={InfoBookingOfCar} /> 
           <Stack.Screen name='AddCarScreen' component={AddCar} /> 
           <Stack.Screen name='ListTripUserScreen' component={ListTripUser} /> 
           <Stack.Screen name='ListCarWaitApproveScreen' component={ListCarWaitApprove} /> 

@@ -23,13 +23,26 @@ const ListCarUser = ({ navigation, route }) => {
   const [checkReload, setCheckReload] = useState(false);
   const [page, setPage] = useState(1);
   const [isDoneFetchData, setIsDoneFetchData] = useState(false);
+  const [totalBooking, setTotalBooking] = useState(undefined);
+  const [turnover, setTurnover] = useState(undefined);
 
   const fetchMyListCarRegister = async ({ name }) => {
     let resultListCarRegister = await getListMyCar({ name });
-    let { error, data } = resultListCarRegister.data;
+    let { error, data: listMyCar } = resultListCarRegister.data;
 
     if(!error) {
-      setListCarRegister(data);
+      setListCarRegister(listMyCar);
+
+      let totalBookingOfUser = listMyCar.reduce((prev, current) => prev + current?.booking?.length, 0);
+      setTotalBooking(totalBookingOfUser);
+
+      let turnoverOfUser = 0;
+      listMyCar.forEach(car => {
+        let turnoverOfCar = car.booking.reduce((prev, current) => prev + (current.totalPrice ? current.totalPrice : 0), 0);
+        turnoverOfUser += turnoverOfCar;
+      })
+      setTurnover(turnoverOfUser);
+
       setIsDoneFetchData(true);
     }
   }
@@ -54,7 +67,7 @@ const ListCarUser = ({ navigation, route }) => {
       <>
         <TouchableOpacity 
           activeOpacity={0.9}
-          onPress={() => navigation.navigate('CarDetailScreen', car)}
+          onPress={() => navigation.navigate('InfoBookingOfCarScreen', car)}
         >
           <View style={ styles.card }>
             <View style={{ alignItems: 'center', }}>
@@ -81,7 +94,7 @@ const ListCarUser = ({ navigation, route }) => {
                     readonly
                     style={{ marginRight: 10 }}
                   />
-                  <Text style={{ fontSize: 13, }}>2 chuyến</Text>
+                  <Text style={{ fontSize: 13, }}>{ car?.booking?.length ? car?.booking?.length : 0 } chuyến</Text>
                 </View>
               </View>
               <View
@@ -132,6 +145,41 @@ const ListCarUser = ({ navigation, route }) => {
               />
             </View>
         </View>
+        
+        <View style={{ marginHorizontal: 10, flexDirection: 'row', alignItems: 'center', backgroundColor: 'white', height: 120, marginTop: 10, width: contentWidth, }}>
+          <View style={{}}>
+          {
+            infoUser?.avatar?.path ?
+            (
+              <Image source={{ uri: infoUser?.avatar?.path }} style={ styles.avatarStyle }/>
+            ) : 
+            (
+              (<Image source={require('../../resources/images/user-300x300.png')} style={ styles.avatarStyle } />)
+            )
+          }
+          </View>
+          <View style={{ marginLeft: 15, }}>
+          {
+            totalBooking === undefined || turnover === undefined ?
+            <>
+              <Skeleton animation="pulse" width={contentWidth - 120} height={16} style={{ marginBottom: 5, }} />
+              <Skeleton animation="pulse" width={contentWidth - 120} height={16} style={{  }} />
+            </> : <>
+              <Text style={{ color: 'black', fontSize: 16, fontWeight: 'bold' }}>Tổng số chuyến: <Text style={{color: '#008000'}}>{ totalBooking }</Text></Text>
+              <Text style={{ color: 'black', fontSize: 16, fontWeight: 'bold' }}>Doanh thu: 
+                <NumberFormat
+                  value={ turnover }
+                  displayType="text"
+                  thousandSeparator
+                  prefix="đ"
+                  renderText={(value) => <Text style={{ fontWeight: 'bold', fontSize: 16, color: '#008000' }}> + {value}</Text>}
+                />
+              </Text>
+            </>
+          }
+          </View>
+        </View>
+
         {
           listCarRegister.length ?
           (
@@ -262,6 +310,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: 6,
     marginTop: 20,
+  },
+
+  avatarStyle: {
+    marginLeft: 10,
+    height: 80,
+    width: 80,
+    borderRadius: 40,
+    borderWidth: 1,
+    borderColor: COLORS.BUTTON_AUTH_COLOR,
   },
 });
 

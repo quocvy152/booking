@@ -54,22 +54,15 @@ const BorrowCar = ({ navigation, route }) => {
   const infoUser = useSelector(state => state.auth.infoUser);
   const infoOwner = car.infoCar && car.infoCar.userID; 
   const [isShowCalendar, setIsShowCalendar] = useState(false);
-  const [Img, setImg] = useState(car.infoCar.avatar ? car.infoCar.avatar.path : null);
   const [startDate, setStartDate] = useState(convertDateToStringFormat(new Date()));
   const [startTime, setStartTime] = useState(`${new Date().getHours() < 10 ? '0' + new Date().getHours() : new Date().getHours()}:${new Date().getMinutes() < 10 ? '0' + new Date().getMinutes() : new Date().getMinutes()}:00`);
 
   const [endDate, setEndDate] = useState(convertDateToStringFormat(new Date(new Date().getTime() + (24 * 60 * 60 * 1000))));
   const [endTime, setEndTime] = useState(`${new Date().getHours() < 10 ? '0' + new Date().getHours() : new Date().getHours()}:${new Date().getMinutes() < 10 ? '0' + new Date().getMinutes() : new Date().getMinutes()}:00`);
 
-  const [infoSeats, setInfoSeats] = useState(car.details.find(detail => detail.characteristicID.characteristicTypeID.code === 'SOGHE'));
-  const [infoTranmission, setInfoTranmission] = useState(car.details.find(detail => detail.characteristicID.characteristicTypeID.code === 'TRUYENDONG'));
-  const [infoFuel, setInfoFuel] = useState(car.details.find(detail => detail.characteristicID.characteristicTypeID.code === 'NHIENLIEU'));
-  const [infoFuelConsumption, setInfoFuelConsumption] = useState(car.details.find(detail => detail.characteristicID.characteristicTypeID.code === 'MUCTIEUTHUNHIENLIEU'));
-  const [listFeature, setListFeature] = useState(car.details.filter(detail => detail.characteristicID.characteristicTypeID.code == 'TINHNANG'))
   const [listLicense, setListLicense] = useState(car.details.filter(detail => detail.characteristicID.characteristicTypeID.code == 'GIAYTOTHUEXE'))
   const [pickUpPlace, setPickUpPlace] = useState();
   const [dropOffPlace, setDropOffPlace] = useState();
-  const [listBookingOfCar, setListBookingOfCar] = useState([]);
 
   // START TOASTCUSTOM MESSAGE
   const [isShowToast, setIsShowToast] = useState(false);
@@ -84,15 +77,15 @@ const BorrowCar = ({ navigation, route }) => {
   const [visible, setVisible] = useState(false);
 
   useEffect(async () => {
-    let resultGetListBookingOfCar = await getListBookingOfCar({ carID: car?.infoCar?._id });
+    let resultGetListBookingOfCar = await getListBookingOfCar({ carID: car?.infoCar?._id, type: 'all' });
     let { error, data: listBookedCar } = resultGetListBookingOfCar.data;
 
     // danh sách các chuyến xe đang được đặt
     let objListBookedCar = {};
 
-    listBookedCar.forEach(bookinng => {
-      let { startTime: start, endTime: end } = bookinng;
-      
+    listBookedCar.forEach(booking => {
+      let { startTime: start, endTime: end } = booking;
+
       objListBookedCar = {
         ...objListBookedCar,
         [convertDateToStringFormat(new Date(start))]: { 

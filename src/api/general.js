@@ -100,8 +100,12 @@ export async function acceptPayedBookingCar(bodyAcceptPayedBooking) {
     return await requestAPI(`${ENDPOINT.ACCEPT_PAYED_BOOKING_CAR}?bookingID=${bodyAcceptPayedBooking.bookingID}`, method.PUT, bodyAcceptPayedBooking);
 }
 
-export async function getListBookingOfCar({ carID }) {
-    return await requestAPI(`${ENDPOINT.LIST_BOOKING_OF_CAR}?car=${carID}`, method.GET);
+export async function getListBookingOfCar({ carID, type }) {
+    return await requestAPI(`${ENDPOINT.LIST_BOOKING_OF_CAR}?car=${carID}&type=${type}`, method.GET);
+}
+
+export async function getListBookingFilter({ carID, type }) {
+    return await requestAPI(`${ENDPOINT.LIST_BOOKING_FILTER}?car=${carID}&type=${type}`, method.GET);
 }
 
 export async function getInfoAboutCar(code) {

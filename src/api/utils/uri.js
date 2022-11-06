@@ -51,6 +51,7 @@ export const ENDPOINT = {
   PAYED_BOOKING_CAR: `${BASE_BOOKINGS}/action/pay-booking`,
   ACCEPT_PAYED_BOOKING_CAR: `${BASE_BOOKINGS}/action/accept-paying`,
   LIST_BOOKING_OF_CAR: `${BASE_BOOKINGS}/list/booking-of-car`,
+  LIST_BOOKING_FILTER: `${BASE_BOOKINGS}/list/booking-filter`,
   
   // Brands
   LIST_BRAND: `${BASE_BRANDS}`,

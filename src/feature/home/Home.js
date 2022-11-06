@@ -120,7 +120,7 @@ const Home = ({ navigation }) => {
                 imageSize={15}
                 readonly
               />
-              <Text style={{ fontSize: 13, }}>2 chuyến</Text>
+              <Text style={{ fontSize: 13, }}>{ car?.booking?.length ? car?.booking?.length : 0 } chuyến</Text>
             </View>
             <View
               style={{

@@ -1573,6 +1573,11 @@
   dependencies:
     merge-options "^3.0.4"
 
+"@react-native-community/checkbox@^0.5.13", "@react-native-community/checkbox@^0.5.9":
+  version "0.5.13"
+  resolved "https://registry.yarnpkg.com/@react-native-community/checkbox/-/checkbox-0.5.13.tgz#f15cdc1f80ccc33fc949b7673b226225d94fe865"
+  integrity sha512-FMDYudaUbodbDOBgD6wT7s5z2QSzzghq46og8fF1yNXAp56AIrmRHZAtQhvlfyCdzWDu1+lBqgOxgupRmkCAUA==
+
 "@react-native-community/cli-debugger-ui@^5.0.1":
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/@react-native-community/cli-debugger-ui/-/cli-debugger-ui-5.0.1.tgz#6b1f3367b8e5211e899983065ea2e72c1901d75f"
@@ -3128,6 +3133,11 @@ expo-asset@~8.4.6:
     md5-file "^3.2.3"
     path-browserify "^1.0.0"
     url-parse "^1.4.4"
+
+expo-checkbox@^2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/expo-checkbox/-/expo-checkbox-2.2.0.tgz#3941715ce4c13858b43719c64a7287484e6dc614"
+  integrity sha512-vuLVnQS1UqzjKod/obfAC3XmozEDw1N338xKel1BqB/AclgpQVxCVhyPJRNsT3kScwrjNb4UXn3H0qJneTX/fg==
 
 expo-constants@~13.0.2:
   version "13.0.2"
@@ -5492,6 +5502,13 @@ react-native-image-slider-box@^2.0.7:
   dependencies:
     react-native-snap-carousel latest
 
+react-native-input-select@^0.18.0:
+  version "0.18.0"
+  resolved "https://registry.yarnpkg.com/react-native-input-select/-/react-native-input-select-0.18.0.tgz#c980ad6ce9113ea8ecfee871b72def5ec8035df8"
+  integrity sha512-1VhxYYwsCyYdojuW+FNBIHD6h1EyyqXu9WMKZvespLKYDtD4SDoplzDjBsTW8+nv/yGi8e7park4b1J4VEZQkw==
+  dependencies:
+    "@react-native-community/checkbox" "^0.5.9"
+
 react-native-linear-gradient@^2.6.2:
   version "2.6.2"
   resolved "https://registry.yarnpkg.com/react-native-linear-gradient/-/react-native-linear-gradient-2.6.2.tgz#56598a76832724b2afa7889747635b5c80948f38"
@@ -5505,6 +5522,13 @@ react-native-mediapicker@^0.4.1:
     prop-types "^15.6.0"
     react-native-image-progress "^1.0.1"
     react-native-nativebutton "^0.1.5"
+
+react-native-modal-dropdown@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/react-native-modal-dropdown/-/react-native-modal-dropdown-1.0.2.tgz#3e1efae5a5eacc42f44ac96468ea2f1b5bb0d759"
+  integrity sha512-X13RbwoQdaOb9Ffi7fjRVwh9OXauXIJhum0uXGzYZLMyoCQ5yt5cxf27P/YZbdh80Fb7bdPx6vTA4PTpUK2WDQ==
+  dependencies:
+    prop-types "^15.6.0"
 
 react-native-modal@^13.0.0:
   version "13.0.1"
@@ -5606,6 +5630,11 @@ react-native-sectioned-multi-select@^0.9.1:
   dependencies:
     lodash.isequal "^4.5.0"
     memoize-one "^6.0.0"
+
+react-native-select-dropdown@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/react-native-select-dropdown/-/react-native-select-dropdown-3.0.1.tgz#5dbbebc885993b20d1f3e6ac5e915c72c761b241"
+  integrity sha512-JWkgGznlhfmA12MX+4WKe9kKQ2ejAiaes3hHdgeLExNkgP9/qybOtf7RAwnyY5Wkn5xkyOe82si/CSngNUUCFA==
 
 react-native-size-matters@^0.3.1:
   version "0.3.1"
