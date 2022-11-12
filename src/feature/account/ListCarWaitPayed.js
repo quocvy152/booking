@@ -17,7 +17,9 @@ import CARS from '../../constant/cars';
 import TextInputCustom from '../../components/TextInputCustom';
 import { TouchableHighlight } from 'react-native-gesture-handler';
 import images from '../../resources/images/index';
-import { getListCustomerBookingMyCar } from '../../api/general';
+import { 
+  getListCustomerBookingMyCar,
+  getListCustomerReturnMyCar } from '../../api/general';
 import ButtonCustom from '../../components/ButtonCustom';
 import { backgroundColor } from 'react-native/Libraries/Components/View/ReactNativeStyleAttributes';
 const { width } = Dimensions.get('screen');
@@ -40,7 +42,7 @@ const ListCarWaitPayed = ({ navigation, route }) => {
 
   const fetchListTrip = async ({ page, name, typeGetList }) => {
     let TYPE_GET_LIST_CAR_WAIT_APPROVE = 4;
-    let resultListCarRegister = await getListCustomerBookingMyCar(TYPE_GET_LIST_CAR_WAIT_APPROVE, name, typeGetList);
+    let resultListCarRegister = await getListCustomerReturnMyCar(TYPE_GET_LIST_CAR_WAIT_APPROVE, name, typeGetList);
     let { error, data } = resultListCarRegister.data;
 
     if(!error) {
@@ -81,6 +83,7 @@ const ListCarWaitPayed = ({ navigation, route }) => {
         <TouchableOpacity 
           activeOpacity={0.9}
           onPress={() => navigation.navigate('CarDetailScreen', newItemToDetailCar)}
+          disabled={selectedItem == 0 ? false : true}
         >
           <View style={ styles.card }>
             <View style={{ alignItems: 'center', top: -15 }}>
@@ -134,7 +137,7 @@ const ListCarWaitPayed = ({ navigation, route }) => {
               }}
             >
               <NumberFormat
-                value={ item?.booking?.realMoney }
+                value={ selectedItem == 0 ? item?.booking?.realMoney : item?.booking?.totalPrice }
                 displayType="text"
                 thousandSeparator
                 prefix="đ"

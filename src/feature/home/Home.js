@@ -240,19 +240,19 @@ const Home = ({ navigation }) => {
             </View>
         </View>
         {
-            listBrand.length ? 
-            (
-              <View>
-                <ListCategories />
-              </View>
-            ) : (
-              <View style={{ flexDirection: 'row', }}>
-                <Skeleton animation="wave" width={125} height={40} style={ styles.cardSkeleton } />
-                <Skeleton animation="wave" width={125} height={40} style={ styles.cardSkeleton } />
-                <Skeleton animation="wave" width={125} height={40} style={ styles.cardSkeleton } />
-              </View>
-            )
-          }
+          listBrand.length ? 
+          (
+            <View>
+              <ListCategories />
+            </View>
+          ) : (
+            <View style={{ flexDirection: 'row', }}>
+              <Skeleton animation="wave" width={125} height={40} style={ styles.cardSkeleton } />
+              <Skeleton animation="wave" width={125} height={40} style={ styles.cardSkeleton } />
+              <Skeleton animation="wave" width={125} height={40} style={ styles.cardSkeleton } />
+            </View>
+          )
+        }
         {
           listCar.length ?
           (
@@ -278,17 +278,52 @@ const Home = ({ navigation }) => {
               </View>
             </> : <>
               <View style={{ flexDirection: 'row', }}>
-                <Skeleton animation="pulse" width={cardWidth} height={230} style={ styles.cardSkeleton } />
-                <Skeleton animation="pulse" width={cardWidth} height={230} style={ styles.cardSkeleton } />
+                <View style={{ height: 230, }}>
+                  <Skeleton animation="pulse" width={cardWidth} height={100} style={ styles.cardSkeleton } />
+                  <Skeleton animation="pulse" width={cardWidth} height={10} style={ styles.cardSkeleton } />
+                  <Skeleton animation="pulse" width={120} height={10} style={ styles.cardSkeleton } />
+                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', }}>
+                    <Skeleton animation="pulse" width={60} height={10} style={ styles.cardSkeleton } />
+                    <Skeleton animation="pulse" width={60} height={10} style={ styles.cardSkeleton } />
+                  </View>
+                  <Skeleton animation="pulse" width={cardWidth} height={10} style={ styles.cardSkeleton } />
+                </View>
+                <View style={{ height: 230, }}>
+                  <Skeleton animation="pulse" width={cardWidth} height={100} style={ styles.cardSkeleton } />
+                  <Skeleton animation="pulse" width={cardWidth} height={10} style={ styles.cardSkeleton } />
+                  <Skeleton animation="pulse" width={120} height={10} style={ styles.cardSkeleton } />
+                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', }}>
+                    <Skeleton animation="pulse" width={60} height={10} style={ styles.cardSkeleton } />
+                    <Skeleton animation="pulse" width={60} height={10} style={ styles.cardSkeleton } />
+                  </View>
+                  <Skeleton animation="pulse" width={cardWidth} height={10} style={ styles.cardSkeleton } />
+                </View>
               </View>
               <View style={{ flexDirection: 'row', }}>
-                <Skeleton animation="pulse" width={cardWidth} height={230} style={ styles.cardSkeleton } />
-                <Skeleton animation="pulse" width={cardWidth} height={230} style={ styles.cardSkeleton } />
+                <View style={{ height: 230, }}>
+                  <Skeleton animation="pulse" width={cardWidth} height={100} style={ styles.cardSkeleton } />
+                  <Skeleton animation="pulse" width={cardWidth} height={10} style={ styles.cardSkeleton } />
+                  <Skeleton animation="pulse" width={120} height={10} style={ styles.cardSkeleton } />
+                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', }}>
+                    <Skeleton animation="pulse" width={60} height={10} style={ styles.cardSkeleton } />
+                    <Skeleton animation="pulse" width={60} height={10} style={ styles.cardSkeleton } />
+                  </View>
+                  <Skeleton animation="pulse" width={cardWidth} height={10} style={ styles.cardSkeleton } />
+                </View>
+                <View style={{ height: 230, }}>
+                  <Skeleton animation="pulse" width={cardWidth} height={100} style={ styles.cardSkeleton } />
+                  <Skeleton animation="pulse" width={cardWidth} height={10} style={ styles.cardSkeleton } />
+                  <Skeleton animation="pulse" width={120} height={10} style={ styles.cardSkeleton } />
+                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', }}>
+                    <Skeleton animation="pulse" width={60} height={10} style={ styles.cardSkeleton } />
+                    <Skeleton animation="pulse" width={60} height={10} style={ styles.cardSkeleton } />
+                  </View>
+                  <Skeleton animation="pulse" width={cardWidth} height={10} style={ styles.cardSkeleton } />
+                </View>
               </View>
             </>
           )
         }
-
       </SafeAreaView>
     </>
   );

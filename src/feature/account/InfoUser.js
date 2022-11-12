@@ -10,7 +10,9 @@ const { width } = Dimensions.get('screen');
 const contentWidth = width - 30;
 import { 
   getListMyCar,
-  getListCustomerBookingMyCar
+  getListCustomerBookingMyCar,
+  getListCustomerReturnMyCar,
+  getListCarBooking
 } from '../../api/general';
 
 import { COLORS } from '../../constant/colors';
@@ -25,6 +27,7 @@ const InfoUser = ({ navigation, route }) => {
 
   const [listCarWaitApprove, setListCarWaitApprove] = useState([]);
   const [listCarWaitPay, setListCarWaitPay] = useState([]);
+  const [listCarBooking, setListCarBooking] = useState([]);
 
   const handleLogoutBtn = async () => {
     await AsyncStorage.clear();
@@ -34,17 +37,19 @@ const InfoUser = ({ navigation, route }) => {
   const fetchInfoNoti = async ({ page, name }) => {
     let TYPE_GET_LIST_CAR_WAIT_APPROVE = 3;
     let TYPE_GET_LIST_CAR_WAIT_PAYED = 4;
+    let TYPE_GET_LIST_TRIP = 1;
 
     let resultGetAll = await Promise.all([
       getListCustomerBookingMyCar(TYPE_GET_LIST_CAR_WAIT_APPROVE, name),
-      getListCustomerBookingMyCar(TYPE_GET_LIST_CAR_WAIT_PAYED, name)
+      getListCustomerReturnMyCar(TYPE_GET_LIST_CAR_WAIT_PAYED, name, 'active'),
+      getListCarBooking(TYPE_GET_LIST_TRIP, name)
     ]);
 
-    let [ resultListCarWaitApprove, resultListCarWaitPay ] = resultGetAll;
+    let [ resultListCarWaitApprove, resultListCarWaitPay, resultCarBooking ] = resultGetAll;
 
     let { error: errorListWaitApprove, data: dataWaitApprove } = resultListCarWaitApprove.data;
-
-    let { error: errorWaitPay, data: dataWaitPay } = resultListCarWaitPay.data;
+    let { error: errorWaitPay, data: dataWaitPay }             = resultListCarWaitPay.data;
+    let { error: errorCarBooking, data: dataCarBooking }       = resultCarBooking.data;
 
     if(!errorListWaitApprove) {
       setListCarWaitApprove(dataWaitApprove);
@@ -52,6 +57,10 @@ const InfoUser = ({ navigation, route }) => {
 
     if(!errorWaitPay) {
       setListCarWaitPay(dataWaitPay);
+    }
+  
+    if(!errorWaitPay) {
+      setListCarBooking(dataCarBooking);
     }
   }
 
@@ -188,7 +197,17 @@ const InfoUser = ({ navigation, route }) => {
           <View style={{ flexDirection: 'row', }}>
             <TouchableOpacity activeOpacity={0.6} onPress={() => navigation.navigate('ListTripUserScreen')}>
               <View style={ styles.tabStyle }>
-                <FontAwesome name="tripadvisor" size={24} color="#8B4513" />
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between',  }}>
+                  <FontAwesome name="tripadvisor" size={24} color="#8B4513" />
+                    {
+                      listCarBooking.length ?
+                      <>
+                        <View style={ styles.notiAlertStyle }>
+                          <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 16 }}>{ listCarBooking.length }</Text>
+                        </View>
+                      </> : <></>
+                    }
+                </View>
                 <Text style={{ marginTop: 16, fontSize: 15 }}>Xe đang thuê</Text>
               </View>
             </TouchableOpacity>

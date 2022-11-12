@@ -44,6 +44,7 @@ export const ENDPOINT = {
   UN_FAVOURITE_CAR: `${BASE_FAVOURITES}`,
   GET_LIST_BOOKING_ADMIN: `${BASE_BOOKINGS}/list/admin`,
   GET_LIST_CUSTOMER_BOOKING_MY_CAR: `${BASE_BOOKINGS}/list/customer-booking-my-car`,
+  GET_LIST_CUSTOMER_RETURN_MY_CAR: `${BASE_BOOKINGS}/list/customer-return-my-car`,
   GET_LIST_CAR_BOOKING: `${BASE_BOOKINGS}/list/my-booking`,
   REMOVE_CAR: `${BASE_CARS}`,
   CANCEL_BOOKING_CAR: `${BASE_BOOKINGS}/action/cancel-booking`,
