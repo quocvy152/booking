@@ -59,9 +59,9 @@ export async function getListCarFavourite({ userID, name }) {
     return await requestAPI(`${ENDPOINT.GET_LIST_MY_FAVOURITE_CAR}?user=${userID}&name=${name}`, method.GET);
 }
 
-export async function getListCustomerBookingMyCar(type, name) {
+export async function getListCustomerBookingMyCar(type, name, typeGetList) {
 
-    return await requestAPI(`${ENDPOINT.GET_LIST_CUSTOMER_BOOKING_MY_CAR}?type=${type}&name=${name}`, method.GET);
+    return await requestAPI(`${ENDPOINT.GET_LIST_CUSTOMER_BOOKING_MY_CAR}?type=${type}&name=${name}&isActive=${typeGetList}`, method.GET);
 }
 
 export async function getListBookingAdmin(status) {

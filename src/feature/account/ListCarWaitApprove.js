@@ -8,6 +8,7 @@ import { useSelector } from 'react-redux';
 import FastImage from 'react-native-fast-image';
 const unwind = require('javascript-unwind');
 const moment = require('moment');
+import SelectDropdown from 'react-native-select-dropdown';
 
 import { COLORS } from '../../constant/colors';
 import CATEGORIES_CAR from '../../constant/categories';
@@ -23,6 +24,8 @@ const cardWidth = width / 2 - 20;
 const contentWidth = width - 20;
 import { Skeleton } from "@rneui/themed";
 
+const status = ["Đang yêu cầu", "Quá hạn"];
+
 const ListCarWaitApprove = ({ navigation, route }) => {
   const infoUser = useSelector(state => state.auth.infoUser);
   const name = infoUser?.name;
@@ -32,10 +35,11 @@ const ListCarWaitApprove = ({ navigation, route }) => {
   const [checkReload, setCheckReload] = useState(false);
   const [page, setPage] = useState(1);  
   const [isDoneFetchData, setIsDoneFetchData] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(0);
 
-  const fetchListTrip = async ({ page, name }) => {
+  const fetchListTrip = async ({ page, name, typeGetList }) => {
     let TYPE_GET_LIST_CAR_WAIT_PAYED = 3;
-    let resultListCarRegister = await getListCustomerBookingMyCar(TYPE_GET_LIST_CAR_WAIT_PAYED, name);
+    let resultListCarRegister = await getListCustomerBookingMyCar(TYPE_GET_LIST_CAR_WAIT_PAYED, name, typeGetList);
     let { error, data } = resultListCarRegister.data;
 
     if(!error) {
@@ -46,14 +50,21 @@ const ListCarWaitApprove = ({ navigation, route }) => {
 
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-      fetchListTrip({ page, name: nameSearch });
+      fetchListTrip({ page, name: nameSearch, typeGetList: 'active' });
     });
     return unsubscribe;
   }, [navigation]);
 
   useEffect(() => {
-    fetchListTrip({ page, name: nameSearch });
-  }, [nameSearch]);
+    let typeGetList = '';
+
+    if(selectedItem == 0) 
+      typeGetList = 'active';
+    else if(selectedItem == 1) 
+      typeGetList = 'inactive';
+
+    fetchListTrip({ page, name: nameSearch, typeGetList });
+  }, [nameSearch, selectedItem]);
 
   const Card = ({ item }) => {
     let newItemToDetailCar = {
@@ -69,6 +80,7 @@ const ListCarWaitApprove = ({ navigation, route }) => {
         <TouchableOpacity 
           activeOpacity={0.9}
           onPress={() => navigation.navigate('CarDetailScreen', newItemToDetailCar)}
+          disabled={ selectedItem == 0 ? false : true }
         >
           <View style={ styles.card }>
             <View style={{ alignItems: 'center', top: -15 }}>
@@ -92,7 +104,7 @@ const ListCarWaitApprove = ({ navigation, route }) => {
               </Text>
               <Text style={{ marginTop: 10, fontSize: 15, color: COLORS.DEFAULT_TEXT }}>
                 Ngày BĐ: 
-                <Text style={{ fontWeight: 'bold', color: 'green' }}>
+                <Text style={{ fontWeight: 'bold', color: selectedItem == 0 ? 'green' : 'red', }}>
                   { 
                     '  ' + moment(item?.booking?.startTime).format('L') + ' ' + moment(item?.booking?.startTime).format('LT')  
                   }
@@ -100,7 +112,7 @@ const ListCarWaitApprove = ({ navigation, route }) => {
               </Text>
               <Text style={{ fontSize: 15, color: COLORS.DEFAULT_TEXT }}>
                 Ngày KT: 
-                <Text style={{ fontWeight: 'bold', color: '#FFD700' }}>
+                <Text style={{ fontWeight: 'bold', color: selectedItem == 0 ? '#FFD700' : 'red', }}>
                   { '  ' + moment(item?.booking?.endTime).format('L') + ' ' + moment(item?.booking?.endTime).format('LT')  }
                 </Text> 
               </Text>
@@ -125,6 +137,14 @@ const ListCarWaitApprove = ({ navigation, route }) => {
         </TouchableOpacity>
       </>
     );
+  }
+
+  const ButtonDropdownText = ({ text }) => {
+    return (
+      <>
+        <Text style={{ fontSize: 18, }}>{ text }</Text>
+      </>
+    )
   }
     
   return (
@@ -152,6 +172,28 @@ const ListCarWaitApprove = ({ navigation, route }) => {
                 textInputAction={val => setNameSearch(val)}
               />
             </View>
+        </View>
+
+        <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 10, }}>
+          <SelectDropdown
+            data={status}
+            defaultButtonText={<ButtonDropdownText text={'Đang yêu cầu'} />}
+            buttonStyle={{ borderRadius: 5, backgroundColor: 'white', borderWidth: 1, borderColor: '#bbbbbb', width: width - 10  }}
+            onSelect={(selectedItem, index) => {
+              console.log(selectedItem, index)
+            }}
+            buttonTextAfterSelection={(selectedItem, index) => {
+              setSelectedItem(index);
+              // text represented after item is selected
+              // if data array is an array of objects then return selectedItem.property to render after item is selected
+              return selectedItem
+            }}
+            rowTextForSelection={(item, index) => {
+              // text represented for each item in dropdown
+              // if data array is an array of objects then return item.property to represent item in dropdown
+              return item
+            }}
+          />
         </View>
         
         {

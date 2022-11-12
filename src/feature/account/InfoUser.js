@@ -8,7 +8,10 @@ import { useSelector } from 'react-redux';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 const { width } = Dimensions.get('screen');
 const contentWidth = width - 30;
-import { getListMyCar } from '../../api/general';
+import { 
+  getListMyCar,
+  getListCustomerBookingMyCar
+} from '../../api/general';
 
 import { COLORS } from '../../constant/colors';
 import ButtonCustom from '../../components/ButtonCustom';
@@ -20,10 +23,48 @@ const InfoUser = ({ navigation, route }) => {
   const avatar = infoUser?.avatar?.path;
   const [totalMyCar, setTotalMyCar] = useState();
 
+  const [listCarWaitApprove, setListCarWaitApprove] = useState([]);
+  const [listCarWaitPay, setListCarWaitPay] = useState([]);
+
   const handleLogoutBtn = async () => {
     await AsyncStorage.clear();
     navigation.navigate('LoginScreen');
   }
+
+  const fetchInfoNoti = async ({ page, name }) => {
+    let TYPE_GET_LIST_CAR_WAIT_APPROVE = 3;
+    let TYPE_GET_LIST_CAR_WAIT_PAYED = 4;
+
+    let resultGetAll = await Promise.all([
+      getListCustomerBookingMyCar(TYPE_GET_LIST_CAR_WAIT_APPROVE, name),
+      getListCustomerBookingMyCar(TYPE_GET_LIST_CAR_WAIT_PAYED, name)
+    ]);
+
+    let [ resultListCarWaitApprove, resultListCarWaitPay ] = resultGetAll;
+
+    let { error: errorListWaitApprove, data: dataWaitApprove } = resultListCarWaitApprove.data;
+
+    let { error: errorWaitPay, data: dataWaitPay } = resultListCarWaitPay.data;
+
+    if(!errorListWaitApprove) {
+      setListCarWaitApprove(dataWaitApprove);
+    }
+
+    if(!errorWaitPay) {
+      setListCarWaitPay(dataWaitPay);
+    }
+  }
+
+  useEffect(() => {
+    fetchInfoNoti({  });
+  }, [])
+
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      fetchInfoNoti({  });
+    });
+    return unsubscribe;
+  }, [navigation]);
 
   const alert = () =>
     Alert.alert(
@@ -109,13 +150,33 @@ const InfoUser = ({ navigation, route }) => {
           <View style={{ flexDirection: 'row', }}>
             <TouchableOpacity activeOpacity={0.6} onPress={() => navigation.navigate('ListCarWaitApproveScreen')}>
               <View style={ styles.tabStyle }>
-                <FontAwesome5 name="list-ul" size={24} color="#808000" />
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between',  }}>
+                  <FontAwesome5 name="list-ul" size={24} color="#808000" />
+                  {
+                    listCarWaitApprove.length ?
+                    <>
+                      <View style={ styles.notiAlertStyle }>
+                        <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 16 }}>{ listCarWaitApprove.length }</Text>
+                      </View>
+                    </> : <></>
+                  }
+                </View>
                 <Text style={{ marginTop: 16, fontSize: 15 }}>Yêu cầu thuê xe</Text>
               </View>
             </TouchableOpacity>
             <TouchableOpacity activeOpacity={0.6} onPress={() => navigation.navigate('ListCarWaitPayedScreen')}>
               <View style={ styles.tabStyle }>
-                <FontAwesome5 name="id-badge" size={24} color="#3E89A8" />
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between',  }}>
+                  <FontAwesome5 name="id-badge" size={24} color="#3E89A8" />
+                  {
+                    listCarWaitPay.length ?
+                    <>
+                      <View style={ styles.notiAlertStyle }>
+                        <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 16 }}>{ listCarWaitPay.length }</Text>
+                      </View>
+                    </> : <></>
+                  }
+                </View>
                 <Text style={{ marginTop: 16, fontSize: 15 }}>Yêu cầu trả xe</Text>
               </View>
             </TouchableOpacity>
@@ -231,6 +292,15 @@ const styles = StyleSheet.create({
     fontSize: 20, 
     fontWeight: 'bold',
     marginTop: 65 
+  },
+
+  notiAlertStyle: {
+    backgroundColor: 'red', 
+    height: 30, 
+    width: 30, 
+    borderRadius: 15, 
+    alignItems: 'center', 
+    justifyContent: 'center' 
   },
 });
 
