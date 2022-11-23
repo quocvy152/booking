@@ -28,6 +28,8 @@ const InfoUser = ({ navigation, route }) => {
   const [listCarWaitApprove, setListCarWaitApprove] = useState([]);
   const [listCarWaitPay, setListCarWaitPay] = useState([]);
   const [listCarBooking, setListCarBooking] = useState([]);
+  const [listCarBookingWaitApprove, setListCarBookingApprove] = useState([]);
+  const [listCarBookingWaitGiveBack, setListCarBookingWaitGiveBack] = useState([]);
 
   const handleLogoutBtn = async () => {
     await AsyncStorage.clear();
@@ -41,15 +43,25 @@ const InfoUser = ({ navigation, route }) => {
 
     let resultGetAll = await Promise.all([
       getListCustomerBookingMyCar(TYPE_GET_LIST_CAR_WAIT_APPROVE, name),
-      getListCustomerReturnMyCar(TYPE_GET_LIST_CAR_WAIT_PAYED, name, 'active'),
-      getListCarBooking(TYPE_GET_LIST_TRIP, name)
+      getListCustomerReturnMyCar(TYPE_GET_LIST_CAR_WAIT_PAYED, name),
+      getListCarBooking(TYPE_GET_LIST_TRIP, name),
+      getListCarBooking(TYPE_GET_LIST_CAR_WAIT_APPROVE, name),
+      getListCarBooking(TYPE_GET_LIST_CAR_WAIT_PAYED, name)
     ]);
 
-    let [ resultListCarWaitApprove, resultListCarWaitPay, resultCarBooking ] = resultGetAll;
+    let [ resultListCarWaitApprove, resultListCarWaitPay, resultCarBooking, resultCarBookingWaitApprove, resultCarBookingWaitGiveCarBack ] = resultGetAll;
 
     let { error: errorListWaitApprove, data: dataWaitApprove } = resultListCarWaitApprove.data;
     let { error: errorWaitPay, data: dataWaitPay }             = resultListCarWaitPay.data;
     let { error: errorCarBooking, data: dataCarBooking }       = resultCarBooking.data;
+    let { 
+      error: errorCarBookingWaitApprove, 
+      data: dataCarBookingWaitApprove 
+    }                                                          = resultCarBookingWaitApprove.data;
+    let { 
+      error: errorCarBookingWaitGiveCarBack, 
+      data: dataCarBookingWaitGiveCarBack 
+    }                                                          = resultCarBookingWaitGiveCarBack.data;
 
     if(!errorListWaitApprove) {
       setListCarWaitApprove(dataWaitApprove);
@@ -59,8 +71,16 @@ const InfoUser = ({ navigation, route }) => {
       setListCarWaitPay(dataWaitPay);
     }
   
-    if(!errorWaitPay) {
+    if(!errorCarBooking) {
       setListCarBooking(dataCarBooking);
+    }
+
+    if(!errorCarBookingWaitApprove) {
+      setListCarBookingApprove(dataCarBookingWaitApprove);
+    }
+
+    if(!errorCarBookingWaitGiveCarBack) {
+      setListCarBookingWaitGiveBack(dataCarBookingWaitGiveCarBack);
     }
   }
 
@@ -221,13 +241,33 @@ const InfoUser = ({ navigation, route }) => {
           <View style={{ flexDirection: 'row', }}>
             <TouchableOpacity activeOpacity={0.6} onPress={() => navigation.navigate('ListTripUserWaitApproveScreen')}>
               <View style={ styles.tabStyle }>
-                <FontAwesome5 name="check-square" size={24} color="#2F4F4F" />
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between',  }}>
+                  <FontAwesome5 name="check-square" size={24} color="#2F4F4F" />
+                  {
+                    listCarBookingWaitApprove.length ?
+                    <>
+                      <View style={ styles.notiAlertStyle }>
+                        <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 16 }}>{ listCarBookingWaitApprove.length }</Text>
+                      </View>
+                    </> : <></>
+                  }
+                </View>
                 <Text style={{ marginTop: 16, fontSize: 15 }}>Xe chờ chấp nhận thuê xe</Text>
               </View>
             </TouchableOpacity>
             <TouchableOpacity activeOpacity={0.6} onPress={() => navigation.navigate('ListTripWaitPayedScreen')}>
               <View style={ styles.tabStyle }>
-                <FontAwesome5 name="chalkboard-teacher" size={24} color="#FF4500" />
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between',  }}>
+                  <FontAwesome5 name="chalkboard-teacher" size={24} color="#FF4500" />
+                  {
+                    listCarBookingWaitGiveBack.length ?
+                    <>
+                      <View style={ styles.notiAlertStyle }>
+                        <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 16 }}>{ listCarBookingWaitGiveBack.length }</Text>
+                      </View>
+                    </> : <></>
+                  }
+                </View>
                 <Text style={{ marginTop: 16, fontSize: 15 }}>Xe chờ chấp nhận trả xe</Text>
               </View>
             </TouchableOpacity>

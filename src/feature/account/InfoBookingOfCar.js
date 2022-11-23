@@ -193,7 +193,7 @@ const BorrowCar = ({ navigation, route }) => {
               </View>
               <View style={{ flexDirection: 'row' }}>
                 <Text style={{ fontWeight: 'bold' }}>Kết thúc: </Text>
-                <Text>{ moment(booking.endTime).format('LLLL') }</Text>
+                <Text>{ moment(booking?.timeGiveCarBack ? booking?.timeGiveCarBack : booking?.endTime).format('LLLL') }</Text>
               </View>
               <View style={{ flexDirection: 'row' }}>
                 <Text style={{ fontWeight: 'bold' }}>Địa chỉ nhận xe: </Text>

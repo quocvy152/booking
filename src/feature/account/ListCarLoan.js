@@ -38,7 +38,7 @@ const ListCarUser = ({ navigation, route }) => {
 
       let turnoverOfUser = 0;
       listMyCar.forEach(car => {
-        let turnoverOfCar = car.booking.reduce((prev, current) => prev + (current.totalPrice ? current.totalPrice : 0), 0);
+        let turnoverOfCar = car.booking.reduce((prev, current) => prev + (current?.realMoney ? current?.realMoney : current?.totalPrice), 0);
         turnoverOfUser += turnoverOfCar;
       })
       setTurnover(turnoverOfUser);

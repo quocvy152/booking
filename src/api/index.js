@@ -25,7 +25,7 @@ export async function requestAPI(path, method, body, injectHeader) {
     if(body) 
       objMeta.data = body
 
-    // console.log({ objMeta });
+    console.log({ objMeta });
 
     return await axios(objMeta);
 }

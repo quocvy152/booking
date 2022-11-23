@@ -74,9 +74,9 @@ export async function getListBookingAdmin(status) {
     return await requestAPI(`${ENDPOINT.GET_LIST_BOOKING_ADMIN}?status=${status}`, method.GET);
 }
 
-export async function getListCarBooking(type, name) {
+export async function getListCarBooking(type, name, isActive) {
 
-    return await requestAPI(`${ENDPOINT.GET_LIST_CAR_BOOKING}?type=${type}&name=${name}`, method.GET);
+    return await requestAPI(`${ENDPOINT.GET_LIST_CAR_BOOKING}?type=${type}&name=${name}&isActive=${isActive}`, method.GET);
 }
 
 export async function removeCar(carID) {

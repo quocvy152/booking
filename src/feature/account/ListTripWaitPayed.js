@@ -6,6 +6,7 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import NumberFormat from 'react-number-format';
 import { useSelector } from 'react-redux';
 import FastImage from 'react-native-fast-image';
+import SelectDropdown from 'react-native-select-dropdown';
 
 import { COLORS } from '../../constant/colors';
 import CATEGORIES_CAR from '../../constant/categories';
@@ -20,21 +21,26 @@ import { Skeleton } from "@rneui/themed";
 const { width } = Dimensions.get('screen');
 const cardWidth = width / 2 - 20;
 const contentWidth = width - 20;
+import moment from 'moment';
+import 'moment/locale/vi';
+
+const status = ["Đang yêu cầu", "Đã tự động thanh toán"];
 
 const ListTripWaitPayed = ({ navigation, route }) => {
   const infoUser = useSelector(state => state.auth.infoUser);
-  const name = infoUser?.name;
   const avatar = infoUser?.avatar?.path;
   const [listTrip, setListTrip] = useState([]);
-  const [nameSearch, setNameSearch] = useState('');
+  const [nameSearch, setNameSearch] = useState(undefined);
   const [checkReload, setCheckReload] = useState(false);
   const [page, setPage] = useState(1);
   const [isDoneFetchData, setIsDoneFetchData] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(0);
 
-  const fetchListTrip = async ({ page, name }) => {
+  const fetchListTrip = async ({ page, name, typeGetList }) => {
     let TYPE_GET_LIST_TRIP_WAIT_PAYED = 4;
-    let resultListCarRegister = await getListCarBooking(TYPE_GET_LIST_TRIP_WAIT_PAYED, name);
+    let resultListCarRegister = await getListCarBooking(TYPE_GET_LIST_TRIP_WAIT_PAYED, name, typeGetList);
     let { error, data } = resultListCarRegister.data;
+
     if(!error) {
       setListTrip(data);
       setIsDoneFetchData(true);
@@ -43,17 +49,24 @@ const ListTripWaitPayed = ({ navigation, route }) => {
 
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-      fetchListTrip({ page, name });
+      fetchListTrip({ page, name: nameSearch, typeGetList: selectedItem == 0 ? 'active' : 'inactive' });
     });
     return unsubscribe;
   }, [navigation]);
 
   useEffect(() => {
-    fetchListTrip({ page, name });
-  }, [checkReload]);
+    let typeGetList = '';
+
+    if(selectedItem == 0) 
+      typeGetList = 'active';
+    else if(selectedItem == 1) 
+      typeGetList = 'inactive';
+
+    fetchListTrip({ page, name: nameSearch, typeGetList });
+  }, [checkReload, selectedItem]);
 
   useEffect(() => {
-    fetchListTrip({ page, name: nameSearch });
+    fetchListTrip({ page, name: nameSearch, typeGetList: 'active', nameSearch });
   }, [nameSearch]);
 
   const Card = ({ item }) => {
@@ -65,6 +78,9 @@ const ListTripWaitPayed = ({ navigation, route }) => {
       booking: item?.booking
     }
 
+    let infoCar = item?.booking?.car;
+    let infoBooking = item?.booking;
+
     return (
       <>
         <TouchableOpacity 
@@ -74,9 +90,9 @@ const ListTripWaitPayed = ({ navigation, route }) => {
           <View style={ styles.card }>
             <View style={{ alignItems: 'center', top: -15 }}>
               {
-                item?.booking?.car?.avatar?
+                infoCar?.avatar?
                 (
-                  <Image source={{ uri: item?.booking?.car?.avatar?.path }} style={{ height: 120, width: 120, borderRadius: 60, resizeMode: 'contain' }} />
+                  <Image source={{ uri: infoCar?.avatar?.path }} style={{ height: 120, width: 120, borderRadius: 60, resizeMode: 'contain' }} />
                 ) : (
                   <Image source={require('../../resources/images/mazda-6-2020-26469.png')} style={{ height: 120, width: 120, borderRadius: 60, resizeMode: 'contain' }} />
                 )
@@ -84,34 +100,66 @@ const ListTripWaitPayed = ({ navigation, route }) => {
               
             </View>
             <View style={{ marginHorizontal: 20, top: -30 }}>
-              <Text style={{ fontSize: 15, fontWeight: 'bold' }}>{ item?.booking?.car?.name && item?.booking?.car?.name.length > 16 ? item?.booking?.car?.name.slice(0, 16) + '...' : item?.booking?.car?.name }</Text>
+              <Text style={{ fontSize: 15, fontWeight: 'bold' }}>{ infoCar?.name && infoCar?.name.length > 16 ? infoCar?.name.slice(0, 16) + '...' : infoCar?.name }</Text>
               <Text style={{ fontSize: 15, color: COLORS.DEFAULT_TEXT }}>
                 Hiệu: 
                 <Text style={{ fontWeight: 'bold', color: 'black' }}>
-                  { '  ' + item?.booking?.car?.brandID?.name }
+                  { '  ' + infoCar?.brandID?.name }
                 </Text> 
               </Text>
             </View>
             <View
               style={{
-                marginTop: 10,
+                top: -20,
+                marginHorizontal: 20,
+                justifyContent: 'space-between',
+              }}
+            >
+              <Text style={{ color: 'blue' }}>Ngày thuê: { moment(infoBooking?.startTime).format('LLL') }</Text>
+              <Text style={{ color: selectedItem == 1 ? 'red' : 'blue' }}>Ngày trả: { moment(infoBooking?.timeGiveCarBack ? infoBooking?.timeGiveCarBack : infoBooking?.endTime).format('LLL') }</Text>
+            </View>
+            <View
+              style={{
                 marginHorizontal: 20,
                 flexDirection: 'row',
                 justifyContent: 'space-between',
               }}
             >
               <NumberFormat
-                value={ item?.booking?.car?.price }
+                value={ infoCar?.price }
                 displayType="text"
                 thousandSeparator
                 prefix="đ"
                 renderText={(value) => <Text style={{ fontWeight: 'bold' }}>{value}/ ngày</Text>}
               />
             </View>
+            <View
+              style={{
+                marginHorizontal: 20,
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+              }}
+            >
+              <NumberFormat
+                value={ infoBooking?.realMoney ? infoBooking?.realMoney : (infoBooking?.totalPrice) }
+                displayType="text"
+                thousandSeparator
+                prefix="đ"
+                renderText={(value) => <Text style={{ fontWeight: 'bold', color: 'green' }}>+ {value}</Text>}
+              />
+            </View>
           </View> 
         </TouchableOpacity>
       </>
     );
+  }
+
+  const ButtonDropdownText = ({ text }) => {
+    return (
+      <>
+        <Text style={{ fontSize: 18, }}>{ text }</Text>
+      </>
+    )
   }
     
   return (
@@ -139,6 +187,28 @@ const ListTripWaitPayed = ({ navigation, route }) => {
                 textInputAction={val => setNameSearch(val)}
               />
             </View>
+        </View>
+
+        <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 10, }}>
+          <SelectDropdown
+            data={status}
+            defaultButtonText={<ButtonDropdownText text={'Đang yêu cầu'} />}
+            buttonStyle={{ borderRadius: 5, backgroundColor: 'white', borderWidth: 1, borderColor: '#bbbbbb', width: width - 10  }}
+            onSelect={(selectedItem, index) => {
+              console.log(selectedItem, index)
+            }}
+            buttonTextAfterSelection={(selectedItem, index) => {
+              setSelectedItem(index);
+              // text represented after item is selected
+              // if data array is an array of objects then return selectedItem.property to render after item is selected
+              return selectedItem
+            }}
+            rowTextForSelection={(item, index) => {
+              // text represented for each item in dropdown
+              // if data array is an array of objects then return item.property to represent item in dropdown
+              return item
+            }}
+          />
         </View>
 
         {
@@ -235,7 +305,7 @@ const styles = StyleSheet.create({
   },
 
   card: {
-    height: 220,
+    height: 280,
     width: cardWidth,
     marginHorizontal: 10,
     marginTop: 15, 
