@@ -84,6 +84,11 @@ export async function removeCar(carID) {
     return await requestAPI(`${ENDPOINT.REMOVE_CAR}/${carID}`, method.DELETE);
 }
 
+export async function createRatingBooking(bodyRatingBooking) {
+
+    return await requestAPI(`${ENDPOINT.CREATE_RATING_BOOKING}`, method.POST, bodyRatingBooking);
+}
+
 export async function acceptBookingCar(bodyAcceptBooking) {
 
     return await requestAPI(`${ENDPOINT.ACCEPT_BOOKING_CAR}?bookingID=${bodyAcceptBooking.bookingID}`, method.PUT);

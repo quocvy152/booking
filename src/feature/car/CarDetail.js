@@ -1,5 +1,5 @@
 import React, { Component, useState } from 'react';
-import { View, Text, StyleSheet, Image, Dimensions, ScrollView, Alert, Button } from 'react-native';
+import { View, Text, StyleSheet, Image, Dimensions, ScrollView, Alert, Modal, Pressable, TextInput } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import NumberFormat from 'react-number-format';
@@ -10,12 +10,16 @@ import {
   payedBookingCar, 
   acceptPayedBookingCar,
   favouriteCar,
-  unFavouriteCar
+  unFavouriteCar,
+  createRatingBooking
 } from '../../api/general';
 import { useSelector } from 'react-redux';
+import { MaterialCommunityIcons  } from '@expo/vector-icons'; 
+import { Rating, AirbnbRating } from 'react-native-ratings';
 
-const { width } = Dimensions.get('screen');
+const { width, height } = Dimensions.get('screen');
 const contentWidth = width - 42;
+const contentHeight = height;
 
 import { COLORS } from '../../constant/colors';
 import ButtonCustom from '../../components/ButtonCustom';
@@ -39,6 +43,10 @@ const CarDetail = ({ navigation, route }) => {
   const [listFeature, setListFeature] = useState(car.details.filter(detail => detail.characteristicID.characteristicTypeID.code == 'TINHNANG'));
   const [listLicense, setListLicense] = useState(car.details.filter(detail => detail.characteristicID.characteristicTypeID.code == 'GIAYTOTHUEXE'));
 
+  const [modalVisible, setModalVisible] = useState(false);
+  const [ratingText, setRatingText] = useState('');
+  const [rating, setRating] = useState('');
+
    // START TOASTCUSTOM MESSAGE
    const [isShowToast, setIsShowToast] = useState(false);
    const [content, setContent] = useState();
@@ -52,6 +60,10 @@ const CarDetail = ({ navigation, route }) => {
     setTimeout(() => {
       setIsShowToast(false);
     }, 1500)
+  }
+
+  const handleRating = () => {
+    setModalVisible(true);
   }
 
   const handleCancelRegisterCar = async () => {
@@ -161,7 +173,66 @@ const CarDetail = ({ navigation, route }) => {
     }
   }
 
+  const getBodyRatingBooking = () => {
+    let carID = car?.infoCar?._id;
+    let bookingID = car?.booking?._id;
+
+    if(!carID || !bookingID) {
+      return { 
+        error: true,
+        content: 'Tham số không hợp lệ. ID không hợp lệ', 
+        type: 'warning' 
+      }
+    }
+
+    if(!rating) {
+      return { 
+        error: true,
+        content: 'Vui lòng đánh giá sao về chuyến đi của bạn', 
+        type: 'warning' 
+      }
+    }
+
+    if(!ratingText) {
+      return { 
+        error: true,
+        content: 'Vui lòng cho biết trải nghiệm về chuyến đi của bạn', 
+        type: 'warning' 
+      }
+    }
+
+    return {
+      error: false,
+      data: {
+        carID, bookingID, rating, ratingText
+      }
+    }
+  }
+
   const handlePayedBooking = async () => {
+    let resultGetDataRatingBooking = getBodyRatingBooking();
+    if(resultGetDataRatingBooking.error) {
+      showToast({
+        content: resultGetDataRatingBooking.content, 
+        type: resultGetDataRatingBooking.type
+      });
+      return;
+    }
+
+    /**
+     * ================================= Bước tạo đánh giá =================================
+     */
+    let bodyRatingBooking = resultGetDataRatingBooking.data;
+    let resultSendRatingBooking = await createRatingBooking(bodyRatingBooking);
+    let { error: errorRating, data: dataRating, message: messageRating } = resultSendRatingBooking.data;
+    if(errorRating) {
+      showToast({ content: messageRating, type: 'error' });
+      return;
+    }
+    // =======================================================================================
+      
+    setModalVisible(false);
+
     let bookingID = car?.booking?._id;
 
     const bodyPayedBooking = {
@@ -666,13 +737,59 @@ const CarDetail = ({ navigation, route }) => {
             )
           }
 
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={() => {
+              Alert.alert("Modal has been closed.");
+              setModalVisible(!modalVisible);
+            }}
+          >
+            <View style={{ zIndex: 99999999, marginTop: contentHeight / 5, }}>
+              <View style={styles.modalView}>
+                <MaterialCommunityIcons  name="star" style={{ marginTop: -20, marginBottom: 20 }} size={65} color="yellow" />
+                <Text style={styles.modalText}>Vui lòng cho biết trải nghiệm và</Text>
+                <Text style={styles.modalText}>mức độ hài lòng của bạn</Text>
+                <Rating
+                  showRating
+                  onFinishRating={(rating) => {
+                    setRating(rating);
+                  }}
+                  style={{ paddingVertical: 10 }}
+                />
+                <TextInput 
+                  style={ styles.inputStyle }
+                  placeholder='Nhập đánh giá của bạn'
+                  onChangeText={(val) => setRatingText(val)}
+                />
+                <View style={{ width: contentWidth - 120, marginBottom: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <Pressable
+                    style={[styles.button, styles.buttonClose, { backgroundColor: COLORS.DEFAULT_TEXT }]}
+                    onPress={() => {
+                      setModalVisible(false);
+                    }}
+                  >
+                    <Text style={styles.textStyle}>Quay lại</Text>
+                  </Pressable>
+                  <Pressable
+                    style={[styles.button, styles.buttonClose]}
+                    onPress={handlePayedBooking}
+                  >
+                    <Text style={styles.textStyle}>Đánh giá</Text>
+                  </Pressable>
+                </View>
+              </View>
+            </View>
+          </Modal>
+
           {
             ROUTE_NAME == 'ListTripUserScreen' ? 
             (
               <>
                 <View style={[styles.btnGroupParagraph, { flexDirection: 'row', }]}>
                   <TouchableOpacity 
-                    onPress={alertPayedBooking}
+                    onPress={handleRating}
                     style={{ 
                       backgroundColor: '#FF8C00', 
                       height: 50, 
@@ -969,6 +1086,62 @@ const styles = StyleSheet.create({
     fontSize: 18, 
     color: 'black', 
     fontStyle: 'italic' 
+  },
+
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    justifyContent: 'center',
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5
+  },
+  button: {
+    borderRadius: 6,
+    paddingHorizontal: 30,
+    paddingVertical: 10,
+    elevation: 2
+  },
+  buttonOpen: {
+    backgroundColor: "#F194FF",
+  },
+  buttonClose: {
+    marginTop: 30,
+    marginBottom: -20,  
+    backgroundColor: "#2196F3",
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center"
+  },
+  modalText: {
+    marginBottom: 10,
+    textAlign: 'justify',
+    fontSize: 16
+  },
+  inputStyle: {
+    height: 50,
+    width: '100%',
+    borderRadius: 6,
+    fontSize: 16,
+    borderColor: '#E0E0E0',
+    borderWidth: 1,
+    paddingHorizontal: 20,
   },
 });
 

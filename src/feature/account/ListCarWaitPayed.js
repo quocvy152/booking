@@ -85,6 +85,9 @@ const ListCarWaitPayed = ({ navigation, route }) => {
           onPress={() => navigation.navigate('CarDetailScreen', newItemToDetailCar)}
           disabled={selectedItem == 0 ? false : true}
         >
+          {
+            console.log({ booking: item?.booking })
+          }
           <View style={ styles.card }>
             <View style={{ alignItems: 'center', top: -15 }}>
               {
@@ -109,7 +112,7 @@ const ListCarWaitPayed = ({ navigation, route }) => {
             <Text style={{ top: -15, marginHorizontal: 20, fontSize: 15 }}>
               Trả xe:
               <Text style={{ fontWeight: 'bold', color: 'orange' }}>
-                { moment(item?.booking?.timeGiveCarBack).format('L') + ' ' + moment(item?.booking?.timeGiveCarBack).format('LT')  }
+                { moment(item?.booking?.timeGiveCarBack ? item?.booking?.timeGiveCarBack : item?.booking?.endTime).format('L') + ' ' + moment(item?.booking?.timeGiveCarBack ? item?.booking?.timeGiveCarBack : item?.booking?.endTime).format('LT')  }
               </Text> 
             </Text>
             <View

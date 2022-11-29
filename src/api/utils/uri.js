@@ -7,7 +7,8 @@ const BASE_FAVOURITES= '/favourites';
 const BASE_TOKEN     = '/Token';
 const BASE_FILE      = '/File';
 const BASE_UPLOAD    = '/upload';
-const BASE_CHARACTERISTIC = '/characteristics';
+const BASE_CHARACTERISTIC   = '/characteristics';
+const BASE_RATING_BOOKINGS  = '/bookings/booking-ratings';
 
 const VERSION_1      = '/v1';
 const VERSION_2      = '/v2';
@@ -56,6 +57,9 @@ export const ENDPOINT = {
   
   // Brands
   LIST_BRAND: `${BASE_BRANDS}`,
+
+  // Rating Booking Car
+  CREATE_RATING_BOOKING: `${BASE_RATING_BOOKINGS}`,
 
   // Location
   LIST_PROVINCE: `${BASE_LOCATION}/provinces`,
