@@ -111,14 +111,16 @@ const Home = ({ navigation }) => {
                 </Text> 
               </Text>
             </View>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginRight: 10, marginLeft: 10 }}>
-              <Rating
-                type='custom'
-                ratingColor='#FFD700'
-                ratingBackgroundColor='#c8c7c8'
-                ratingCount={5}
-                imageSize={15}
-                readonly
+            <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginRight: 10, marginLeft: 10 }}>
+              <AirbnbRating
+                reviews={['Rất Tệ', 'Không Tốt', 'Bình Thường', 'Hài Lòng', 'Xuất Xắc']}
+                selectedColor='#FFD700'
+                defaultRating={3}
+                unSelectedColor='#c8c7c8'
+                count={5}
+                size={12}
+                reviewSize={14}
+                isDisabled={true}
               />
               <Text style={{ fontSize: 13, }}>{ car?.booking?.length ? car?.booking?.length : 0 } chuyến</Text>
             </View>
@@ -386,7 +388,7 @@ const styles = StyleSheet.create({
   },
 
   card: {
-    height: 230,
+    height: 270,
     width: cardWidth,
     marginHorizontal: 10,
     marginTop: 15, 

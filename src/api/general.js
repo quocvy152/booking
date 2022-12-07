@@ -89,6 +89,11 @@ export async function createRatingBooking(bodyRatingBooking) {
     return await requestAPI(`${ENDPOINT.CREATE_RATING_BOOKING}`, method.POST, bodyRatingBooking);
 }
 
+export async function getInfoRatingBooking({ bookingID }) {
+
+    return await requestAPI(`${ENDPOINT.GET_INFO_RATING_BOOKING}?bookingID=${bookingID}`, method.GET);
+}
+
 export async function acceptBookingCar(bodyAcceptBooking) {
 
     return await requestAPI(`${ENDPOINT.ACCEPT_BOOKING_CAR}?bookingID=${bodyAcceptBooking.bookingID}`, method.PUT);

@@ -1,4 +1,4 @@
-import React, { Component, useState } from 'react';
+import React, { Component, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, Dimensions, ScrollView, Alert, Modal, Pressable, TextInput } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -11,7 +11,8 @@ import {
   acceptPayedBookingCar,
   favouriteCar,
   unFavouriteCar,
-  createRatingBooking
+  createRatingBooking,
+  getInfoRatingBooking
 } from '../../api/general';
 import { useSelector } from 'react-redux';
 import { MaterialCommunityIcons  } from '@expo/vector-icons'; 
@@ -52,6 +53,16 @@ const CarDetail = ({ navigation, route }) => {
    const [content, setContent] = useState();
    const [type, setType] = useState();
    // END TOASTCUSTOM MESSAGE
+
+   const [infoRatingBooking, setInfoRatingBooking] = useState({});
+
+   useEffect(async () => {
+    let resultGetInfoBooking = await getInfoRatingBooking({ bookingID: car?.booking?._id });
+    let { error, data } = resultGetInfoBooking.data;
+
+    if(!error)
+      setInfoRatingBooking(data);
+   }, [])
 
   const showToast = ({ content, type }) => {
     setIsShowToast(true);
@@ -885,6 +896,24 @@ const CarDetail = ({ navigation, route }) => {
                     }
                   </View>
                 </View>
+                <View style={{ marginTop: 20, height: 5, backgroundColor: '#DCDCDC' }}></View>
+                <View style={{ borderWidth: 1, borderColor: 'white', marginTop: 20, paddingBottom: 20, }}>
+                  <Text style={{ color: COLORS.WHITE, textAlign: 'justify', marginHorizontal: 20, marginTop: 18, lineHeight: 22, fontSize: 21, fontWeight: 'bold' }}>Đánh giá của khách hàng</Text>
+                  <View style={{ margin: 25, flex: 1, }}>
+                    <Text>{ infoRatingBooking?.customer?.lastName + ' ' + infoRatingBooking?.customer?.firstName }</Text>
+                    <AirbnbRating
+                      reviews={['Rất Tệ', 'Không Tốt', 'Bình Thường', 'Hài Lòng', 'Xuất Xắc']}
+                      selectedColor='#FFD700'
+                      defaultRating={3}
+                      unSelectedColor='#c8c7c8'
+                      count={5}
+                      size={12}
+                      reviewSize={14}
+                      isDisabled={true}
+                    />
+                  </View>
+                </View>
+
                 <View style={ styles.btnParagraph }>
                   <ButtonCustom 
                     title='Chấp nhận cho trả xe'

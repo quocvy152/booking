@@ -60,6 +60,7 @@ export const ENDPOINT = {
 
   // Rating Booking Car
   CREATE_RATING_BOOKING: `${BASE_RATING_BOOKINGS}`,
+  GET_INFO_RATING_BOOKING: `${BASE_RATING_BOOKINGS}/get-info`,
 
   // Location
   LIST_PROVINCE: `${BASE_LOCATION}/provinces`,
